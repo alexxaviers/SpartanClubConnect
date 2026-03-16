@@ -1,0 +1,120 @@
+:root {
+    --spartan-blue: #0055A2;
+    --spartan-blue-dark: #004785;
+    --gold: #E5A823;
+    --bg-light: #f3f4f6;
+    --text-dark: #1f2937;
+    --text-muted: #4b5563;
+    --border-light: #d1d5db;
+    --surface: #ffffff;
+    --input-bg: #f9fafb;
+    --danger: #b91c1c;
+    --danger-bg: #fef2f2;
+    --danger-border: #fecaca;
+    --success: #047857;
+    --success-bg: #ecfdf5;
+    --success-border: #a7f3d0;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--bg-light);
+    color: var(--text-dark);
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #111827;
+}
+
+input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    background: var(--input-bg);
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+input:focus {
+    border-color: var(--spartan-blue);
+    box-shadow: 0 0 0 3px rgba(0, 85, 162, 0.15);
+    background: var(--surface);
+}
+
+.primary-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: var(--spartan-blue);
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.primary-btn:hover {
+    background: var(--spartan-blue-dark);
+}
+
+.primary-btn:active {
+    transform: translateY(1px);
+}
+
+.field-error {
+    display: block;
+    margin-top: 6px;
+    min-height: 18px;
+    color: var(--danger);
+    font-size: 0.88rem;
+}
+
+.message {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+}
+
+.error-message-box {
+    background: var(--danger-bg);
+    color: var(--danger);
+    border: 1px solid var(--danger-border);
+}
+
+.success-message-box {
+    background: var(--success-bg);
+    color: var(--success);
+    border: 1px solid var(--success-border);
+}
+
+.blue {
+    color: var(--spartan-blue);
+}
+
+.gold {
+    color: var(--gold);
+}
+
+a {
+    color: var(--spartan-blue);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+a:hover {
+    text-decoration: underline;
+}
