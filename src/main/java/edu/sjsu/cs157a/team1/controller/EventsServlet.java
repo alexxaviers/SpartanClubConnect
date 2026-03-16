@@ -1,4 +1,4 @@
-package edu.sjsu.cs157a.team1;
+package edu.sjsu.cs157a.team1.controller;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

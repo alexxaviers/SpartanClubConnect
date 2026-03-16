@@ -1,3 +1,4 @@
+### Maven build ###
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -36,6 +37,10 @@ build/
 
 ### Mac OS ###
 .DS_Store
+Thumbs.db
 
-# Local DB creds
+### Local DB creds ###
 src/main/resources/db.properties
+
+### Logs ###
+*.log

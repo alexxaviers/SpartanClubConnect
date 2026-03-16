@@ -1,4 +1,4 @@
-package edu.sjsu.cs157a.team1;
+package edu.sjsu.cs157a.team1.util;
 
 import java.io.InputStream;
 import java.sql.*;
