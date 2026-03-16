@@ -1,23 +1,28 @@
 package edu.sjsu.cs157a.team1.controller;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.sql.*;
 import java.util.Properties;
 
-@WebServlet("/events")
+
+// Temporary demo servlet used to verify JDBC + servlet + DB integration
+// Could be deleted or changed later
 public class EventsServlet extends HttpServlet {
 
     private Properties loadDbProps() throws IOException {
         Properties props = new Properties();
         try (InputStream in = getClass().getClassLoader().getResourceAsStream("db.properties")) {
-            if (in == null)
+            if (in == null) {
                 throw new FileNotFoundException("db.properties not found in classpath (src/main/resources)");
+            }
             props.load(in);
         }
         return props;
@@ -32,7 +37,6 @@ public class EventsServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
         resp.setContentType("text/html;charset=UTF-8");
 
         try (PrintWriter out = resp.getWriter()) {
@@ -48,9 +52,11 @@ public class EventsServlet extends HttpServlet {
 
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
+
                 try (Connection conn = DriverManager.getConnection(url, user, pass);
                      PreparedStatement stmt = conn.prepareStatement(sql);
                      ResultSet rs = stmt.executeQuery()) {
+
                     out.println("<table border='1' cellpadding='6' cellspacing='0'>");
                     out.println("<tr><th>EventID</th><th>ClubID</th><th>Title</th><th>Description</th><th>Date</th><th>Location</th></tr>");
 
@@ -66,10 +72,9 @@ public class EventsServlet extends HttpServlet {
                         out.println("<td>" + escape(rs.getString("location")) + "</td>");
                         out.println("</tr>");
                     }
+
                     out.println("</table>");
-
                     out.println("<p>Total rows: " + count + "</p>");
-
                 } catch (SQLException e) {
                     out.println("<h3>DB Error</h3>");
                     out.println("<pre>");
@@ -77,10 +82,14 @@ public class EventsServlet extends HttpServlet {
                     out.println("</pre>");
                 }
 
-                out.println("</body></html>");
             } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+                out.println("<h3>Driver Error</h3>");
+                out.println("<pre>");
+                e.printStackTrace(out);
+                out.println("</pre>");
             }
+
+            out.println("</body></html>");
         }
     }
 }
