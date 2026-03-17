@@ -9,10 +9,6 @@ import edu.sjsu.cs157a.team1.model.User;
 import edu.sjsu.cs157a.team1.util.PasswordUtil;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 public class CreateAccountServlet extends HttpServlet {
 
