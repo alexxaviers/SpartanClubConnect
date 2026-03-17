@@ -5,7 +5,7 @@ SpartanClubConnect is a full-stack web application designed to help San José St
 
 ---
 
-##🚀 Overview
+## 🚀 Overview
 This project provides a modern, Instagram-style interface where:
 - Students can explore clubs and events
 - Club officers can manage clubs and publish events
@@ -14,13 +14,13 @@ The goal is to improve student engagement by replacing scattered platforms with 
 
 ---
 
-##✨ Features
-###👤 User Authentication
+## ✨ Features
+### 👤 User Authentication
 - User registration and login with secure password hashing
 - Role-based access (Student, Club Officer, Admin)
 - Session management and logout functionality
 
-###🏫 Club Management
+### 🏫 Club Management
 - Create and edit club profiles
 - Browse and search clubs by name or category
 - Assign club officers to manage clubs
@@ -30,24 +30,24 @@ The goal is to improve student engagement by replacing scattered platforms with 
 - View event feed and event details
 - Events include title, date, location, and optional images
 
-###⭐ Student Engagement
+### ⭐ Student Engagement
 - Follow/unfollow clubs
 - Bookmark events
 - Personalized event feed based on followed clubs
 
-###📝 RSVP System
+### 📝 RSVP System
 - RSVP to events with capacity handling
 - Cancel RSVP
 - View registered events
-
-###🛠️ Admin Controls
+ 
+### 🛠️ Admin Controls
 - Approve/deny club officer requests
 - Moderate or remove events
 - Manage user accounts and roles
 
 ---
 
-##🧱 Tech Stack
+## 🧱 Tech Stack
 Frontend
 - HTML, CSS, JavaScript
 
@@ -64,7 +64,7 @@ Tools
 
 ---
 
-##🗄️ Database Design
+## 🗄️ Database Design
 The system uses a relational database with key entities such as:
 - Users (Students, Club Officers, Admins)
 - Clubs
@@ -82,7 +82,7 @@ Relationships include many-to-many mappings like:
 
 ---
 
-##🔐 Access Control
+## 🔐 Access Control
 Role-Based Access Control (RBAC):
 - Student: browse, follow, bookmark, RSVP
 - Club Officer: manage clubs and events
@@ -90,7 +90,7 @@ Role-Based Access Control (RBAC):
 
 ---
 
-##⚙️ Setup Instructions
+## ⚙️ Setup Instructions
 1. Clone the repository
 ```bash
 git clone <repo-url>
@@ -109,7 +109,7 @@ cd SpartanClubConnect
 
 ---
 
-##📈 Future Improvements
+## 📈 Future Improvements
 - Waitlist system for full events
 - Enhanced UI/UX
 - Notifications system
@@ -117,12 +117,12 @@ cd SpartanClubConnect
 
 ---
 
-##👥 Team
+## 👥 Team
 - Anh Tran
 - Trista Chen
 - Alex Xavier
 
 ---
 
-##📄 License
+## 📄 License
 This project is for academic purposes (CS157A - SJSU).
