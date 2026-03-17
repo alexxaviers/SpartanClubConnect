@@ -74,7 +74,7 @@ The system uses a relational database with key entities such as:
 - Follows
 
 Relationships include many-to-many mappings like:
-- Students ↔ Events (Bookmarks)
+- Students ↔ Events (RSVPs)
 - Students ↔ Clubs (Follows)
 - Clubs ↔ ClubCategories (ClubCategoryMaps)
 
