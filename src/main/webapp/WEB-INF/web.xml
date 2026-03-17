@@ -27,4 +27,14 @@
         <servlet-name>EventsServlet</servlet-name>
         <url-pattern>/events</url-pattern>
     </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>CreateAccountServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.CreateAccountServlet</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>CreateAccountServlet</servlet-name>
+        <url-pattern>/CreateAccountServlet</url-pattern>
+    </servlet-mapping>
 </web-app>
