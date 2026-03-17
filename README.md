@@ -93,7 +93,7 @@ Role-Based Access Control (RBAC):
 ## ⚙️ Setup Instructions
 1. Clone the repository
 ```bash
-git clone <repo-url>
+git clone [<repo-url>](https://github.com/ObviousYordle/CS157A-S1-Team-1.git)
 cd SpartanClubConnect
 ```
 
