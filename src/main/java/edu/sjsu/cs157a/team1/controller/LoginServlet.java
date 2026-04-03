@@ -20,7 +20,7 @@ public class LoginServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        email = email != null ? email.trim() : "";
+        email = email != null ? email.trim().toLowerCase() : "";
         password = password != null ? password.trim() : "";
 
         if (email.isEmpty() || password.isEmpty()) {
@@ -51,12 +51,18 @@ public class LoginServlet extends HttpServlet {
             role = "Student";
         }
 
-        HttpSession session = request.getSession();
+        HttpSession oldSession = request.getSession(false);
+        if (oldSession != null) {
+            oldSession.invalidate();
+        }
+
+        HttpSession session = request.getSession(true);
         session.setAttribute("userId", user.getUserId());
         session.setAttribute("fullName", user.getFullName());
         session.setAttribute("email", user.getEmail());
         session.setAttribute("role", role);
+        session.setMaxInactiveInterval(15 * 60);
 
-        response.sendRedirect("home.jsp");
+        response.sendRedirect("dashboard.jsp");
     }
 }

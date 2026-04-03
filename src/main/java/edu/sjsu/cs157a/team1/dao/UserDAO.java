@@ -36,23 +36,30 @@ public class UserDAO {
         return null;
     }
 
-    public boolean createUser(User user) {
+    public int createUser(User user) {
         String sql = "INSERT INTO Users (full_name, email, password_hash, role) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DbUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, user.getFullName());
             stmt.setString(2, user.getEmail());
             stmt.setString(3, user.getPasswordHash());
             stmt.setString(4, user.getRole());
 
-            return stmt.executeUpdate() > 0;
+            int affected = stmt.executeUpdate();
+            if (affected > 0) {
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    }
+                }
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return false;
+        return -1;
     }
 }
