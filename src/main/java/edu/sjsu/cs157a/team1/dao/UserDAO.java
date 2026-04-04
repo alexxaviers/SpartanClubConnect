@@ -10,7 +10,9 @@ import java.sql.SQLException;
 
 public class UserDAO {
     public User findByEmail(String email) {
-        String sql = "SELECT user_id, full_name, email, password_hash, role FROM Users WHERE email = ?";
+        String sql = "SELECT user_id, full_name, email, password_hash, created_at, is_active " +
+                "FROM Users " +
+                "WHERE email = ?";
 
         try (Connection conn = DbUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -24,7 +26,6 @@ public class UserDAO {
                     user.setFullName(rs.getString("full_name"));
                     user.setEmail(rs.getString("email"));
                     user.setPasswordHash(rs.getString("password_hash"));
-                    user.setRole(rs.getString("role"));
                     return user;
                 }
             }
@@ -37,17 +38,45 @@ public class UserDAO {
     }
 
     public boolean createUser(User user) {
-        String sql = "INSERT INTO Users (full_name, email, password_hash, role) VALUES (?, ?, ?, ?)";
+        String userSql = "INSERT INTO Users (full_name, email, password_hash, is_active) " +
+                "VALUES (?, ?, ?, ?)";
+        String roleSql = "INSERT INTO UserRoles (user_id, role_id) VALUES (?, ?)";
 
-        try (Connection conn = DbUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DbUtil.getConnection()) {
+            conn.setAutoCommit(false);
 
-            stmt.setString(1, user.getFullName());
-            stmt.setString(2, user.getEmail());
-            stmt.setString(3, user.getPasswordHash());
-            stmt.setString(4, user.getRole());
+            int newUserId;
 
-            return stmt.executeUpdate() > 0;
+            try (PreparedStatement userStmt = conn.prepareStatement(userSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                userStmt.setString(1, user.getFullName());
+                userStmt.setString(2, user.getEmail());
+                userStmt.setString(3, user.getPasswordHash());
+                userStmt.setBoolean(4, true);
+
+                int rowsInserted = userStmt.executeUpdate();
+                if (rowsInserted == 0) {
+                    conn.rollback();
+                    return false;
+                }
+
+                try (ResultSet generatedKeys = userStmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        newUserId = generatedKeys.getInt(1);
+                    } else {
+                        conn.rollback();
+                        return false;
+                    }
+                }
+            }
+
+            try (PreparedStatement roleStmt = conn.prepareStatement(roleSql)) {
+                roleStmt.setInt(1, newUserId);
+                roleStmt.setInt(2, 1); // Student role_id = 1
+                roleStmt.executeUpdate();
+            }
+
+            conn.commit();
+            return true;
 
         } catch (SQLException e) {
             e.printStackTrace();

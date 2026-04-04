@@ -1,77 +1,100 @@
 -- ==========================================
--- SCREENSHOT QUERIES
--- Run one section at a time in MySQL Workbench.
+-- SCREENSHOT + VALIDATION QUERIES
+-- SpartanClubConnect
 -- ==========================================
 
 USE CS157SpartanClubConnect;
 
--- 0. Optional: verify each table has at least 10 rows
-SELECT 'Users' AS table_name, COUNT(*) AS row_count FROM Users
-UNION ALL
-SELECT 'Students', COUNT(*) FROM Students
-UNION ALL
-SELECT 'Admin', COUNT(*) FROM Admin
-UNION ALL
-SELECT 'ClubOfficers', COUNT(*) FROM ClubOfficers
-UNION ALL
-SELECT 'Clubs', COUNT(*) FROM Clubs
-UNION ALL
-SELECT 'ClubCategories', COUNT(*) FROM ClubCategories
-UNION ALL
-SELECT 'ClubCategoryMaps', COUNT(*) FROM ClubCategoryMaps
-UNION ALL
-SELECT 'Events', COUNT(*) FROM Events
-UNION ALL
-SELECT 'EventSessions', COUNT(*) FROM EventSessions
-UNION ALL
-SELECT 'Manages', COUNT(*) FROM Manages
-UNION ALL
-SELECT 'Follows', COUNT(*) FROM Follows
-UNION ALL
-SELECT 'Bookmarks', COUNT(*) FROM Bookmarks
-UNION ALL
-SELECT 'RSVPs', COUNT(*) FROM RSVPs
-UNION ALL
-SELECT 'ClubOfficerRequests', COUNT(*) FROM ClubOfficerRequests;
+-- ==========================================
+-- OPTIONAL: row counts
+-- Run one at a time to verify data exists
+-- ==========================================
+
+SELECT COUNT(*) AS user_count
+FROM Users;
+
+SELECT COUNT(*) AS role_count
+FROM Roles;
+
+SELECT COUNT(*) AS user_role_count
+FROM UserRoles;
+
+SELECT COUNT(*) AS club_count
+FROM Clubs;
+
+SELECT COUNT(*) AS club_category_count
+FROM ClubCategories;
+
+SELECT COUNT(*) AS club_category_map_count
+FROM ClubCategoryMaps;
+
+SELECT COUNT(*) AS event_count
+FROM Events;
+
+SELECT COUNT(*) AS manages_count
+FROM Manages;
+
+SELECT COUNT(*) AS follows_count
+FROM Follows;
+
+SELECT COUNT(*) AS bookmark_count
+FROM Bookmarks;
+
+SELECT COUNT(*) AS rsvp_count
+FROM RSVPs;
+
+SELECT COUNT(*) AS officer_request_count
+FROM ClubOfficerRequests;
+
+-- ==========================================
+-- SCREENSHOT TABLE QUERIES
+-- Run one section at a time
+-- ==========================================
 
 -- 1. Users
-SELECT * FROM Users;
+SELECT *
+FROM Users;
 
--- 2. Students
-SELECT * FROM Students;
+-- 2. Roles
+SELECT *
+FROM Roles;
 
--- 3. Admin
-SELECT * FROM Admin;
+-- 3. UserRoles
+SELECT *
+FROM UserRoles;
 
--- 4. ClubOfficers
-SELECT * FROM ClubOfficers;
+-- 4. Clubs
+SELECT *
+FROM Clubs;
 
--- 5. Clubs
-SELECT * FROM Clubs;
+-- 5. ClubCategories
+SELECT *
+FROM ClubCategories;
 
--- 6. ClubCategories
-SELECT * FROM ClubCategories;
+-- 6. ClubCategoryMaps
+SELECT *
+FROM ClubCategoryMaps;
 
--- 7. ClubCategoryMaps
-SELECT * FROM ClubCategoryMaps;
+-- 7. Events
+SELECT *
+FROM Events;
 
--- 8. Events
-SELECT * FROM Events;
+-- 8. Manages
+SELECT *
+FROM Manages;
 
--- 9. EventSessions
-SELECT * FROM EventSessions;
+-- 9. Follows
+SELECT *
+FROM Follows;
 
--- 10. Manages
-SELECT * FROM Manages;
+-- 10. Bookmarks
+SELECT *
+FROM Bookmarks;
 
--- 11. Follows
-SELECT * FROM Follows;
+-- 11. RSVPs
+SELECT *
+FROM RSVPs;
 
--- 12. Bookmarks
-SELECT * FROM Bookmarks;
-
--- 13. RSVPs
-SELECT * FROM RSVPs;
-
--- 14. ClubOfficerRequests
-SELECT * FROM ClubOfficerRequests;
+-- 12. ClubOfficerRequests
+SELECT *
+FROM ClubOfficerRequests;
