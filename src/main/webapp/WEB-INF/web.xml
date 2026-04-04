@@ -37,4 +37,44 @@
         <servlet-name>CreateAccountServlet</servlet-name>
         <url-pattern>/CreateAccountServlet</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>BrowseClubsServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.BrowseClubsServlet</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>BrowseClubsServlet</servlet-name>
+        <url-pattern>/clubs</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ClubProfileServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.ClubProfileServlet</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>ClubProfileServlet</servlet-name>
+        <url-pattern>/club</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CreateClubServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.CreateClubServlet</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>CreateClubServlet</servlet-name>
+        <url-pattern>/createClub</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>EditClubServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.EditClubServlet</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>EditClubServlet</servlet-name>
+        <url-pattern>/editClub</url-pattern>
+    </servlet-mapping>
 </web-app>
