@@ -38,9 +38,7 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        boolean validPassword = PasswordUtil.verifyPassword(password, user.getPasswordHash());
-
-        if (!validPassword) {
+        if (!PasswordUtil.verifyPassword(password, user.getPasswordHash())) {
             request.setAttribute("error", "Invalid email or password.");
             request.getRequestDispatcher("login.jsp").forward(request, response);
             return;

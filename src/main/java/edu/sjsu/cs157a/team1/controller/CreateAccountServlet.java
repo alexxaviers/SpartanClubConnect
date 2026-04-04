@@ -1,15 +1,15 @@
 package edu.sjsu.cs157a.team1.controller;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import edu.sjsu.cs157a.team1.dao.UserDAO;
 import edu.sjsu.cs157a.team1.model.User;
 import edu.sjsu.cs157a.team1.util.PasswordUtil;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 public class CreateAccountServlet extends HttpServlet {
 
@@ -17,7 +17,7 @@ public class CreateAccountServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-    	String fullName = request.getParameter("fullName");
+        String fullName = request.getParameter("fullName");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
@@ -30,17 +30,14 @@ public class CreateAccountServlet extends HttpServlet {
         }
 
         String normalizedEmail = email.trim().toLowerCase();
-
         UserDAO userDao = new UserDAO();
 
-        // Check if the user email already exists
         if (userDao.findByEmail(normalizedEmail) != null) {
             request.setAttribute("errorMessage", "An account with that email already exists.");
             request.getRequestDispatcher("createAccount.jsp").forward(request, response);
             return;
         }
 
-        // Hash the password and create user
         String passwordHash = PasswordUtil.hashPassword(password);
 
         User user = new User();
@@ -65,7 +62,7 @@ public class CreateAccountServlet extends HttpServlet {
         session.setAttribute("userId", newUserId);
         session.setAttribute("fullName", user.getFullName());
         session.setAttribute("email", user.getEmail());
-        session.setAttribute("role", user.getRole());
+        session.setAttribute("role", "Student");
         session.setMaxInactiveInterval(15 * 60);
 
         response.sendRedirect("dashboard.jsp");
@@ -81,6 +78,7 @@ public class CreateAccountServlet extends HttpServlet {
         }
 
         String trimmedEmail = email.trim().toLowerCase();
+
         if (!trimmedEmail.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")) {
             return "Please enter a valid email address.";
         }
