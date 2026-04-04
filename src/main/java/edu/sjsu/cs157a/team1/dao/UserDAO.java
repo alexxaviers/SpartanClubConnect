@@ -9,10 +9,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserDAO {
+
     public User findByEmail(String email) {
-        String sql = "SELECT user_id, full_name, email, password_hash, created_at, is_active " +
-                "FROM Users " +
-                "WHERE email = ?";
+        String sql =
+                "SELECT u.user_id, u.full_name, u.email, u.password_hash, r.role_name " +
+                        "FROM Users u, UserRoles ur, Roles r " +
+                        "WHERE u.user_id = ur.user_id " +
+                        "AND ur.role_id = r.role_id " +
+                        "AND u.email = ?";
 
         try (Connection conn = DbUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -26,6 +30,7 @@ public class UserDAO {
                     user.setFullName(rs.getString("full_name"));
                     user.setEmail(rs.getString("email"));
                     user.setPasswordHash(rs.getString("password_hash"));
+                    user.setRole(rs.getString("role_name"));
                     return user;
                 }
             }
@@ -37,17 +42,27 @@ public class UserDAO {
         return null;
     }
 
-    public boolean createUser(User user) {
-        String userSql = "INSERT INTO Users (full_name, email, password_hash, is_active) " +
-                "VALUES (?, ?, ?, ?)";
-        String roleSql = "INSERT INTO UserRoles (user_id, role_id) VALUES (?, ?)";
+    public int createUser(User user) {
+        String userSql =
+                "INSERT INTO Users (full_name, email, password_hash, is_active) " +
+                        "VALUES (?, ?, ?, ?)";
 
-        try (Connection conn = DbUtil.getConnection()) {
+        String userRoleSql =
+                "INSERT INTO UserRoles (user_id, role_id) " +
+                        "VALUES (?, ?)";
+
+        Connection conn = null;
+
+        try {
+            conn = DbUtil.getConnection();
             conn.setAutoCommit(false);
 
-            int newUserId;
+            int newUserId = -1;
 
-            try (PreparedStatement userStmt = conn.prepareStatement(userSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            try (PreparedStatement userStmt = conn.prepareStatement(
+                    userSql,
+                    PreparedStatement.RETURN_GENERATED_KEYS)) {
+
                 userStmt.setString(1, user.getFullName());
                 userStmt.setString(2, user.getEmail());
                 userStmt.setString(3, user.getPasswordHash());
@@ -56,7 +71,7 @@ public class UserDAO {
                 int rowsInserted = userStmt.executeUpdate();
                 if (rowsInserted == 0) {
                     conn.rollback();
-                    return false;
+                    return -1;
                 }
 
                 try (ResultSet generatedKeys = userStmt.getGeneratedKeys()) {
@@ -64,24 +79,47 @@ public class UserDAO {
                         newUserId = generatedKeys.getInt(1);
                     } else {
                         conn.rollback();
-                        return false;
+                        return -1;
                     }
                 }
             }
 
-            try (PreparedStatement roleStmt = conn.prepareStatement(roleSql)) {
+            try (PreparedStatement roleStmt = conn.prepareStatement(userRoleSql)) {
                 roleStmt.setInt(1, newUserId);
-                roleStmt.setInt(2, 1); // Student role_id = 1
-                roleStmt.executeUpdate();
+                roleStmt.setInt(2, 1); // Student role_id = 1 based on your seed data
+
+                int roleRows = roleStmt.executeUpdate();
+                if (roleRows == 0) {
+                    conn.rollback();
+                    return -1;
+                }
             }
 
             conn.commit();
-            return true;
+            return newUserId;
 
         } catch (SQLException e) {
             e.printStackTrace();
-        }
 
-        return false;
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException rollbackException) {
+                    rollbackException.printStackTrace();
+                }
+            }
+
+            return -1;
+
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException closeException) {
+                    closeException.printStackTrace();
+                }
+            }
+        }
     }
 }

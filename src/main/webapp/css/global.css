@@ -118,3 +118,16 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
+.brand-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 28px;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
