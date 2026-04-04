@@ -45,7 +45,8 @@
         </div>
 
         <div class="home-actions">
-            <a class="secondary-link" href="events">View Events Demo</a>
+            <a class="secondary-link" href="events">Browse Events</a>
+            <a class="secondary-link" href="my-rsvps">My RSVPs</a>
         </div>
     </section>
 </main>

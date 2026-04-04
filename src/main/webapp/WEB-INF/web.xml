@@ -27,6 +27,36 @@
         <servlet-name>EventsServlet</servlet-name>
         <url-pattern>/events</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>EventDetailsServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.EventDetailsServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>EventDetailsServlet</servlet-name>
+        <url-pattern>/event-details</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RsvpServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.RsvpServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>RsvpServlet</servlet-name>
+        <url-pattern>/rsvp</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MyRsvpsServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.MyRsvpsServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>MyRsvpsServlet</servlet-name>
+        <url-pattern>/my-rsvps</url-pattern>
+    </servlet-mapping>
     
     <servlet>
         <servlet-name>CreateAccountServlet</servlet-name>

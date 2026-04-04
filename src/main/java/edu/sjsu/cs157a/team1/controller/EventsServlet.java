@@ -1,95 +1,36 @@
 package edu.sjsu.cs157a.team1.controller;
 
+import edu.sjsu.cs157a.team1.dao.RsvpDAO;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import java.io.FileNotFoundException;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.sql.*;
-import java.util.Properties;
-
-
-// Temporary demo servlet used to verify JDBC + servlet + DB integration
-// Could be deleted or changed later
-public class EventsServlet extends HttpServlet {
-
-    private Properties loadDbProps() throws IOException {
-        Properties props = new Properties();
-        try (InputStream in = getClass().getClassLoader().getResourceAsStream("db.properties")) {
-            if (in == null) {
-                throw new FileNotFoundException("db.properties not found in classpath (src/main/resources)");
-            }
-            props.load(in);
-        }
-        return props;
-    }
-
-    private String escape(String s) {
-        if (s == null) return "";
-        return s.replace("&", "&amp;")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;");
-    }
+import java.util.Collections;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("text/html;charset=UTF-8");
-
-        try (PrintWriter out = resp.getWriter()) {
-            out.println("<html><body>");
-            out.println("<h1>Events</h1>");
-
-            Properties p = loadDbProps();
-            String url = p.getProperty("jdbc.url");
-            String user = p.getProperty("jdbc.user");
-            String pass = p.getProperty("jdbc.pass");
-
-            String sql = "SELECT event_id AS EventID, club_id AS ClubID, title, description, date AS eventDate, location FROM Events";
-
-            try {
-                Class.forName("com.mysql.cj.jdbc.Driver");
-
-                try (Connection conn = DriverManager.getConnection(url, user, pass);
-                     PreparedStatement stmt = conn.prepareStatement(sql);
-                     ResultSet rs = stmt.executeQuery()) {
-
-                    out.println("<table border='1' cellpadding='6' cellspacing='0'>");
-                    out.println("<tr><th>EventID</th><th>ClubID</th><th>Title</th><th>Description</th><th>Date</th><th>Location</th></tr>");
-
-                    int count = 0;
-                    while (rs.next()) {
-                        count++;
-                        out.println("<tr>");
-                        out.println("<td>" + rs.getInt("EventID") + "</td>");
-                        out.println("<td>" + rs.getInt("ClubID") + "</td>");
-                        out.println("<td>" + escape(rs.getString("title")) + "</td>");
-                        out.println("<td>" + escape(rs.getString("description")) + "</td>");
-                        out.println("<td>" + rs.getDate("eventDate") + "</td>");
-                        out.println("<td>" + escape(rs.getString("location")) + "</td>");
-                        out.println("</tr>");
-                    }
-
-                    out.println("</table>");
-                    out.println("<p>Total rows: " + count + "</p>");
-                } catch (SQLException e) {
-                    out.println("<h3>DB Error</h3>");
-                    out.println("<pre>");
-                    e.printStackTrace(out);
-                    out.println("</pre>");
-                }
-
-            } catch (ClassNotFoundException e) {
-                out.println("<h3>Driver Error</h3>");
-                out.println("<pre>");
-                e.printStackTrace(out);
-                out.println("</pre>");
-            }
-
-            out.println("</body></html>");
+        HttpSession session = req.getSession(false);
+        if (session == null || session.getAttribute("userId") == null) {
+            resp.sendRedirect("login.jsp");
+            return;
         }
+
+        Integer userId = (Integer) session.getAttribute("userId");
+        RsvpDAO rsvpDAO = new RsvpDAO();
+
+        req.setAttribute("success", req.getParameter("success"));
+        req.setAttribute("error", req.getParameter("error"));
+
+        try {
+            req.setAttribute("events", rsvpDAO.getAllEventsForUser(userId));
+        } catch (Exception e) {
+            req.setAttribute("events", Collections.emptyList());
+            req.setAttribute("error", "Unable to load events right now.");
+        }
+
+        req.getRequestDispatcher("events.jsp").forward(req, resp);
     }
 }

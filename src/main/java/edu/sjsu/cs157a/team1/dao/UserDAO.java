@@ -10,9 +10,17 @@ import java.sql.SQLException;
 
 public class UserDAO {
     public User findByEmail(String email) {
-        String sql = "SELECT user_id, full_name, email, password_hash, created_at, is_active " +
-                "FROM Users " +
-                "WHERE email = ?";
+        String sql = "SELECT u.user_id, u.full_name, u.email, u.password_hash, " +
+            "COALESCE(MAX(CASE " +
+            "WHEN r.role_name = 'Admin' THEN 'Admin' " +
+            "WHEN r.role_name = 'Club Officer' THEN 'Club Officer' " +
+            "WHEN r.role_name = 'Student' THEN 'Student' " +
+            "END), 'Student') AS role_name " +
+            "FROM Users u " +
+            "LEFT JOIN UserRoles ur ON u.user_id = ur.user_id " +
+            "LEFT JOIN Roles r ON ur.role_id = r.role_id " +
+            "WHERE u.email = ? " +
+            "GROUP BY u.user_id, u.full_name, u.email, u.password_hash";
 
         try (Connection conn = DbUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -26,6 +34,7 @@ public class UserDAO {
                     user.setFullName(rs.getString("full_name"));
                     user.setEmail(rs.getString("email"));
                     user.setPasswordHash(rs.getString("password_hash"));
+                    user.setRole(rs.getString("role_name"));
                     return user;
                 }
             }
