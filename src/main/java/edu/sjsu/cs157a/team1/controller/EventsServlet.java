@@ -48,7 +48,7 @@ public class EventsServlet extends HttpServlet {
             String user = p.getProperty("jdbc.user");
             String pass = p.getProperty("jdbc.pass");
 
-            String sql = "SELECT EventID, ClubID, title, description, eventDate, location FROM Events";
+            String sql = "SELECT event_id AS EventID, club_id AS ClubID, title, description, date AS eventDate, location FROM Events";
 
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
@@ -68,7 +68,7 @@ public class EventsServlet extends HttpServlet {
                         out.println("<td>" + rs.getInt("ClubID") + "</td>");
                         out.println("<td>" + escape(rs.getString("title")) + "</td>");
                         out.println("<td>" + escape(rs.getString("description")) + "</td>");
-                        out.println("<td>" + rs.getTimestamp("eventDate") + "</td>");
+                        out.println("<td>" + rs.getDate("eventDate") + "</td>");
                         out.println("<td>" + escape(rs.getString("location")) + "</td>");
                         out.println("</tr>");
                     }
