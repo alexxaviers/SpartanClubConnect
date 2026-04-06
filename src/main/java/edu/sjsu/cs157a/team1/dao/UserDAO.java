@@ -12,11 +12,9 @@ public class UserDAO {
 
     public User findByEmail(String email) {
         String sql =
-                "SELECT u.user_id, u.full_name, u.email, u.password_hash, r.role_name " +
-                        "FROM Users u, UserRoles ur, Roles r " +
-                        "WHERE u.user_id = ur.user_id " +
-                        "AND ur.role_id = r.role_id " +
-                        "AND u.email = ?";
+                "SELECT user_id, full_name, email, password_hash " +
+                        "FROM Users " +
+                        "WHERE email = ?";
 
         try (Connection conn = DbUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -30,7 +28,6 @@ public class UserDAO {
                     user.setFullName(rs.getString("full_name"));
                     user.setEmail(rs.getString("email"));
                     user.setPasswordHash(rs.getString("password_hash"));
-                    user.setRole(rs.getString("role_name"));
                     return user;
                 }
             }
@@ -40,6 +37,31 @@ public class UserDAO {
         }
 
         return null;
+    }
+
+    public boolean userHasRole(int userId, String roleName) {
+        String sql =
+                "SELECT 1 " +
+                        "FROM UserRoles ur " +
+                        "JOIN Roles r ON ur.role_id = r.role_id " +
+                        "WHERE ur.user_id = ? AND r.role_name = ? " +
+                        "LIMIT 1";
+
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            stmt.setString(2, roleName);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     public int createUser(User user) {

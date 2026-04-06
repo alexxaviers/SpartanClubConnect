@@ -10,6 +10,16 @@
 
     String successMessage = (String) request.getAttribute("successMessage");
     String errorMessage = (String) request.getAttribute("errorMessage");
+
+    String submittedSjsuId = (String) request.getAttribute("submittedSjsuId");
+    String submittedClubName = (String) request.getAttribute("submittedClubName");
+    String submittedJustification = (String) request.getAttribute("submittedJustification");
+
+    Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
+    Boolean isClubOfficer = (Boolean) session.getAttribute("isClubOfficer");
+
+    if (isAdmin == null) isAdmin = false;
+    if (isClubOfficer == null) isClubOfficer = false;
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,7 +28,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Request Club Officer Role - SpartanClubConnect</title>
     <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/landing.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/clubOfficer.css">
 </head>
 <body class="landing-body">
 
@@ -32,7 +44,19 @@
         <nav class="dashboard-sidebar-nav">
             <a href="dashboard.jsp" class="dashboard-sidebar-link">Dashboard</a>
             <a href="profile.jsp" class="dashboard-sidebar-link">Profile</a>
+
+            <% if (!isClubOfficer && !isAdmin) { %>
             <a href="clubOfficerRequest.jsp" class="dashboard-sidebar-link active">Request Club Officer Role</a>
+            <% } %>
+
+            <% if (isClubOfficer) { %>
+            <a href="createClub.jsp" class="dashboard-sidebar-link">Create Club</a>
+            <a href="createEvent.jsp" class="dashboard-sidebar-link">Create Event</a>
+            <% } %>
+
+            <% if (isAdmin) { %>
+            <a href="AdminOfficerRequestsServlet" class="dashboard-sidebar-link">Manage Officer Requests</a>
+            <% } %>
         </nav>
 
         <div class="dashboard-sidebar-footer">
@@ -86,7 +110,7 @@
                 <p class="message success-message-box"><%= successMessage %></p>
                 <% } %>
 
-                <form action="#" method="post" class="dashboard-form">
+                <form action="ClubOfficerRequestServlet" method="post" class="dashboard-form">
                     <div class="form-group">
                         <label for="fullName">Full Name</label>
                         <input
@@ -104,8 +128,11 @@
                                 type="text"
                                 id="sjsuId"
                                 name="sjsuId"
-                                placeholder="Enter your SJSU ID"
+                                placeholder="Enter your 9-digit SJSU ID"
+                                pattern="[0-9]{9}"
+                                maxlength="9"
                                 required
+                                value="<%= submittedSjsuId != null ? submittedSjsuId : "" %>"
                         >
                     </div>
 
@@ -116,7 +143,9 @@
                                 id="clubName"
                                 name="clubName"
                                 placeholder="Enter the club name"
+                                maxlength="255"
                                 required
+                                value="<%= submittedClubName != null ? submittedClubName : "" %>"
                         >
                     </div>
 
@@ -127,15 +156,18 @@
                                 name="justification"
                                 class="dashboard-textarea"
                                 placeholder="Write a short justification for your request"
+                                maxlength="500"
                                 required
-                        ></textarea>
+                        ><%= submittedJustification != null ? submittedJustification : "" %></textarea>
+
+                        <div id="justificationCount" class="field-hint">0/500 characters</div>
                     </div>
 
                     <button type="submit" class="primary-btn">Submit Request</button>
                 </form>
 
                 <div class="dashboard-note-box">
-                    This page can be connected to the backend request flow in a later step.
+                    Requests are reviewed by administrators. Once approved, your account can be assigned the Club Officer role.
                 </div>
             </section>
         </main>
@@ -147,5 +179,6 @@
 </div>
 
 <script src="js/home.js"></script>
+<script src="js/clubOfficerRequest.js"></script>
 </body>
 </html>

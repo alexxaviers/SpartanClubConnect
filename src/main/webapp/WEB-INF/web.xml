@@ -47,4 +47,24 @@
         <servlet-name>EventsServlet</servlet-name>
         <url-pattern>/events</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ClubOfficerRequestServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.ClubOfficerRequestServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ClubOfficerRequestServlet</servlet-name>
+        <url-pattern>/ClubOfficerRequestServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminOfficerRequestsServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.AdminOfficerRequestsServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AdminOfficerRequestsServlet</servlet-name>
+        <url-pattern>/AdminOfficerRequestsServlet</url-pattern>
+    </servlet-mapping>
 </web-app>

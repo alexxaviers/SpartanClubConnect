@@ -1,6 +1,5 @@
 -- ==========================================
--- SCREENSHOT + VALIDATION QUERIES
--- SpartanClubConnect
+-- GENERAL VALIDATION / SCREENSHOT QUERIES
 -- ==========================================
 
 USE CS157SpartanClubConnect;

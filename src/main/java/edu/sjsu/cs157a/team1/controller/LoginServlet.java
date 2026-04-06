@@ -44,9 +44,14 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        String role = user.getRole();
-        if (role == null || role.trim().isEmpty()) {
-            role = "Student";
+        boolean isAdmin = userDAO.userHasRole(user.getUserId(), "Admin");
+        boolean isClubOfficer = userDAO.userHasRole(user.getUserId(), "Club Officer");
+
+        String role = "Student";
+        if (isAdmin) {
+            role = "Admin";
+        } else if (isClubOfficer) {
+            role = "Club Officer";
         }
 
         HttpSession oldSession = request.getSession(false);
@@ -59,6 +64,8 @@ public class LoginServlet extends HttpServlet {
         session.setAttribute("fullName", user.getFullName());
         session.setAttribute("email", user.getEmail());
         session.setAttribute("role", role);
+        session.setAttribute("isAdmin", isAdmin);
+        session.setAttribute("isClubOfficer", isClubOfficer);
         session.setMaxInactiveInterval(15 * 60);
 
         response.sendRedirect("dashboard.jsp");
