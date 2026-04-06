@@ -9,10 +9,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserDAO {
+
     public User findByEmail(String email) {
-        String sql = "SELECT user_id, full_name, email, password_hash, created_at, is_active " +
-                "FROM Users " +
-                "WHERE email = ?";
+        String sql =
+                "SELECT user_id, full_name, email, password_hash " +
+                        "FROM Users " +
+                        "WHERE email = ?";
 
         try (Connection conn = DbUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -37,17 +39,52 @@ public class UserDAO {
         return null;
     }
 
-    public boolean createUser(User user) {
-        String userSql = "INSERT INTO Users (full_name, email, password_hash, is_active) " +
-                "VALUES (?, ?, ?, ?)";
-        String roleSql = "INSERT INTO UserRoles (user_id, role_id) VALUES (?, ?)";
+    public boolean userHasRole(int userId, String roleName) {
+        String sql =
+                "SELECT 1 " +
+                        "FROM UserRoles ur " +
+                        "JOIN Roles r ON ur.role_id = r.role_id " +
+                        "WHERE ur.user_id = ? AND r.role_name = ? " +
+                        "LIMIT 1";
 
-        try (Connection conn = DbUtil.getConnection()) {
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            stmt.setString(2, roleName);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public int createUser(User user) {
+        String userSql =
+                "INSERT INTO Users (full_name, email, password_hash, is_active) " +
+                        "VALUES (?, ?, ?, ?)";
+
+        String userRoleSql =
+                "INSERT INTO UserRoles (user_id, role_id) " +
+                        "VALUES (?, ?)";
+
+        Connection conn = null;
+
+        try {
+            conn = DbUtil.getConnection();
             conn.setAutoCommit(false);
 
-            int newUserId;
+            int newUserId = -1;
 
-            try (PreparedStatement userStmt = conn.prepareStatement(userSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            try (PreparedStatement userStmt = conn.prepareStatement(
+                    userSql,
+                    PreparedStatement.RETURN_GENERATED_KEYS)) {
+
                 userStmt.setString(1, user.getFullName());
                 userStmt.setString(2, user.getEmail());
                 userStmt.setString(3, user.getPasswordHash());
@@ -56,7 +93,7 @@ public class UserDAO {
                 int rowsInserted = userStmt.executeUpdate();
                 if (rowsInserted == 0) {
                     conn.rollback();
-                    return false;
+                    return -1;
                 }
 
                 try (ResultSet generatedKeys = userStmt.getGeneratedKeys()) {
@@ -64,24 +101,47 @@ public class UserDAO {
                         newUserId = generatedKeys.getInt(1);
                     } else {
                         conn.rollback();
-                        return false;
+                        return -1;
                     }
                 }
             }
 
-            try (PreparedStatement roleStmt = conn.prepareStatement(roleSql)) {
+            try (PreparedStatement roleStmt = conn.prepareStatement(userRoleSql)) {
                 roleStmt.setInt(1, newUserId);
-                roleStmt.setInt(2, 1); // Student role_id = 1
-                roleStmt.executeUpdate();
+                roleStmt.setInt(2, 1); // Student role_id = 1 based on your seed data
+
+                int roleRows = roleStmt.executeUpdate();
+                if (roleRows == 0) {
+                    conn.rollback();
+                    return -1;
+                }
             }
 
             conn.commit();
-            return true;
+            return newUserId;
 
         } catch (SQLException e) {
             e.printStackTrace();
-        }
 
-        return false;
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException rollbackException) {
+                    rollbackException.printStackTrace();
+                }
+            }
+
+            return -1;
+
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException closeException) {
+                    closeException.printStackTrace();
+                }
+            }
+        }
     }
 }

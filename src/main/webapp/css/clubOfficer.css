@@ -1,0 +1,216 @@
+.dashboard-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.dashboard-textarea {
+    width: 100%;
+    min-height: 140px;
+    padding: 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: #f9fafb;
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    resize: vertical;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.dashboard-textarea:focus {
+    border-color: #0055A2;
+    box-shadow: 0 0 0 3px rgba(0, 85, 162, 0.15);
+    background: #ffffff;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+input[readonly] {
+    background: #eef2f7;
+    color: #4b5563;
+    cursor: not-allowed;
+}
+
+.field-hint {
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: #6B7280;
+    text-align: right;
+}
+
+.request-section-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 16px;
+}
+
+.request-history-card {
+    margin-top: 28px;
+}
+
+.dashboard-table-card {
+    max-width: none;
+    width: 100%;
+}
+
+.request-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.request-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+.request-table th,
+.request-table td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+    vertical-align: top;
+    font-size: 0.95rem;
+}
+
+.request-table th {
+    background: #f9fafb;
+    color: #111827;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.request-table td {
+    color: #374151;
+}
+
+/* Pending table */
+.request-table-pending th:nth-child(2),
+.request-table-pending td:nth-child(2) {
+    min-width: 150px;
+    white-space: nowrap;
+}
+
+.request-table-pending th:nth-child(3),
+.request-table-pending td:nth-child(3) {
+    min-width: 220px;
+    white-space: nowrap;
+}
+
+.request-table-pending th:nth-child(6),
+.request-table-pending td:nth-child(6) {
+    min-width: 180px;
+    white-space: nowrap;
+}
+
+.request-table-pending th:nth-child(7),
+.request-table-pending td:nth-child(7) {
+    min-width: 340px;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.request-table-pending th:nth-child(8),
+.request-table-pending td:nth-child(8) {
+    min-width: 180px;
+    white-space: nowrap;
+}
+
+.request-table-pending th:nth-child(9),
+.request-table-pending td:nth-child(9) {
+    min-width: 140px;
+    white-space: nowrap;
+}
+
+/* History table */
+.request-table-history th:nth-child(1),
+.request-table-history td:nth-child(1),
+.request-table-history th:nth-child(2),
+.request-table-history td:nth-child(2),
+.request-table-history th:nth-child(3),
+.request-table-history td:nth-child(3),
+.request-table-history th:nth-child(4),
+.request-table-history td:nth-child(4),
+.request-table-history th:nth-child(5),
+.request-table-history td:nth-child(5),
+.request-table-history th:nth-child(6),
+.request-table-history td:nth-child(6),
+.request-table-history th:nth-child(8),
+.request-table-history td:nth-child(8),
+.request-table-history th:nth-child(9),
+.request-table-history td:nth-child(9),
+.request-table-history th:nth-child(10),
+.request-table-history td:nth-child(10),
+.request-table-history th:nth-child(11),
+.request-table-history td:nth-child(11) {
+    white-space: nowrap;
+}
+
+.request-table-history th:nth-child(2),
+.request-table-history td:nth-child(2) {
+    min-width: 150px;
+}
+
+.request-table-history th:nth-child(3),
+.request-table-history td:nth-child(3) {
+    min-width: 220px;
+}
+
+.request-table-history th:nth-child(6),
+.request-table-history td:nth-child(6) {
+    min-width: 180px;
+}
+
+.request-table-history th:nth-child(7),
+.request-table-history td:nth-child(7) {
+    min-width: 340px;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.request-table-history th:nth-child(9),
+.request-table-history td:nth-child(9),
+.request-table-history th:nth-child(10),
+.request-table-history td:nth-child(10),
+.request-table-history th:nth-child(11),
+.request-table-history td:nth-child(11) {
+    min-width: 160px;
+}
+
+.request-action-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 120px;
+}
+
+.request-action-btn {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.status-approved {
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+}
+
+.status-denied {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
