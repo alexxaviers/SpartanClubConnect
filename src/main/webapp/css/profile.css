@@ -1,0 +1,26 @@
+.user-info {
+    display: grid;
+    gap: 14px;
+    margin-bottom: 28px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    background: #f9fafb;
+}
+
+.info-label {
+    font-weight: 700;
+    color: #111827;
+}
+
+.info-value {
+    color: #374151;
+    text-align: right;
+    word-break: break-word;
+}

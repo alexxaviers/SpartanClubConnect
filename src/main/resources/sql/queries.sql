@@ -98,3 +98,92 @@ FROM RSVPs;
 -- 12. ClubOfficerRequests
 SELECT *
 FROM ClubOfficerRequests;
+
+-- ==========================================
+-- DAO REFERENCE QUERIES
+-- These are used in backend prepared statements.
+-- Replace ? values manually if testing in MySQL Workbench.
+-- ==========================================
+
+-- Insert a new club officer request
+INSERT INTO ClubOfficerRequests
+(sjsu_id, club_name, justification, status, created_at, user_id)
+VALUES (?, ?, ?, 'Pending', NOW(), ?);
+
+-- Check if user already has a pending request
+SELECT 1
+FROM ClubOfficerRequests
+WHERE user_id = ? AND status = 'Pending'
+    LIMIT 1;
+
+-- Check if user already has Club Officer role
+SELECT 1
+FROM UserRoles ur
+         JOIN Roles r ON ur.role_id = r.role_id
+WHERE ur.user_id = ? AND r.role_name = 'Club Officer'
+    LIMIT 1;
+
+-- ==========================================
+-- ADMIN OFFICER REQUEST REVIEW QUERIES
+-- Replace ? manually if testing in MySQL Workbench
+-- ==========================================
+
+-- View all pending officer requests with requester info
+SELECT
+    cor.request_id,
+    cor.sjsu_id,
+    cor.club_name,
+    cor.justification,
+    cor.status,
+    cor.created_at,
+    cor.user_id,
+    cor.reviewed_by,
+    cor.reviewed_at,
+    u.full_name,
+    u.email
+FROM ClubOfficerRequests cor
+         JOIN Users u ON cor.user_id = u.user_id
+WHERE cor.status = 'Pending'
+ORDER BY cor.created_at ASC;
+
+-- Approve a request
+UPDATE ClubOfficerRequests
+SET status = 'Approved',
+    reviewed_by = ?,
+    reviewed_at = NOW()
+WHERE request_id = ? AND status = 'Pending';
+
+-- Deny a request
+UPDATE ClubOfficerRequests
+SET status = 'Denied',
+    reviewed_by = ?,
+    reviewed_at = NOW()
+WHERE request_id = ? AND status = 'Pending';
+
+-- Find Club Officer role ID
+SELECT role_id
+FROM Roles
+WHERE role_name = 'Club Officer'
+    LIMIT 1;
+
+-- Assign Club Officer role to user
+INSERT INTO UserRoles (user_id, role_id, assigned_at)
+VALUES (?, ?, NOW());
+
+-- View reviewed officer requests with requester info
+SELECT
+    cor.request_id,
+    cor.sjsu_id,
+    cor.club_name,
+    cor.justification,
+    cor.status,
+    cor.created_at,
+    cor.user_id,
+    cor.reviewed_by,
+    cor.reviewed_at,
+    u.full_name,
+    u.email
+FROM ClubOfficerRequests cor
+         JOIN Users u ON cor.user_id = u.user_id
+WHERE cor.status IN ('Approved', 'Denied')
+ORDER BY cor.reviewed_at DESC, cor.created_at DESC;

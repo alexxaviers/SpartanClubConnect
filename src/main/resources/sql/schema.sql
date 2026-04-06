@@ -55,12 +55,14 @@ CREATE TABLE Events (
 -- CLUB OFFICER REQUESTS
 CREATE TABLE ClubOfficerRequests (
     request_id INT AUTO_INCREMENT PRIMARY KEY,
-    sjsu_id VARCHAR(50),
-    justification TEXT,
-    status VARCHAR(50),
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    user_id INT,
+    sjsu_id VARCHAR(9) NOT NULL,
+    club_name VARCHAR(255) NOT NULL,
+    justification TEXT NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id INT NOT NULL,
     reviewed_by INT NULL,
+    reviewed_at TIMESTAMP NULL,
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
     FOREIGN KEY (reviewed_by) REFERENCES Users(user_id)
 );

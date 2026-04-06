@@ -9,6 +9,12 @@
     response.sendRedirect("login.jsp");
     return;
   }
+
+  Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
+  Boolean isClubOfficer = (Boolean) session.getAttribute("isClubOfficer");
+
+  if (isAdmin == null) isAdmin = false;
+  if (isClubOfficer == null) isClubOfficer = false;
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,7 +23,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profile - SpartanClubConnect</title>
   <link rel="stylesheet" href="css/global.css">
-  <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="css/landing.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/profile.css">
 </head>
 <body class="landing-body">
 
@@ -31,7 +39,19 @@
     <nav class="dashboard-sidebar-nav">
       <a href="dashboard.jsp" class="dashboard-sidebar-link">Dashboard</a>
       <a href="profile.jsp" class="dashboard-sidebar-link active">Profile</a>
+
+      <% if (!isClubOfficer && !isAdmin) { %>
       <a href="clubOfficerRequest.jsp" class="dashboard-sidebar-link">Request Club Officer Role</a>
+      <% } %>
+
+      <% if (isClubOfficer) { %>
+      <a href="createClub.jsp" class="dashboard-sidebar-link">Create Club</a>
+      <a href="createEvent.jsp" class="dashboard-sidebar-link">Create Event</a>
+      <% } %>
+
+      <% if (isAdmin) { %>
+      <a href="AdminOfficerRequestsServlet" class="dashboard-sidebar-link">Manage Officer Requests</a>
+      <% } %>
     </nav>
 
     <div class="dashboard-sidebar-footer">
