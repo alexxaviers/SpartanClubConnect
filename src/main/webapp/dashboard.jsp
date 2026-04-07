@@ -13,6 +13,8 @@
 
     if (isAdmin == null) isAdmin = false;
     if (isClubOfficer == null) isClubOfficer = false;
+    
+    String ctx = request.getContextPath();
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,12 +44,12 @@
             <% } %>
 
             <% if (isClubOfficer) { %>
-            <a href="createClub.jsp" class="dashboard-sidebar-link">Create Club</a>
+            <a href="<%= ctx %>/createClub.jsp" class="dashboard-sidebar-link">Create Club</a>
             <a href="createEvent.jsp" class="dashboard-sidebar-link">Create Event</a>
             <% } %>
 
             <% if (isAdmin) { %>
-            <a href="AdminOfficerRequestsServlet" class="dashboard-sidebar-link">Manage Officer Requests</a>
+            <a href="<%= ctx %>/AdminOfficerRequestsServlet" class="dashboard-sidebar-link">Manage Officer Requests</a>
             <% } %>
         </nav>
 
@@ -95,26 +97,26 @@
 
             <section class="dashboard-search-section">
                 <div class="landing-search-wrap">
-                    <form class="landing-search-bar" action="clubs.jsp" method="get">
+                    <form class="landing-search-bar" action="<%= ctx %>/clubs.jsp" method="get">
                         <input type="text" name="q" placeholder="Search clubs or events..." autocomplete="off">
                         <button type="submit">Search</button>
                     </form>
                 </div>
 
                 <div class="landing-chips">
-                    <a href="clubs.jsp" class="landing-chip">Academic</a>
-                    <a href="clubs.jsp" class="landing-chip">Engineering</a>
-                    <a href="clubs.jsp" class="landing-chip">Business</a>
-                    <a href="clubs.jsp" class="landing-chip">Cultural</a>
-                    <a href="clubs.jsp" class="landing-chip">Arts</a>
-                    <a href="clubs.jsp" class="landing-chip">Technology</a>
-                    <a href="clubs.jsp" class="landing-chip">Recreation &amp; Sports</a>
-                    <a href="clubs.jsp" class="landing-chip">Community Service</a>
+                    <a href="<%= ctx %>/clubs.jsp" class="landing-chip">Academic</a>
+                    <a href="<%= ctx %>/clubs.jsp" class="landing-chip">Engineering</a>
+                    <a href="<%= ctx %>/clubs.jsp" class="landing-chip">Business</a>
+                    <a href="<%= ctx %>/clubs.jsp" class="landing-chip">Cultural</a>
+                    <a href="<%= ctx %>/clubs.jsp" class="landing-chip">Arts</a>
+                    <a href="<%= ctx %>/clubs.jsp" class="landing-chip">Technology</a>
+                    <a href="<%= ctx %>/clubs.jsp" class="landing-chip">Recreation &amp; Sports</a>
+                    <a href="<%= ctx %>/clubs.jsp" class="landing-chip">Community Service</a>
                 </div>
             </section>
 
             <section class="dashboard-main-cards">
-                <a href="clubs.jsp" class="landing-gateway-card">
+                <a href="<%= ctx %>/clubs.jsp" class="landing-gateway-card">
                     <div class="landing-card-icon landing-card-icon-blue">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                              stroke="#0055A2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

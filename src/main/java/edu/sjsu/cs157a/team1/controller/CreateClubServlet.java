@@ -12,7 +12,9 @@ import java.io.IOException;
 
 public class CreateClubServlet extends HttpServlet {
 
-    private static final String CLUB_OFFICER_ROLE = "Club Officer";
+    private static boolean mayCreateClub(HttpSession session) {
+    	return session != null && Boolean.TRUE.equals(session.getAttribute("isClubOfficer"));
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -24,10 +26,9 @@ public class CreateClubServlet extends HttpServlet {
             return;
         }
 
-        String role = (String) session.getAttribute("role");
-        if (!CLUB_OFFICER_ROLE.equals(role)) {
-            request.setAttribute("errorMessage", "Only club officers can create a club profile.");
-            request.getRequestDispatcher("/home.jsp").forward(request, response);
+        if (!mayCreateClub(session)) {
+            request.setAttribute("errorMessage", "Only club officers or admins can create a club profile.");
+            request.getRequestDispatcher("/dashboard.jsp").forward(request, response);
             return;
         }
 
@@ -44,10 +45,9 @@ public class CreateClubServlet extends HttpServlet {
             return;
         }
 
-        String role = (String) session.getAttribute("role");
-        if (!CLUB_OFFICER_ROLE.equals(role)) {
-            request.setAttribute("errorMessage", "Only club officers can create a club profile.");
-            request.getRequestDispatcher("/home.jsp").forward(request, response);
+        if (!mayCreateClub(session)) {
+            request.setAttribute("errorMessage", "Only club officers or admins can create a club profile.");
+            request.getRequestDispatcher("/dashboard.jsp").forward(request, response);
             return;
         }
 
@@ -99,8 +99,8 @@ public class CreateClubServlet extends HttpServlet {
         if (name == null || name.trim().isEmpty()) {
             return "Club name is required.";
         }
-        if (name.trim().length() > 200) {
-            return "Club name must be at most 200 characters.";
+        if (name.trim().length() > 100) {
+            return "Club name must be at most 100 characters.";
         }
 
         if (description != null && description.length() > 8000) {
@@ -116,7 +116,7 @@ public class CreateClubServlet extends HttpServlet {
             if (!e.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")) {
                 return "Please enter a valid contact email.";
             }
-            if (e.length() > 255) {
+            if (e.length() > 100) {
                 return "Contact email is too long.";
             }
         }

@@ -9,7 +9,12 @@
         return;
     }
     if (request.getAttribute("clubs") == null) {
-        response.sendRedirect(request.getContextPath() + "/clubs");
+    	String qs = request.getQueryString();
+    	String dest = request.getContextPath() + "/clubs";
+    	if (qs != null && !dest.isEmpty()){
+    		dest += "?" + qs;
+    	}
+        response.sendRedirect(dest);
         return;
     }
     @SuppressWarnings("unchecked")
@@ -32,7 +37,7 @@
 <main class="clubs-page">
     <div class="clubs-card">
         <nav class="top-nav">
-            <a href="<%= ctx %>/home.jsp">Home</a>
+            <a href="<%= ctx %>/dashboard.jsp">Dashboard</a>
         </nav>
         <div class="clubs-header">
             <h1>Clubs</h1>

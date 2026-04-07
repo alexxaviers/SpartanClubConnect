@@ -2,13 +2,13 @@
 <%@ page import="edu.sjsu.cs157a.team1.util.HtmlEscape" %>
 <%
     Integer userId = (Integer) session.getAttribute("userId");
-    String role = (String) session.getAttribute("role");
+
     if (userId == null) {
         response.sendRedirect(request.getContextPath() + "/login.jsp");
         return;
     }
-    if (!"Club Officer".equals(role)) {
-        response.sendRedirect(request.getContextPath() + "/home.jsp");
+	if (!Boolean.TRUE.equals(session.getAttribute("isClubOfficer"))) {
+		response.sendRedirect(request.getContextPath() + "/dashboard.jsp");
         return;
     }
     String errorMessage = (String) request.getAttribute("errorMessage");
@@ -28,7 +28,7 @@
 <main class="login-page">
     <section class="auth-card" style="max-width: 560px;">
         <nav class="top-nav" style="margin-bottom: 16px;">
-            <a href="<%= ctx %>/home.jsp">Home</a>
+            <a href="<%= ctx %>/dashboard.jsp">Dashboard</a>
             &nbsp;&middot;&nbsp;
             <a href="<%= ctx %>/clubs">Clubs</a>
         </nav>
@@ -41,7 +41,7 @@
         <form class="club-form" action="<%= ctx %>/createClub" method="post">
             <div class="form-group">
                 <label for="name">Club name</label>
-                <input type="text" id="name" name="name" required maxlength="200"
+                <input type="text" id="name" name="name" required maxlength="100"
                        value="<%= request.getParameter("name") != null ? HtmlEscape.escape(request.getParameter("name")) : "" %>">
             </div>
             <div class="form-group">
@@ -55,7 +55,7 @@
             </div>
             <div class="form-group">
                 <label for="contactEmail">Contact email</label>
-                <input type="email" id="contactEmail" name="contactEmail" maxlength="255"
+                <input type="email" id="contactEmail" name="contactEmail" maxlength="100"
                        value="<%= request.getParameter("contactEmail") != null ? HtmlEscape.escape(request.getParameter("contactEmail")) : "" %>">
             </div>
             <div class="form-group">

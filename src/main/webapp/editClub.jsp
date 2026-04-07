@@ -47,7 +47,7 @@
             <input type="hidden" name="clubId" value="<%= club.getClubId() %>">
             <div class="form-group">
                 <label for="name">Club name</label>
-                <input type="text" id="name" name="name" required maxlength="200"
+                <input type="text" id="name" name="name" required maxlength="100"
                        value="<%= HtmlEscape.escape(nameVal) %>">
             </div>
             <div class="form-group">
@@ -61,7 +61,7 @@
             </div>
             <div class="form-group">
                 <label for="contactEmail">Contact email</label>
-                <input type="email" id="contactEmail" name="contactEmail" maxlength="255"
+                <input type="email" id="contactEmail" name="contactEmail" maxlength="100"
                        value="<%= HtmlEscape.escape(emailVal) %>">
             </div>
             <div class="form-group">

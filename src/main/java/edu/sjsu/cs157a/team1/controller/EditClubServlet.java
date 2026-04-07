@@ -160,8 +160,8 @@ public class EditClubServlet extends HttpServlet {
         if (name == null || name.trim().isEmpty()) {
             return "Club name is required.";
         }
-        if (name.trim().length() > 200) {
-            return "Club name must be at most 200 characters.";
+        if (name.trim().length() > 100) {
+            return "Club name must be at most 100 characters.";
         }
 
         if (description != null && description.length() > 8000) {
@@ -177,7 +177,7 @@ public class EditClubServlet extends HttpServlet {
             if (!e.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")) {
                 return "Please enter a valid contact email.";
             }
-            if (e.length() > 255) {
+            if (e.length() > 100) {
                 return "Contact email is too long.";
             }
         }

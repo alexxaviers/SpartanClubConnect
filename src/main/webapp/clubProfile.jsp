@@ -30,7 +30,7 @@
         <nav class="top-nav">
             <a href="<%= ctx %>/clubs">All clubs</a>
             &nbsp;&middot;&nbsp;
-            <a href="<%= ctx %>/home.jsp">Home</a>
+            <a href="<%= ctx %>/dashboard.jsp">Dashboard</a>
         </nav>
 
         <div class="clubs-header">
