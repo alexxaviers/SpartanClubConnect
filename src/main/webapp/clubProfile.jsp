@@ -33,9 +33,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= HtmlEscape.escape(club.getName()) %> - SpartanClubConnect</title>
-    <%-- Relative to the browser URL (/context/club) so CSS resolves like the /clubs page --%>
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/clubs.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/global.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/clubs.css">
 </head>
 <body>
 <main class="clubs-page">

@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%
+    String ctx = request.getContextPath();
     String errorMessage = (String) request.getAttribute("errorMessage");
     String successMessage = (String) request.getAttribute("successMessage");
 %>
@@ -9,8 +10,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Account - SpartanClubConnect</title>
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/global.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/auth.css">
 </head>
 <body>
 <main class="login-page">
@@ -27,7 +28,7 @@
         <p class="message success-message-box"><%= successMessage %></p>
         <% } %>
 
-        <form id="createAccountForm" action="CreateAccountServlet" method="POST" novalidate>
+        <form id="createAccountForm" action="<%= ctx %>/CreateAccountServlet" method="POST" novalidate>
             <div class="form-group">
                 <label for="fullName">Full Name</label>
                 <input
@@ -85,11 +86,11 @@
 
         <p class="bottom-link">
             Already have an account?
-            <a href="login.jsp">Sign In</a>
+            <a href="<%= ctx %>/login.jsp">Sign In</a>
         </p>
     </section>
 </main>
 
-<script src="js/createAccount.js"></script>
+<script src="<%= ctx %>/js/createAccount.js"></script>
 </body>
 </html>

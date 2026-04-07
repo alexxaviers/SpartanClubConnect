@@ -3,18 +3,10 @@
 <%@ page import="edu.sjsu.cs157a.team1.model.Club" %>
 <%@ page import="edu.sjsu.cs157a.team1.util.HtmlEscape" %>
 <%
+    String ctx = request.getContextPath();
     Integer userId = (Integer) session.getAttribute("userId");
     if (userId == null) {
-        response.sendRedirect(request.getContextPath() + "/login.jsp");
-        return;
-    }
-    if (request.getAttribute("clubs") == null) {
-    	String qs = request.getQueryString();
-    	String dest = request.getContextPath() + "/clubs";
-    	if (qs != null && !dest.isEmpty()){
-    		dest += "?" + qs;
-    	}
-        response.sendRedirect(dest);
+        response.sendRedirect(ctx + "/login.jsp");
         return;
     }
     @SuppressWarnings("unchecked")
@@ -22,7 +14,6 @@
     String q = request.getAttribute("q") != null ? (String) request.getAttribute("q") : "";
     String category = request.getAttribute("category") != null ? (String) request.getAttribute("category") : "";
     String sort = request.getAttribute("sort") != null ? (String) request.getAttribute("sort") : "name_asc";
-    String ctx = request.getContextPath();
 %>
 <!DOCTYPE html>
 <html lang="en">

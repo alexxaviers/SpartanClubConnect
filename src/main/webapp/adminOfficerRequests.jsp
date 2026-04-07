@@ -3,10 +3,11 @@
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="edu.sjsu.cs157a.team1.model.ClubOfficerRequest" %>
 <%
+    String ctx = request.getContextPath();
     Integer userId = (Integer) session.getAttribute("userId");
 
     if (userId == null) {
-        response.sendRedirect("login.jsp");
+        response.sendRedirect(ctx + "/login.jsp");
         return;
     }
 
@@ -32,11 +33,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Officer Requests - SpartanClubConnect</title>
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/global.css">
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/landing.css">
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/dashboard.css">
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/clubOfficer.css">
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/admin.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/global.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/landing.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/dashboard.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/clubOfficer.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/admin.css">
 </head>
 
 <%@ include file="/WEB-INF/jspf/adminLayoutStart.jspf" %>
@@ -92,7 +93,7 @@
                 <td><%= officerRequest.getCreatedAt() != null ? dateFormatter.format(officerRequest.getCreatedAt()) : "-" %></td>
                 <td>
                     <div class="request-action-group">
-                        <form action="<%= request.getContextPath() %>/AdminOfficerRequestsServlet" method="post">
+                        <form action="<%= ctx %>/AdminOfficerRequestsServlet" method="post">
                             <input type="hidden" name="requestId" value="<%= officerRequest.getRequestId() %>">
                             <input type="hidden" name="action" value="approve">
                             <button
@@ -103,7 +104,7 @@
                             </button>
                         </form>
 
-                        <form action="<%= request.getContextPath() %>/AdminOfficerRequestsServlet" method="post">
+                        <form action="<%= ctx %>/AdminOfficerRequestsServlet" method="post">
                             <input type="hidden" name="requestId" value="<%= officerRequest.getRequestId() %>">
                             <input type="hidden" name="action" value="deny">
                             <button

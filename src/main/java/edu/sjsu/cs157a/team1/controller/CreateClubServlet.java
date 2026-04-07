@@ -27,7 +27,7 @@ public class CreateClubServlet extends HttpServlet {
         }
 
         if (!mayCreateClub(session)) {
-            request.setAttribute("errorMessage", "Only club officers or admins can create a club profile.");
+            request.setAttribute("errorMessage", "Only club officers can create a club profile.");
             request.getRequestDispatcher("/dashboard.jsp").forward(request, response);
             return;
         }
@@ -46,7 +46,7 @@ public class CreateClubServlet extends HttpServlet {
         }
 
         if (!mayCreateClub(session)) {
-            request.setAttribute("errorMessage", "Only club officers or admins can create a club profile.");
+            request.setAttribute("errorMessage", "Only club officers can create a club profile.");
             request.getRequestDispatcher("/dashboard.jsp").forward(request, response);
             return;
         }

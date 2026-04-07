@@ -1,10 +1,11 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%
+    String ctx = request.getContextPath();
     Integer userId = (Integer) session.getAttribute("userId");
     String fullName = (String) session.getAttribute("fullName");
 
     if (userId == null) {
-        response.sendRedirect("login.jsp");
+        response.sendRedirect(ctx + "/login.jsp");
         return;
     }
 
@@ -27,10 +28,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Request Club Officer Role - SpartanClubConnect</title>
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/landing.css">
-    <link rel="stylesheet" href="css/dashboard.css">
-    <link rel="stylesheet" href="css/clubOfficer.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/global.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/landing.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/dashboard.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/clubOfficer.css">
 </head>
 <body class="landing-body">
 
@@ -42,27 +43,27 @@
         </div>
 
         <nav class="dashboard-sidebar-nav">
-            <a href="dashboard.jsp" class="dashboard-sidebar-link">Dashboard</a>
-            <a href="profile.jsp" class="dashboard-sidebar-link">Profile</a>
+            <a href="<%= ctx %>/dashboard.jsp" class="dashboard-sidebar-link">Dashboard</a>
+            <a href="<%= ctx %>/profile.jsp" class="dashboard-sidebar-link">Profile</a>
 
             <% if (!isClubOfficer && !isAdmin) { %>
-            <a href="clubOfficerRequest.jsp" class="dashboard-sidebar-link active">Request Club Officer Role</a>
+            <a href="<%= ctx %>/clubOfficerRequest.jsp" class="dashboard-sidebar-link active">Request Club Officer Role</a>
             <% } %>
 
             <% if (isClubOfficer) { %>
-            <a href="createClub.jsp" class="dashboard-sidebar-link">Create Club</a>
-            <a href="createEvent.jsp" class="dashboard-sidebar-link">Create Event</a>
+            <a href="<%= ctx %>/createClub.jsp" class="dashboard-sidebar-link">Create Club</a>
+            <a href="<%= ctx %>/createEvent.jsp" class="dashboard-sidebar-link">Create Event</a>
             <% } %>
 
             <% if (isAdmin) { %>
-            <a href="AdminOfficerRequestsServlet" class="dashboard-sidebar-link">Manage Officer Requests</a>
-            <a href="<%= request.getContextPath() %>/admin/users" class="dashboard-sidebar-link">Manage Users</a>
-            <a href="<%= request.getContextPath() %>/admin/events" class="dashboard-sidebar-link">Moderate Events</a>
+            <a href="<%= ctx %>/AdminOfficerRequestsServlet" class="dashboard-sidebar-link">Manage Officer Requests</a>
+            <a href="<%= ctx %>/admin/users" class="dashboard-sidebar-link">Manage Users</a>
+            <a href="<%= ctx %>/admin/events" class="dashboard-sidebar-link">Moderate Events</a>
             <% } %>
         </nav>
 
         <div class="dashboard-sidebar-footer">
-            <form action="LogoutServlet" method="post">
+            <form action="<%= ctx %>/LogoutServlet" method="post">
                 <button type="submit" class="dashboard-sidebar-logout">
                     <svg class="dashboard-logout-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -88,7 +89,7 @@
                         <span></span>
                     </button>
 
-                    <a class="landing-logo" href="dashboard.jsp">
+                    <a class="landing-logo" href="<%= ctx %>/dashboard.jsp">
                         <span class="blue">Spartan</span><span class="gold">Club</span><span class="blue">Connect</span>
                     </a>
                 </div>
@@ -112,7 +113,7 @@
                 <p class="message success-message-box"><%= successMessage %></p>
                 <% } %>
 
-                <form action="ClubOfficerRequestServlet" method="post" class="dashboard-form">
+                <form action="<%= ctx %>/ClubOfficerRequestServlet" method="post" class="dashboard-form">
                     <div class="form-group">
                         <label for="fullName">Full Name</label>
                         <input
@@ -180,7 +181,7 @@
     </div>
 </div>
 
-<script src="js/home.js"></script>
-<script src="js/clubOfficerRequest.js"></script>
+<script src="<%= ctx %>/js/home.js"></script>
+<script src="<%= ctx %>/js/clubOfficerRequest.js"></script>
 </body>
 </html>
