@@ -12,7 +12,7 @@ public class UserDAO {
 
     public User findByEmail(String email) {
         String sql =
-                "SELECT user_id, full_name, email, password_hash " +
+                "SELECT user_id, full_name, email, password_hash, is_active " +
                         "FROM Users " +
                         "WHERE email = ?";
 
@@ -28,6 +28,7 @@ public class UserDAO {
                     user.setFullName(rs.getString("full_name"));
                     user.setEmail(rs.getString("email"));
                     user.setPasswordHash(rs.getString("password_hash"));
+                    user.setActive(rs.getBoolean("is_active"));
                     return user;
                 }
             }
@@ -108,7 +109,7 @@ public class UserDAO {
 
             try (PreparedStatement roleStmt = conn.prepareStatement(userRoleSql)) {
                 roleStmt.setInt(1, newUserId);
-                roleStmt.setInt(2, 1); // Student role_id = 1 based on your seed data
+                roleStmt.setInt(2, 1);
 
                 int roleRows = roleStmt.executeUpdate();
                 if (roleRows == 0) {
