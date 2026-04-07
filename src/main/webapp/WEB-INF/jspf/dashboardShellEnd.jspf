@@ -1,0 +1,19 @@
+        </main>
+
+        <footer class="landing-footer-minimal">
+            © 2026 SpartanClubConnect · CS157A Section 1 — Team 1
+        </footer>
+    </div>
+</div>
+
+<script src="<%= ctx %>/js/home.js"></script>
+<%
+    String dashboardExtraScript = (String) request.getAttribute("dashboardExtraScript");
+    if (dashboardExtraScript != null && !dashboardExtraScript.isEmpty()) {
+%>
+<script src="<%= ctx %><%= dashboardExtraScript %>"></script>
+<%
+    }
+%>
+</body>
+</html>
