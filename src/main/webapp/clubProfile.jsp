@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="edu.sjsu.cs157a.team1.model.Club" %>
 <%@ page import="edu.sjsu.cs157a.team1.util.HtmlEscape" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 <%
     Integer userId = (Integer) session.getAttribute("userId");
     if (userId == null) {
@@ -14,6 +15,17 @@
     }
     Boolean canEdit = (Boolean) request.getAttribute("canEdit");
     String ctx = request.getContextPath();
+
+
+    String categoryLabel = club.getCategory() != null && !club.getCategory().isEmpty()
+            ? club.getCategory()
+            : "Uncategorized";
+    String managerLabel = club.getManagerFullName() != null ? club.getManagerFullName() : "—";
+    String createdFormatted = null;
+    if (club.getCreatedAt() != null) {
+        createdFormatted = DateTimeFormatter.ofPattern("MMMM d, yyyy")
+                .format(club.getCreatedAt().toLocalDateTime());
+    }
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,59 +33,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= HtmlEscape.escape(club.getName()) %> - SpartanClubConnect</title>
-    <link rel="stylesheet" href="<%= ctx %>/css/global.css">
-    <link rel="stylesheet" href="<%= ctx %>/css/clubs.css">
+    <%-- Relative to the browser URL (/context/club) so CSS resolves like the /clubs page --%>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/clubs.css">
 </head>
 <body>
 <main class="clubs-page">
     <div class="clubs-card">
         <nav class="top-nav">
             <a href="<%= ctx %>/clubs">All clubs</a>
-            &nbsp;&middot;&nbsp;
+            <span class="club-profile-nav-dot">&middot;</span>
             <a href="<%= ctx %>/dashboard.jsp">Dashboard</a>
         </nav>
 
-        <div class="clubs-header">
+
+        <div class="clubs-header club-profile-header">
             <h1><%= HtmlEscape.escape(club.getName()) %></h1>
             <p class="club-meta">
-                <%= club.getCategory() != null && !club.getCategory().isEmpty()
-                        ? HtmlEscape.escape(club.getCategory()) : "Uncategorized" %>
-                &middot; Primary manager (earliest assigned): <%= HtmlEscape.escape(
-                        club.getManagerFullName() != null ? club.getManagerFullName() : "—") %>
+                <%= HtmlEscape.escape(categoryLabel) %>
+                &middot; Manager: <%= HtmlEscape.escape(managerLabel) %>
             </p>
-            <% if (club.getCreatedAt() != null) { %>
-            <p class="club-meta">Created: <%= club.getCreatedAt() %></p>
-            <% } %>
-            <% if (Boolean.TRUE.equals(canEdit)) { %>
-            <p style="margin-top: 12px;">
-                <a class="secondary-link" href="<%= ctx %>/editClub?clubId=<%= club.getClubId() %>">Edit club</a>
-            </p>
+            <% if (createdFormatted != null) { %>
+            <p class="club-meta">Established <%= HtmlEscape.escape(createdFormatted) %></p>
             <% } %>
         </div>
 
-        <div class="club-profile-section">
-            <h2>Description</h2>
-            <div class="block"><%= club.getDescription() != null && !club.getDescription().isEmpty()
-                    ? HtmlEscape.escape(club.getDescription()) : "No description yet." %></div>
-        </div>
 
-        <div class="club-profile-section">
-            <h2>Contact</h2>
-            <p>
-                <% if (club.getContactEmail() != null && !club.getContactEmail().isEmpty()) { %>
-                Email: <%= HtmlEscape.escape(club.getContactEmail()) %>
+        <% if (Boolean.TRUE.equals(canEdit)) { %>
+        <div class="club-profile-actions">
+            <a href="<%= ctx %>/editClub?clubId=<%= club.getClubId() %>" class="club-profile-edit-btn">Edit club</a>
+        </div>
+        <% } %>
+
+
+        <ul class="club-list club-profile-details">
+            <li class="club-list-item">
+                <h2 class="club-profile-block-heading">Description</h2>
+                <% if (club.getDescription() != null && !club.getDescription().isEmpty()) { %>
+                <p class="club-profile-block-text"><%= HtmlEscape.escape(club.getDescription()) %></p>
                 <% } else { %>
-                No contact email listed.
+                <p class="club-profile-block-text club-profile-block-text--muted">No description yet.</p>
                 <% } %>
-            </p>
-        </div>
-
-        <div class="club-profile-section">
-            <h2>Meeting info</h2>
-            <div class="block"><%= club.getMeetingInfo() != null && !club.getMeetingInfo().isEmpty()
-                    ? HtmlEscape.escape(club.getMeetingInfo()) : "No meeting info listed." %></div>
-        </div>
+            </li>
+            <li class="club-list-item">
+                <h2 class="club-profile-block-heading">Contact</h2>
+                <% if (club.getContactEmail() != null && !club.getContactEmail().isEmpty()) {
+                        String contactEmail = club.getContactEmail();
+                %>
+                <p class="club-profile-block-text">
+                    <a href="mailto:<%= HtmlEscape.escape(contactEmail) %>"><%= HtmlEscape.escape(contactEmail) %></a>
+                </p>
+                <% } else { %>
+                <p class="club-profile-block-text club-profile-block-text--muted">No contact email listed.</p>
+                <% } %>
+            </li>
+            <li class="club-list-item">
+                <h2 class="club-profile-block-heading">Meeting info</h2>
+                <% if (club.getMeetingInfo() != null && !club.getMeetingInfo().isEmpty()) { %>
+                <p class="club-profile-block-text"><%= HtmlEscape.escape(club.getMeetingInfo()) %></p>
+                <% } else { %>
+                <p class="club-profile-block-text club-profile-block-text--muted">No meeting info listed.</p>
+                <% } %>
+            </li>
+        </ul>
     </div>
 </main>
 </body>
 </html>
+
+
+
+
+
