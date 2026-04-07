@@ -108,4 +108,24 @@
         <servlet-name>AdminOfficerRequestsServlet</servlet-name>
         <url-pattern>/AdminOfficerRequestsServlet</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminEventsServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.AdminEventsServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AdminEventsServlet</servlet-name>
+        <url-pattern>/admin/events</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminUsersServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.AdminUsersServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AdminUsersServlet</servlet-name>
+        <url-pattern>/admin/users</url-pattern>
+    </servlet-mapping>
 </web-app>

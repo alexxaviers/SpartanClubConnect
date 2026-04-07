@@ -38,6 +38,12 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
+        if (!user.isActive()) {
+            request.setAttribute("error", "Your account is deactivated. Please contact an administrator.");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+            return;
+        }
+
         if (!PasswordUtil.verifyPassword(password, user.getPasswordHash())) {
             request.setAttribute("error", "Invalid email or password.");
             request.getRequestDispatcher("login.jsp").forward(request, response);

@@ -50,6 +50,8 @@
 
             <% if (isAdmin) { %>
             <a href="<%= ctx %>/AdminOfficerRequestsServlet" class="dashboard-sidebar-link">Manage Officer Requests</a>
+            <a href="<%= ctx %>/admin/users" class="dashboard-sidebar-link">Manage Users</a>
+            <a href="<%= ctx %>/admin/events" class="dashboard-sidebar-link">Moderate Events</a>
             <% } %>
         </nav>
 
