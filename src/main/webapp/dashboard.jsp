@@ -48,6 +48,8 @@
 
             <% if (isAdmin) { %>
             <a href="AdminOfficerRequestsServlet" class="dashboard-sidebar-link">Manage Officer Requests</a>
+            <a href="<%= request.getContextPath() %>/admin/users" class="dashboard-sidebar-link">Manage Users</a>
+            <a href="<%= request.getContextPath() %>/admin/events" class="dashboard-sidebar-link">Moderate Events</a>
             <% } %>
         </nav>
 
