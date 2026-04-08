@@ -19,6 +19,15 @@
 
     @SuppressWarnings("unchecked")
     List<Club> clubs = (List<Club>) request.getAttribute("clubs");
+    if (clubs == null) {
+        String qs = request.getQueryString();
+        String dest = ctx + "/clubs";
+        if (qs != null && !qs.isEmpty()) {
+            dest += "?" + qs;
+        }
+        response.sendRedirect(dest);
+        return;
+    }
     String q = request.getAttribute("q") != null ? (String) request.getAttribute("q") : "";
     String category = request.getAttribute("category") != null ? (String) request.getAttribute("category") : "";
     String sort = request.getAttribute("sort") != null ? (String) request.getAttribute("sort") : "name_asc";

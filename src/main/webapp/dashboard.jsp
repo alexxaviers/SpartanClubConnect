@@ -37,26 +37,26 @@
 
             <section class="dashboard-search-section">
                 <div class="landing-search-wrap">
-                    <form class="landing-search-bar" action="<%= ctx %>/clubs.jsp" method="get">
+                    <form class="landing-search-bar" action="<%= ctx %>/clubs" method="get">
                         <input type="text" name="q" placeholder="Search clubs or events..." autocomplete="off">
                         <button type="submit">Search</button>
                     </form>
                 </div>
 
                 <div class="landing-chips">
-                    <a href="<%= ctx %>/clubs.jsp" class="landing-chip">Academic</a>
-                    <a href="<%= ctx %>/clubs.jsp" class="landing-chip">Engineering</a>
-                    <a href="<%= ctx %>/clubs.jsp" class="landing-chip">Business</a>
-                    <a href="<%= ctx %>/clubs.jsp" class="landing-chip">Cultural</a>
-                    <a href="<%= ctx %>/clubs.jsp" class="landing-chip">Arts</a>
-                    <a href="<%= ctx %>/clubs.jsp" class="landing-chip">Technology</a>
-                    <a href="<%= ctx %>/clubs.jsp" class="landing-chip">Recreation &amp; Sports</a>
-                    <a href="<%= ctx %>/clubs.jsp" class="landing-chip">Community Service</a>
+                    <a href="<%= ctx %>/clubs" class="landing-chip">Academic</a>
+                    <a href="<%= ctx %>/clubs" class="landing-chip">Engineering</a>
+                    <a href="<%= ctx %>/clubs" class="landing-chip">Business</a>
+                    <a href="<%= ctx %>/clubs" class="landing-chip">Cultural</a>
+                    <a href="<%= ctx %>/clubs" class="landing-chip">Arts</a>
+                    <a href="<%= ctx %>/clubs" class="landing-chip">Technology</a>
+                    <a href="<%= ctx %>/clubs" class="landing-chip">Recreation &amp; Sports</a>
+                    <a href="<%= ctx %>/clubs" class="landing-chip">Community Service</a>
                 </div>
             </section>
 
             <section class="dashboard-main-cards">
-                <a href="<%= ctx %>/clubs.jsp" class="landing-gateway-card">
+                <a href="<%= ctx %>/clubs" class="landing-gateway-card">
                     <div class="landing-card-icon landing-card-icon-blue">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                              stroke="#0055A2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
