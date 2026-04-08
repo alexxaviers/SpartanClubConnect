@@ -6,5 +6,5 @@
 </div>
 </div>
 
-<script src="<%= request.getContextPath() %>/js/home.js"></script>
+<script src="<%= ctx %>/js/home.js"></script>
 </body>

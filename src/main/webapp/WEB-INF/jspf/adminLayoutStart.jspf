@@ -1,6 +1,4 @@
 <%
-    String ctx = request.getContextPath();
-
     Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
     Boolean isClubOfficer = (Boolean) session.getAttribute("isClubOfficer");
 
