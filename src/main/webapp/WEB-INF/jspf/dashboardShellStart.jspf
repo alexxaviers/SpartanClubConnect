@@ -10,7 +10,7 @@
     <aside class="dashboard-sidebar" id="dashboardSidebar">
         <div class="dashboard-sidebar-header">
             <span class="dashboard-sidebar-title">Menu</span>
-            <button class="dashboard-sidebar-close" id="sidebarCloseBtn" type="button" aria-label="Close menu">×</button>
+            <button class="dashboard-sidebar-close" id="sidebarCloseBtn" type="button" aria-label="Close menu">ח</button>
         </div>
 
         <nav class="dashboard-sidebar-nav">
