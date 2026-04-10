@@ -127,6 +127,48 @@
     background: #f9fafb;
 }
 
+.club-list-item--with-action {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 16px;
+    row-gap: 8px;
+}
+
+.club-list-item-body {
+    min-width: 0;
+}
+
+.followed-club-unfollow-form {
+    margin: 0;
+    width: auto;
+    max-width: none;
+    justify-self: end;
+}
+
+.club-list-item--with-action .followed-club-unfollow-form .followed-club-unfollow-btn.secondary-btn {
+    width: auto;
+    min-width: 7.5rem;
+    padding: 10px 18px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+@media (max-width: 520px) {
+    .club-list-item--with-action {
+        grid-template-columns: 1fr;
+        justify-items: stretch;
+    }
+
+    .club-list-item--with-action .followed-club-unfollow-form {
+        justify-self: stretch;
+    }
+
+    .club-list-item--with-action .followed-club-unfollow-form .followed-club-unfollow-btn.secondary-btn {
+        width: 100%;
+    }
+}
+
 
 .club-list-item h2 {
     font-size: 1.15rem;

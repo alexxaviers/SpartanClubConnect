@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.List;
+
 
 public class ClubFollowServlet extends HttpServlet{
 	
@@ -62,6 +62,13 @@ public class ClubFollowServlet extends HttpServlet{
                     + "}");
             return;
         }
+        
+        String returnTo = request.getParameter("returnTo");
+        if("followedClubs".equals(returnTo)) {
+        	response.sendRedirect(ctx + "/followedClubs");
+        	return;
+        }
+        
         response.sendRedirect(back);
 	}
 }

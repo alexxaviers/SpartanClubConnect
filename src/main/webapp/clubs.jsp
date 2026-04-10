@@ -15,7 +15,7 @@
     if (isAdmin == null) isAdmin = false;
     if (isClubOfficer == null) isClubOfficer = false;
 
-    request.setAttribute("activeNav", "");
+    request.setAttribute("activeNav", "browseClubs");
 
     @SuppressWarnings("unchecked")
     List<Club> clubs = (List<Club>) request.getAttribute("clubs");

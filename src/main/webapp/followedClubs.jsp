@@ -55,13 +55,21 @@
                 <% } else { %>
                 <ul class="club-list">
                     <% for (Club c : followedClubs) { %>
-                    <li class="club-list-item">
-                        <h2><a href="<%= ctx %>/club?id=<%= c.getClubId() %>"><%= HtmlEscape.escape(c.getName()) %></a></h2>
-                        <p class="club-meta">
-                            <%= c.getCategory() != null && !c.getCategory().isEmpty()
-                                    ? HtmlEscape.escape(c.getCategory()) : "Uncategorized" %>
-                            &middot; Manager: <%= HtmlEscape.escape(c.getManagerFullName() != null ? c.getManagerFullName() : "—") %>
-                        </p>
+					<li class="club-list-item club-list-item--with-action">
+                        <div class="club-list-item-body">
+                            <h2><a href="<%= ctx %>/club?id=<%= c.getClubId() %>"><%= HtmlEscape.escape(c.getName()) %></a></h2>
+                            <p class="club-meta">
+                                <%= c.getCategory() != null && !c.getCategory().isEmpty()
+                                        ? HtmlEscape.escape(c.getCategory()) : "Uncategorized" %>
+                                &middot; Manager: <%= HtmlEscape.escape(c.getManagerFullName() != null ? c.getManagerFullName() : "—") %>
+                            </p>
+                        </div>
+                        <form class="followed-club-unfollow-form" action="<%= ctx %>/clubFollow" method="post">
+                            <input type="hidden" name="clubId" value="<%= c.getClubId() %>">
+                            <input type="hidden" name="action" value="unfollow">
+                            <input type="hidden" name="returnTo" value="followedClubs">
+                            <button type="submit" class="secondary-btn followed-club-unfollow-btn">Unfollow</button>
+                        </form>
                     </li>
                     <% } %>
                 </ul>

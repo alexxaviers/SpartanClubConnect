@@ -18,8 +18,10 @@
                class="dashboard-sidebar-link<%= "dashboard".equals(activeNav) ? " active" : "" %>">Dashboard</a>
             <a href="<%= ctx %>/profile.jsp"
                class="dashboard-sidebar-link<%= "profile".equals(activeNav) ? " active" : "" %>">Profile</a>
-			
+               
 			<%if (!isAdmin){ %>
+            <a href="<%= ctx %>/clubs"
+               class="dashboard-sidebar-link<%= "browseClubs".equals(activeNav) ? " active" : "" %>">Browse Club</a>
 			<a href="<%= ctx %>/followedClubs"
                class="dashboard-sidebar-link<%= "followedClubs".equals(activeNav) ? " active" : "" %>">Followed Clubs</a>
             <% } %>
