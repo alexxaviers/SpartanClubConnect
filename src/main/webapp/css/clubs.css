@@ -16,7 +16,14 @@
 }
 
 .club-profile-dashboard-meta--secondary {
-    margin-bottom: 0;
+    margin-bottom: 6px;
+}
+
+.club-profile-follower-count {
+	margin-top: 0;
+	margin-bottom: 0;
+	font-weight: 600;
+	color: #374151;
 }
 
 .club-profile-actions--shell {
@@ -208,6 +215,23 @@
     border-top: 1px solid var(--border-light);
 }
 
+.club-profile-actions-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+}
+
+.club-profile-follow-form {
+	display: inline;
+	margin: 0;
+}
+
+.club-profile-follow-btn {
+	width: auto;
+	padding-left: 22px;
+	padding-right: 22px;
+}
 
 .club-profile-edit-btn {
     display: inline-block;

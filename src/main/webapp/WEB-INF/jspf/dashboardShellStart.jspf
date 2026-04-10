@@ -18,7 +18,12 @@
                class="dashboard-sidebar-link<%= "dashboard".equals(activeNav) ? " active" : "" %>">Dashboard</a>
             <a href="<%= ctx %>/profile.jsp"
                class="dashboard-sidebar-link<%= "profile".equals(activeNav) ? " active" : "" %>">Profile</a>
-
+			
+			<%if (!isAdmin){ %>
+			<a href="<%= ctx %>/followedClubs"
+               class="dashboard-sidebar-link<%= "followedClubs".equals(activeNav) ? " active" : "" %>">Followed Clubs</a>
+            <% } %>
+			
             <% if (!isClubOfficer && !isAdmin) { %>
             <a href="<%= ctx %>/clubOfficerRequest.jsp"
                class="dashboard-sidebar-link<%= "clubOfficer".equals(activeNav) ? " active" : "" %>">Request Club Officer Role</a>
