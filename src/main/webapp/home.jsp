@@ -47,6 +47,9 @@
         <div class="home-actions">
             <a class="secondary-link" href="events">Browse Events</a>
             <a class="secondary-link" href="my-rsvps">My RSVPs</a>
+            <% if ("Club Officer".equalsIgnoreCase(role)) { %>
+                <a class="secondary-link" href="officer-events">Manage My Club Events</a>
+            <% } %>
         </div>
     </section>
 </main>

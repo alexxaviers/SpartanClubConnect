@@ -51,6 +51,12 @@
             <p><strong>Date:</strong> <%= event.getDate() %></p>
             <p><strong>Time:</strong> <%= event.getStartTime() %> - <%= event.getEndTime() %></p>
             <p><strong>Location:</strong> <%= event.getLocation() %></p>
+            <p><strong>Category:</strong> <%= event.getCategory() == null ? "-" : event.getCategory() %></p>
+            <% if (event.getImageUrl() != null && !event.getImageUrl().isEmpty()) { %>
+                <p>
+                    <img src="<%= event.getImageUrl() %>" alt="Event image" style="max-width: 100%; max-height: 320px; border-radius: 8px;">
+                </p>
+            <% } %>
             <p>
                 <strong>Capacity:</strong>
                 <%= event.getGoingCount() %>
@@ -58,31 +64,42 @@
                 <%= event.getCapacity() == null ? "No Limit" : event.getCapacity() %>
                 <%= event.isFull() ? " (Full)" : "" %>
             </p>
+            <p><strong>Your RSVP Status:</strong> <%= event.getUserRsvpStatus() == null ? "Not RSVPed" : event.getUserRsvpStatus() %></p>
         </section>
 
         <section style="margin-bottom: 28px;">
-            <% if (event.isUserRsvped()) { %>
+            <% if ("Going".equals(event.getUserRsvpStatus()) || "Waitlisted".equals(event.getUserRsvpStatus())) { %>
                 <form action="rsvp" method="post">
                     <input type="hidden" name="action" value="cancel">
                     <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
                     <input type="hidden" name="returnTo" value="event-details">
-                    <button type="submit">Cancel RSVP</button>
+                    <button type="submit"><%= "Waitlisted".equals(event.getUserRsvpStatus()) ? "Leave Waitlist" : "Cancel RSVP" %></button>
                 </form>
-            <% } else if (event.isFull()) { %>
-                <p><strong>Event is full.</strong></p>
             <% } else { %>
                 <form action="rsvp" method="post">
                     <input type="hidden" name="action" value="register">
                     <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
                     <input type="hidden" name="returnTo" value="event-details">
-                    <button type="submit">RSVP / Register</button>
+                    <button type="submit"><%= event.isFull() ? "Join Waitlist" : "RSVP / Register" %></button>
                 </form>
             <% } %>
         </section>
 
         <% if (Boolean.TRUE.equals(canViewAttendees)) { %>
+            <section style="margin-bottom: 20px;">
+                <a href="officer-event?eventId=<%= event.getEventId() %>">Edit Event</a>
+                |
+                <form action="officer-events" method="post" style="display: inline; margin: 0;">
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
+                    <button type="submit" onclick="return confirm('Delete this event?');">Delete Event</button>
+                </form>
+            </section>
+        <% } %>
+
+        <% if (Boolean.TRUE.equals(canViewAttendees)) { %>
             <section>
-                <h3>Attendee List (Going)</h3>
+                <h3>Attendee List</h3>
                 <% if (attendees == null || attendees.isEmpty()) { %>
                     <p>No attendees yet.</p>
                 <% } else { %>
@@ -92,6 +109,7 @@
                             <th>User ID</th>
                             <th>Name</th>
                             <th>Email</th>
+                            <th>Status</th>
                             <th>RSVP Time</th>
                         </tr>
                         </thead>
@@ -101,6 +119,7 @@
                                 <td><%= attendee.getUserId() %></td>
                                 <td><%= attendee.getFullName() %></td>
                                 <td><%= attendee.getEmail() %></td>
+                                <td><%= attendee.getStatus() %></td>
                                 <td><%= attendee.getRsvpTime() %></td>
                             </tr>
                         <% } %>

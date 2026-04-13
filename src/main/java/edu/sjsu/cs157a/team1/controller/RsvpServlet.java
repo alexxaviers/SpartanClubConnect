@@ -65,14 +65,15 @@ public class RsvpServlet extends HttpServlet {
             return;
         }
 
-        if (event.isFull()) {
-            redirectWithMessage(resp, returnTo, eventId, "error", "Event is full");
+        String targetStatus = event.isFull() ? "Waitlisted" : "Going";
+        boolean saved = rsvpDAO.upsertRsvpStatus(userId, eventId, targetStatus);
+        if (!saved) {
+            redirectWithMessage(resp, returnTo, eventId, "error", "Could not RSVP");
             return;
         }
 
-        boolean inserted = rsvpDAO.createRsvp(userId, eventId);
-        if (!inserted) {
-            redirectWithMessage(resp, returnTo, eventId, "error", "Could not RSVP");
+        if ("Waitlisted".equals(targetStatus)) {
+            redirectWithMessage(resp, returnTo, eventId, "success", "Event is full. You were added to the waitlist");
             return;
         }
 
@@ -86,10 +87,15 @@ public class RsvpServlet extends HttpServlet {
             return;
         }
 
-        boolean deleted = rsvpDAO.deleteRsvp(userId, eventId);
-        if (!deleted) {
+        String oldStatus = rsvpDAO.getRsvpStatus(userId, eventId);
+        boolean cancelled = rsvpDAO.cancelRsvp(userId, eventId);
+        if (!cancelled) {
             redirectWithMessage(resp, returnTo, eventId, "error", "Could not cancel RSVP");
             return;
+        }
+
+        if ("Going".equals(oldStatus)) {
+            rsvpDAO.promoteFirstWaitlisted(eventId);
         }
 
         redirectWithMessage(resp, returnTo, eventId, "success", "RSVP cancelled");

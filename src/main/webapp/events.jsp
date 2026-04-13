@@ -3,6 +3,7 @@
 <%@ page import="edu.sjsu.cs157a.team1.dao.RsvpDAO.EventView" %>
 <%
     Integer userId = (Integer) session.getAttribute("userId");
+    String role = (String) session.getAttribute("role");
     if (userId == null) {
         response.sendRedirect("login.jsp");
         return;
@@ -26,7 +27,12 @@
 
     <p>
         <a href="home.jsp">Home</a> |
-        <a href="my-rsvps">My RSVPs</a>
+        <a href="my-rsvps">My RSVPs</a> |
+        <a href="events?feed=all">Browse All Events</a> |
+        <a href="#" onclick="return false;" title="Placeholder for teammate implementation">Browse Personalized Events (Coming Soon)</a>
+        <% if ("Club Officer".equalsIgnoreCase(role)) { %>
+            | <a href="officer-events">Manage My Club Events</a>
+        <% } %>
     </p>
 
     <% if (success != null && !success.isEmpty()) { %>
@@ -45,6 +51,7 @@
             <tr>
                 <th>Title</th>
                 <th>Club</th>
+                <th>Category</th>
                 <th>Date</th>
                 <th>Time</th>
                 <th>Location</th>
@@ -58,6 +65,7 @@
                 <tr>
                     <td><%= event.getTitle() %></td>
                     <td><%= event.getClubName() %></td>
+                    <td><%= event.getCategory() == null ? "-" : event.getCategory() %></td>
                     <td><%= event.getDate() %></td>
                     <td><%= event.getStartTime() %> - <%= event.getEndTime() %></td>
                     <td><%= event.getLocation() %></td>
@@ -67,7 +75,7 @@
                         <%= event.getCapacity() == null ? "No Limit" : event.getCapacity() %>
                         <%= event.isFull() ? " (Full)" : "" %>
                     </td>
-                    <td><%= event.isUserRsvped() ? "Going" : "Not RSVPed" %></td>
+                    <td><%= event.getUserRsvpStatus() == null ? "Not RSVPed" : event.getUserRsvpStatus() %></td>
                     <td><a href="event-details?eventId=<%= event.getEventId() %>">View Details</a></td>
                 </tr>
             <% } %>

@@ -48,6 +48,7 @@
                 <th>Date</th>
                 <th>Time</th>
                 <th>Location</th>
+                <th>Status</th>
                 <th>Action</th>
             </tr>
             </thead>
@@ -61,6 +62,7 @@
                     <td><%= event.getDate() %></td>
                     <td><%= event.getStartTime() %> - <%= event.getEndTime() %></td>
                     <td><%= event.getLocation() %></td>
+                    <td><%= event.getUserRsvpStatus() %></td>
                     <td>
                         <form action="rsvp" method="post" style="margin: 0;">
                             <input type="hidden" name="action" value="cancel">

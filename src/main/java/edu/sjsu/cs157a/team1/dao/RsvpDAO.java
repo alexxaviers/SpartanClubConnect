@@ -24,9 +24,12 @@ public class RsvpDAO {
         private Time startTime;
         private Time endTime;
         private String location;
+        private String category;
+        private String imageUrl;
         private Integer capacity;
         private int goingCount;
         private boolean userRsvped;
+        private String userRsvpStatus;
 
         public int getEventId() {
             return eventId;
@@ -100,6 +103,22 @@ public class RsvpDAO {
             this.location = location;
         }
 
+        public String getCategory() {
+            return category;
+        }
+
+        public void setCategory(String category) {
+            this.category = category;
+        }
+
+        public String getImageUrl() {
+            return imageUrl;
+        }
+
+        public void setImageUrl(String imageUrl) {
+            this.imageUrl = imageUrl;
+        }
+
         public Integer getCapacity() {
             return capacity;
         }
@@ -124,6 +143,14 @@ public class RsvpDAO {
             this.userRsvped = userRsvped;
         }
 
+        public String getUserRsvpStatus() {
+            return userRsvpStatus;
+        }
+
+        public void setUserRsvpStatus(String userRsvpStatus) {
+            this.userRsvpStatus = userRsvpStatus;
+        }
+
         public boolean isFull() {
             return capacity != null && goingCount >= capacity;
         }
@@ -133,6 +160,7 @@ public class RsvpDAO {
         private int userId;
         private String fullName;
         private String email;
+        private String status;
         private Timestamp rsvpTime;
 
         public int getUserId() {
@@ -159,6 +187,14 @@ public class RsvpDAO {
             this.email = email;
         }
 
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
         public Timestamp getRsvpTime() {
             return rsvpTime;
         }
@@ -170,13 +206,14 @@ public class RsvpDAO {
 
     public List<EventView> getAllEventsForUser(int userId) throws SQLException {
         String sql = "SELECT e.event_id, e.club_id, c.club_name, e.title, e.description, e.date, e.start_time, e.end_time, " +
-                "e.location, e.capacity, " +
+            "e.location, e.category, e.image_url, e.capacity, " +
                 "(SELECT COUNT(*) FROM RSVPs rc WHERE rc.event_id = e.event_id AND rc.status = 'Going') AS going_count, " +
-                "CASE WHEN r.user_id IS NULL THEN 0 ELSE 1 END AS has_rsvp " +
+            "CASE WHEN r.status IN ('Going', 'Waitlisted') THEN 1 ELSE 0 END AS has_rsvp, " +
+            "r.status AS user_rsvp_status " +
                 "FROM Events e " +
                 "JOIN Clubs c ON c.club_id = e.club_id " +
-                "LEFT JOIN RSVPs r ON r.event_id = e.event_id AND r.user_id = ? AND r.status = 'Going' " +
-                "WHERE e.is_active = TRUE " +
+            "LEFT JOIN RSVPs r ON r.event_id = e.event_id AND r.user_id = ? " +
+            "WHERE e.is_active = TRUE AND e.date >= CURDATE() " +
                 "ORDER BY e.date ASC, e.start_time ASC";
 
         List<EventView> events = new ArrayList<>();
@@ -195,12 +232,13 @@ public class RsvpDAO {
 
     public EventView getEventById(int eventId, int userId) throws SQLException {
         String sql = "SELECT e.event_id, e.club_id, c.club_name, e.title, e.description, e.date, e.start_time, e.end_time, " +
-                "e.location, e.capacity, " +
+                "e.location, e.category, e.image_url, e.capacity, " +
                 "(SELECT COUNT(*) FROM RSVPs rc WHERE rc.event_id = e.event_id AND rc.status = 'Going') AS going_count, " +
-                "CASE WHEN r.user_id IS NULL THEN 0 ELSE 1 END AS has_rsvp " +
+                "CASE WHEN r.status IN ('Going', 'Waitlisted') THEN 1 ELSE 0 END AS has_rsvp, " +
+                "r.status AS user_rsvp_status " +
                 "FROM Events e " +
                 "JOIN Clubs c ON c.club_id = e.club_id " +
-                "LEFT JOIN RSVPs r ON r.event_id = e.event_id AND r.user_id = ? AND r.status = 'Going' " +
+                "LEFT JOIN RSVPs r ON r.event_id = e.event_id AND r.user_id = ? " +
                 "WHERE e.event_id = ? AND e.is_active = TRUE";
 
         try (Connection conn = DbUtil.getConnection();
@@ -219,7 +257,7 @@ public class RsvpDAO {
     }
 
     public boolean hasActiveRsvp(int userId, int eventId) throws SQLException {
-        String sql = "SELECT 1 FROM RSVPs WHERE user_id = ? AND event_id = ? AND status = 'Going' LIMIT 1";
+        String sql = "SELECT 1 FROM RSVPs WHERE user_id = ? AND event_id = ? AND status IN ('Going', 'Waitlisted') LIMIT 1";
 
         try (Connection conn = DbUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -231,19 +269,38 @@ public class RsvpDAO {
         }
     }
 
-    public boolean createRsvp(int userId, int eventId) throws SQLException {
-        String sql = "INSERT INTO RSVPs (user_id, event_id, status) VALUES (?, ?, 'Going')";
+    public String getRsvpStatus(int userId, int eventId) throws SQLException {
+        String sql = "SELECT status FROM RSVPs WHERE user_id = ? AND event_id = ? LIMIT 1";
 
         try (Connection conn = DbUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
             stmt.setInt(2, eventId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("status");
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public boolean upsertRsvpStatus(int userId, int eventId, String status) throws SQLException {
+        String sql = "INSERT INTO RSVPs (user_id, event_id, status, rsvp_time) VALUES (?, ?, ?, CURRENT_TIMESTAMP) " +
+                "ON DUPLICATE KEY UPDATE status = VALUES(status), rsvp_time = CURRENT_TIMESTAMP";
+
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setInt(2, eventId);
+            stmt.setString(3, status);
             return stmt.executeUpdate() > 0;
         }
     }
 
-    public boolean deleteRsvp(int userId, int eventId) throws SQLException {
-        String sql = "DELETE FROM RSVPs WHERE user_id = ? AND event_id = ?";
+    public boolean cancelRsvp(int userId, int eventId) throws SQLException {
+        String sql = "UPDATE RSVPs SET status = 'Cancelled' WHERE user_id = ? AND event_id = ? AND status IN ('Going', 'Waitlisted')";
 
         try (Connection conn = DbUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -255,13 +312,14 @@ public class RsvpDAO {
 
     public List<EventView> getMyUpcomingRsvps(int userId) throws SQLException {
         String sql = "SELECT e.event_id, e.club_id, c.club_name, e.title, e.description, e.date, e.start_time, e.end_time, " +
-                "e.location, e.capacity, " +
+                "e.location, e.category, e.image_url, e.capacity, " +
                 "(SELECT COUNT(*) FROM RSVPs rc WHERE rc.event_id = e.event_id AND rc.status = 'Going') AS going_count, " +
-                "1 AS has_rsvp " +
+                "1 AS has_rsvp, " +
+                "r.status AS user_rsvp_status " +
                 "FROM RSVPs r " +
                 "JOIN Events e ON e.event_id = r.event_id " +
                 "JOIN Clubs c ON c.club_id = e.club_id " +
-                "WHERE r.user_id = ? AND r.status = 'Going' AND e.is_active = TRUE AND e.date >= CURDATE() " +
+                "WHERE r.user_id = ? AND r.status IN ('Going', 'Waitlisted') AND e.is_active = TRUE AND e.date >= CURDATE() " +
                 "ORDER BY e.date ASC, e.start_time ASC";
 
         List<EventView> events = new ArrayList<>();
@@ -298,10 +356,10 @@ public class RsvpDAO {
     }
 
     public List<AttendeeView> getAttendeesForEvent(int eventId) throws SQLException {
-        String sql = "SELECT u.user_id, u.full_name, u.email, r.rsvp_time " +
+        String sql = "SELECT u.user_id, u.full_name, u.email, r.status, r.rsvp_time " +
                 "FROM RSVPs r " +
                 "JOIN Users u ON u.user_id = r.user_id " +
-                "WHERE r.event_id = ? AND r.status = 'Going' " +
+            "WHERE r.event_id = ? " +
                 "ORDER BY r.rsvp_time ASC";
 
         List<AttendeeView> attendees = new ArrayList<>();
@@ -316,6 +374,7 @@ public class RsvpDAO {
                     attendee.setUserId(rs.getInt("user_id"));
                     attendee.setFullName(rs.getString("full_name"));
                     attendee.setEmail(rs.getString("email"));
+                    attendee.setStatus(rs.getString("status"));
                     attendee.setRsvpTime(rs.getTimestamp("rsvp_time"));
                     attendees.add(attendee);
                 }
@@ -323,6 +382,20 @@ public class RsvpDAO {
         }
 
         return attendees;
+    }
+
+    public boolean promoteFirstWaitlisted(int eventId) throws SQLException {
+        String sql = "UPDATE RSVPs target " +
+                "JOIN (SELECT user_id FROM RSVPs WHERE event_id = ? AND status = 'Waitlisted' ORDER BY rsvp_time ASC LIMIT 1) candidate " +
+                "ON target.user_id = candidate.user_id AND target.event_id = ? " +
+                "SET target.status = 'Going', target.rsvp_time = CURRENT_TIMESTAMP";
+
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, eventId);
+            stmt.setInt(2, eventId);
+            return stmt.executeUpdate() > 0;
+        }
     }
 
     private EventView mapEventRow(ResultSet rs) throws SQLException {
@@ -336,6 +409,8 @@ public class RsvpDAO {
         event.setStartTime(rs.getTime("start_time"));
         event.setEndTime(rs.getTime("end_time"));
         event.setLocation(rs.getString("location"));
+        event.setCategory(rs.getString("category"));
+        event.setImageUrl(rs.getString("image_url"));
 
         int capacity = rs.getInt("capacity");
         if (rs.wasNull()) {
@@ -346,6 +421,7 @@ public class RsvpDAO {
 
         event.setGoingCount(rs.getInt("going_count"));
         event.setUserRsvped(rs.getInt("has_rsvp") == 1);
+        event.setUserRsvpStatus(rs.getString("user_rsvp_status"));
         return event;
     }
 }
