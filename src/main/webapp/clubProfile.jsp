@@ -15,7 +15,12 @@
         return;
     }
     Boolean canEdit = (Boolean) request.getAttribute("canEdit");
-
+	Boolean canFollowClubs = (Boolean) request.getAttribute("canFollowClubs");
+	Boolean isFollowing = (Boolean) request.getAttribute("isFollowing");
+	
+	if (canFollowClubs == null) canFollowClubs = false;
+	if (isFollowing == null) isFollowing = false;
+    
     Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
     Boolean isClubOfficer = (Boolean) session.getAttribute("isClubOfficer");
     if (isAdmin == null) isAdmin = false;
@@ -31,6 +36,11 @@
     if (club.getCreatedAt() != null) {
         createdFormatted = DateTimeFormatter.ofPattern("MMMM d, yyyy")
                 .format(club.getCreatedAt().toLocalDateTime());
+    }
+    Object followerCountObj = request.getAttribute("clubFollowerCount");
+    int followerCount = 0;
+    if (followerCountObj instanceof Number) {
+        followerCount = ((Number) followerCountObj).intValue();
     }
 %>
 <!DOCTYPE html>
@@ -56,11 +66,31 @@
                     Established <%= HtmlEscape.escape(createdFormatted) %>
                 </p>
                 <% } %>
+                <p class="dashboard-page-subtitle club-profile-dashboard-meta club-profile-follower-count"
+                   id="club-follower-count"
+                   aria-live="polite">
+                    <%= followerCount == 1 ? "1 follower" : followerCount + " followers" %>
+                </p>
             </section>
 
-            <% if (Boolean.TRUE.equals(canEdit)) { %>
+			<% if (Boolean.TRUE.equals(canEdit) || Boolean.TRUE.equals(canFollowClubs)) { %>
             <div class="club-profile-actions club-profile-actions--shell">
-                <a href="<%= ctx %>/editClub?clubId=<%= club.getClubId() %>" class="club-profile-edit-btn">Edit club</a>
+                <div class="club-profile-actions-row">
+                    <% if (Boolean.TRUE.equals(canEdit)) { %>
+                    <a href="<%= ctx %>/editClub?clubId=<%= club.getClubId() %>" class="club-profile-edit-btn">Edit club</a>
+                    <% } %>
+                    <% if (Boolean.TRUE.equals(canFollowClubs)) { %>
+                    <form class="club-profile-follow-form" action="<%= ctx %>/clubFollow" method="post" data-live-follow="true">
+                        <input type="hidden" name="clubId" value="<%= club.getClubId() %>">
+                        <input type="hidden" name="action" value="<%= Boolean.TRUE.equals(isFollowing) ? "unfollow" : "follow" %>">
+                        <% if (Boolean.TRUE.equals(isFollowing)) { %>
+                        <button type="submit" class="secondary-btn club-profile-follow-btn">Unfollow</button>
+                        <% } else { %>
+                        <button type="submit" class="primary-btn club-profile-follow-btn">Follow</button>
+                        <% } %>
+                    </form>
+                    <% } %>
+                </div>
             </div>
             <% } %>
 
@@ -96,4 +126,48 @@
                     </li>
                 </ul>
             </section>
+ <% if (Boolean.TRUE.equals(canFollowClubs)) { %>
+            <script>
+            (function () {
+                var form = document.querySelector('form.club-profile-follow-form[data-live-follow="true"]');
+                if (!form) return;
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    var fd = new FormData(form);
+                    fd.set('format', 'json');
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: fd,
+                        credentials: 'same-origin',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    }).then(function (res) {
+                        if (!res.ok) throw new Error('request failed');
+                        return res.json();
+                    }).then(function (data) {
+                        var el = document.getElementById('club-follower-count');
+                        if (el && typeof data.followerCount === 'number') {
+                            el.textContent = data.followerCount === 1
+                                ? '1 follower'
+                                : data.followerCount + ' followers';
+                        }
+                        var actionInput = form.querySelector('input[name="action"]');
+                        var btn = form.querySelector('button[type="submit"]');
+                        if (actionInput && btn && typeof data.isFollowing === 'boolean') {
+                            if (data.isFollowing) {
+                                actionInput.value = 'unfollow';
+                                btn.textContent = 'Unfollow';
+                                btn.className = 'secondary-btn club-profile-follow-btn';
+                            } else {
+                                actionInput.value = 'follow';
+                                btn.textContent = 'Follow';
+                                btn.className = 'primary-btn club-profile-follow-btn';
+                            }
+                        }
+                    }).catch(function () {
+                        form.submit();
+                    });
+                });
+            })();
+            </script>
+            <% } %>
 <%@ include file="/WEB-INF/jspf/dashboardShellEnd.jspf" %>

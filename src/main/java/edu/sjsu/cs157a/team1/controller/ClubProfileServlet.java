@@ -1,6 +1,7 @@
 package edu.sjsu.cs157a.team1.controller;
 
 import edu.sjsu.cs157a.team1.dao.ClubDAO;
+import edu.sjsu.cs157a.team1.dao.FollowDAO;
 import edu.sjsu.cs157a.team1.model.Club;
 
 import javax.servlet.ServletException;
@@ -45,7 +46,20 @@ public class ClubProfileServlet extends HttpServlet {
 
         Integer userId = (Integer) session.getAttribute("userId");
         boolean canEdit = userId != null && clubDAO.isOfficer(clubId, userId);
-
+        
+        boolean isAdmin = Boolean.TRUE.equals(session.getAttribute("isAdmin"));
+        boolean canFollowClubs = !isAdmin;
+        request.setAttribute("canFollowClubs", canFollowClubs);
+        
+        FollowDAO followDAO = new FollowDAO();
+        request.setAttribute("clubFollowerCount", followDAO.countFollowersForClub(clubId));
+        if (canFollowClubs && userId != null) {
+        	request.setAttribute("isFollowing", followDAO.isFollowing(userId, clubId));
+        }
+        else {
+        	request.setAttribute("isFollowing", false);
+        }
+        
         request.setAttribute("club", club);
         request.setAttribute("canEdit", canEdit);
         request.getRequestDispatcher("/clubProfile.jsp").forward(request, response);

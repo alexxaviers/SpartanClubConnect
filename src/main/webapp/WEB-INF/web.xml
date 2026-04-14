@@ -68,7 +68,27 @@
         <servlet-name>ClubProfileServlet</servlet-name>
         <url-pattern>/club</url-pattern>
     </servlet-mapping>
-
+    
+    <servlet>
+    	<servlet-name>ClubFollowServlet</servlet-name>
+    	<servlet-class>edu.sjsu.cs157a.team1.controller.ClubFollowServlet</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+    	<servlet-name>ClubFollowServlet</servlet-name>
+    	<url-pattern>/clubFollow</url-pattern>
+    </servlet-mapping>
+	
+	    <servlet>
+    	<servlet-name>FollowedClubsServlet</servlet-name>
+    	<servlet-class>edu.sjsu.cs157a.team1.controller.FollowedClubsServlet</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+    	<servlet-name>FollowedClubsServlet</servlet-name>
+    	<url-pattern>/followedClubs</url-pattern>
+    </servlet-mapping>
+	
     <servlet>
         <servlet-name>CreateClubServlet</servlet-name>
         <servlet-class>edu.sjsu.cs157a.team1.controller.CreateClubServlet</servlet-class>
