@@ -1,6 +1,7 @@
 package edu.sjsu.cs157a.team1.controller;
 
 import edu.sjsu.cs157a.team1.dao.EventDAO;
+import edu.sjsu.cs157a.team1.util.CsrfUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -53,6 +54,11 @@ public class OfficerEventsServlet extends HttpServlet {
 
         Integer userId = (Integer) session.getAttribute("userId");
         EventDAO eventDAO = new EventDAO();
+
+        if (!CsrfUtil.isValid(session, req.getParameter("csrfToken"))) {
+            resp.sendRedirect("officer-events?error=" + encode("Invalid request"));
+            return;
+        }
 
         String action = req.getParameter("action");
         if (!"delete".equalsIgnoreCase(action)) {

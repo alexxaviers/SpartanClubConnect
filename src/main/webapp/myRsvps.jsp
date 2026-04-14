@@ -2,12 +2,15 @@
 <%@ page import="java.util.List" %>
 <%@ page import="edu.sjsu.cs157a.team1.dao.RsvpDAO.EventView" %>
 <%@ page import="edu.sjsu.cs157a.team1.util.HtmlEscape" %>
+<%@ page import="edu.sjsu.cs157a.team1.util.CsrfUtil" %>
 <%
     Integer userId = (Integer) session.getAttribute("userId");
     if (userId == null) {
         response.sendRedirect("login.jsp");
         return;
     }
+
+    String csrfToken = CsrfUtil.getToken(session);
 
     List<EventView> events = (List<EventView>) request.getAttribute("events");
     String success = (String) request.getAttribute("success");
@@ -66,6 +69,7 @@
                     <td><%= HtmlEscape.escape(event.getUserRsvpStatus()) %></td>
                     <td>
                         <form action="rsvp" method="post" style="margin: 0;">
+                            <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
                             <input type="hidden" name="action" value="cancel">
                             <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
                             <input type="hidden" name="returnTo" value="my-rsvps">

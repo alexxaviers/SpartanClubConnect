@@ -2,12 +2,15 @@
 <%@ page import="java.util.List" %>
 <%@ page import="edu.sjsu.cs157a.team1.dao.EventDAO.ManagedEventView" %>
 <%@ page import="edu.sjsu.cs157a.team1.util.HtmlEscape" %>
+<%@ page import="edu.sjsu.cs157a.team1.util.CsrfUtil" %>
 <%
     Integer userId = (Integer) session.getAttribute("userId");
     if (userId == null) {
         response.sendRedirect("login.jsp");
         return;
     }
+
+    String csrfToken = CsrfUtil.getToken(session);
 
     List<ManagedEventView> events = (List<ManagedEventView>) request.getAttribute("events");
     String success = (String) request.getAttribute("success");
@@ -67,6 +70,7 @@
                 <a href="officer-event?eventId=<%= event.getEventId() %>">Edit</a>
                 |
                 <form action="officer-events" method="post" style="display: inline; margin: 0;">
+                    <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
                     <input type="hidden" name="action" value="delete">
                     <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
                     <button type="submit" onclick="return confirm('Delete this event?');">Delete</button>

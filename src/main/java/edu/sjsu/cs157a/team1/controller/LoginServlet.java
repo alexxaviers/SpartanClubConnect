@@ -2,6 +2,7 @@ package edu.sjsu.cs157a.team1.controller;
 
 import edu.sjsu.cs157a.team1.dao.UserDAO;
 import edu.sjsu.cs157a.team1.model.User;
+import edu.sjsu.cs157a.team1.util.CsrfUtil;
 import edu.sjsu.cs157a.team1.util.PasswordUtil;
 
 import javax.servlet.ServletException;
@@ -73,6 +74,7 @@ public class LoginServlet extends HttpServlet {
         session.setAttribute("isAdmin", isAdmin);
         session.setAttribute("isClubOfficer", isClubOfficer);
         session.setMaxInactiveInterval(15 * 60);
+        CsrfUtil.getToken(session);
 
         response.sendRedirect("dashboard.jsp");
     }

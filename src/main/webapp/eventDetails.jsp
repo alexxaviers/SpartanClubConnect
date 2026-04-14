@@ -3,6 +3,7 @@
 <%@ page import="edu.sjsu.cs157a.team1.dao.RsvpDAO.EventView" %>
 <%@ page import="edu.sjsu.cs157a.team1.dao.RsvpDAO.AttendeeView" %>
 <%@ page import="edu.sjsu.cs157a.team1.util.HtmlEscape" %>
+<%@ page import="edu.sjsu.cs157a.team1.util.CsrfUtil" %>
 <%
     Integer userId = (Integer) session.getAttribute("userId");
     if (userId == null) {
@@ -10,6 +11,7 @@
         return;
     }
 
+    String csrfToken = CsrfUtil.getToken(session);
     EventView event = (EventView) request.getAttribute("event");
     Boolean canViewAttendees = (Boolean) request.getAttribute("canViewAttendees");
     List<AttendeeView> attendees = (List<AttendeeView>) request.getAttribute("attendees");
@@ -67,12 +69,13 @@
                 <%= event.getCapacity() == null ? "No Limit" : event.getCapacity() %>
                 <%= event.isFull() ? " (Full)" : "" %>
             </p>
-            <p><strong>Your RSVP Status:</strong> <%= event.getUserRsvpStatus() == null ? "Not RSVPed" : event.getUserRsvpStatus() %></p>
+            <p><strong>Your RSVP Status:</strong> <%= event.getUserRsvpStatus() == null ? "Not RSVPed" : HtmlEscape.escape(event.getUserRsvpStatus()) %></p>
         </section>
 
         <section style="margin-bottom: 28px;">
             <% if ("Going".equals(event.getUserRsvpStatus()) || "Waitlisted".equals(event.getUserRsvpStatus())) { %>
                 <form action="rsvp" method="post">
+                    <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
                     <input type="hidden" name="action" value="cancel">
                     <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
                     <input type="hidden" name="returnTo" value="event-details">
@@ -80,6 +83,7 @@
                 </form>
             <% } else { %>
                 <form action="rsvp" method="post">
+                    <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
                     <input type="hidden" name="action" value="register">
                     <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
                     <input type="hidden" name="returnTo" value="event-details">
@@ -93,6 +97,7 @@
                 <a href="officer-event?eventId=<%= event.getEventId() %>">Edit Event</a>
                 |
                 <form action="officer-events" method="post" style="display: inline; margin: 0;">
+                    <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
                     <input type="hidden" name="action" value="delete">
                     <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
                     <button type="submit" onclick="return confirm('Delete this event?');">Delete Event</button>

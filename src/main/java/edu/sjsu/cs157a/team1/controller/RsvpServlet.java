@@ -1,6 +1,7 @@
 package edu.sjsu.cs157a.team1.controller;
 
 import edu.sjsu.cs157a.team1.dao.RsvpDAO;
+import edu.sjsu.cs157a.team1.util.CsrfUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -25,6 +26,11 @@ public class RsvpServlet extends HttpServlet {
         Integer userId = (Integer) session.getAttribute("userId");
         String action = req.getParameter("action");
         String returnTo = req.getParameter("returnTo");
+
+        if (!CsrfUtil.isValid(session, req.getParameter("csrfToken"))) {
+            resp.sendRedirect("events?error=Invalid+request");
+            return;
+        }
 
         int eventId;
         try {

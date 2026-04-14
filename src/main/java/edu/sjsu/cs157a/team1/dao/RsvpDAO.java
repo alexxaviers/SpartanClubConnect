@@ -209,7 +209,7 @@ public class RsvpDAO {
             "e.location, e.category, e.image_url, e.capacity, " +
             "COALESCE(rc.going_count, 0) AS going_count, " +
             "CASE WHEN r.status IN ('Going', 'Waitlisted') THEN 1 ELSE 0 END AS has_rsvp, " +
-            "r.status AS user_rsvp_status " +
+            "CASE WHEN r.status IN ('Going', 'Waitlisted') THEN r.status ELSE NULL END AS user_rsvp_status " +
                 "FROM Events e " +
                 "JOIN Clubs c ON c.club_id = e.club_id " +
             "LEFT JOIN RSVPs r ON r.event_id = e.event_id AND r.user_id = ? " +
@@ -236,7 +236,7 @@ public class RsvpDAO {
                 "e.location, e.category, e.image_url, e.capacity, " +
                 "COALESCE(rc.going_count, 0) AS going_count, " +
                 "CASE WHEN r.status IN ('Going', 'Waitlisted') THEN 1 ELSE 0 END AS has_rsvp, " +
-                "r.status AS user_rsvp_status " +
+                "CASE WHEN r.status IN ('Going', 'Waitlisted') THEN r.status ELSE NULL END AS user_rsvp_status " +
                 "FROM Events e " +
                 "JOIN Clubs c ON c.club_id = e.club_id " +
                 "LEFT JOIN RSVPs r ON r.event_id = e.event_id AND r.user_id = ? " +
@@ -362,7 +362,7 @@ public class RsvpDAO {
         String sql = "SELECT u.user_id, u.full_name, u.email, r.status, r.rsvp_time " +
                 "FROM RSVPs r " +
                 "JOIN Users u ON u.user_id = r.user_id " +
-            "WHERE r.event_id = ? " +
+            "WHERE r.event_id = ? AND r.status IN ('Going', 'Waitlisted') " +
                 "ORDER BY r.rsvp_time ASC";
 
         List<AttendeeView> attendees = new ArrayList<>();
