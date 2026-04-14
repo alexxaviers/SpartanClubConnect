@@ -96,7 +96,7 @@ public class EventEditorServlet extends HttpServlet {
 
             if (title.isEmpty() || description.isEmpty() || dateParam.isEmpty() ||
                     startTimeParam.isEmpty() || endTimeParam.isEmpty() || location.isEmpty()) {
-                redirectToForm(resp, eventIdParam, "Please fill all required fields");
+                forwardToForm(req, resp, eventDAO, userId, eventIdParam, "Please fill all required fields");
                 return;
             }
 
@@ -107,7 +107,7 @@ public class EventEditorServlet extends HttpServlet {
 
             String lengthError = validateFieldLengths(title, location, category, imageUrl);
             if (lengthError != null) {
-                redirectToForm(resp, eventIdParam, lengthError);
+                forwardToForm(req, resp, eventDAO, userId, eventIdParam, lengthError);
                 return;
             }
 
@@ -116,7 +116,7 @@ public class EventEditorServlet extends HttpServlet {
             Time endTime = Time.valueOf(endTimeParam + ":00");
 
             if (!endTime.after(startTime)) {
-                redirectToForm(resp, eventIdParam, "End time must be after start time");
+                forwardToForm(req, resp, eventDAO, userId, eventIdParam, "End time must be after start time");
                 return;
             }
 
@@ -124,27 +124,27 @@ public class EventEditorServlet extends HttpServlet {
             if (!capacityParam.isEmpty()) {
                 capacity = Integer.parseInt(capacityParam);
                 if (capacity <= 0) {
-                    redirectToForm(resp, eventIdParam, "Capacity must be a positive number");
+                    forwardToForm(req, resp, eventDAO, userId, eventIdParam, "Capacity must be a positive number");
                     return;
                 }
             }
 
             if (eventIdParam.isEmpty()) {
                 if (clubIdParam.isEmpty()) {
-                    redirectToForm(resp, "", "Club is required for new events");
+                    forwardToForm(req, resp, eventDAO, userId, "", "Club is required for new events");
                     return;
                 }
 
                 int clubId = Integer.parseInt(clubIdParam);
                 if (!eventDAO.canManageClub(userId, clubId)) {
-                    redirectToForm(resp, "", "You can only create events for clubs you manage");
+                    forwardToForm(req, resp, eventDAO, userId, "", "You can only create events for clubs you manage");
                     return;
                 }
 
                 boolean created = eventDAO.createEvent(userId, clubId, title, description, eventDate,
                         startTime, endTime, location, capacity, emptyToNull(category), emptyToNull(imageUrl));
                 if (!created) {
-                    redirectToForm(resp, "", "Unable to create event");
+                    forwardToForm(req, resp, eventDAO, userId, "", "Unable to create event");
                     return;
                 }
 
@@ -156,25 +156,36 @@ public class EventEditorServlet extends HttpServlet {
             boolean updated = eventDAO.updateEvent(userId, eventId, title, description, eventDate,
                     startTime, endTime, location, capacity, emptyToNull(category), emptyToNull(imageUrl));
             if (!updated) {
-                redirectToForm(resp, eventIdParam, "Unable to update event");
+                forwardToForm(req, resp, eventDAO, userId, eventIdParam, "Unable to update event");
                 return;
             }
 
             resp.sendRedirect("officer-events?success=" + encode("Event updated"));
         } catch (IllegalArgumentException e) {
-            redirectToForm(resp, eventIdParam, "Invalid date/time format");
+            forwardToForm(req, resp, eventDAO, userId, eventIdParam, "Invalid date/time format");
         } catch (Exception e) {
-            redirectToForm(resp, eventIdParam, "Unable to save event right now");
+            forwardToForm(req, resp, eventDAO, userId, eventIdParam, "Unable to save event right now");
         }
     }
 
-    private void redirectToForm(HttpServletResponse resp, String eventId, String error) throws IOException {
-        StringBuilder redirect = new StringBuilder("officer-event?error=").append(encode(error));
-        String normalizedEventId = normalizeEventId(eventId);
-        if (normalizedEventId != null) {
-            redirect.append("&eventId=").append(encode(normalizedEventId));
+    private void forwardToForm(HttpServletRequest req, HttpServletResponse resp, EventDAO eventDAO, int userId, String eventId, String error)
+            throws IOException, ServletException {
+        try {
+            req.setAttribute("error", error);
+            req.setAttribute("clubs", eventDAO.getManagedClubs(userId));
+
+            String normalizedEventId = normalizeEventId(eventId);
+            if (normalizedEventId != null) {
+                EventDAO.ManagedEventView event = eventDAO.getManagedEventById(userId, Integer.parseInt(normalizedEventId));
+                if (event != null) {
+                    req.setAttribute("event", event);
+                }
+            }
+
+            req.getRequestDispatcher("eventForm.jsp").forward(req, resp);
+        } catch (Exception ex) {
+            resp.sendRedirect("officer-events?error=" + encode(error));
         }
-        resp.sendRedirect(redirect.toString());
     }
 
     private String normalizeEventId(String eventId) {

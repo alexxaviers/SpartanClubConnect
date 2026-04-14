@@ -334,7 +334,7 @@ public class RsvpDAO {
     }
 
     public RegisterResult registerUserAtomically(int userId, int eventId) throws SQLException {
-        String lockEventSql = "SELECT date, capacity, is_active FROM Events WHERE event_id = ? FOR UPDATE";
+        String lockEventSql = "SELECT date, end_time, capacity, is_active FROM Events WHERE event_id = ? FOR UPDATE";
         String userStatusSql = "SELECT status FROM RSVPs WHERE user_id = ? AND event_id = ? LIMIT 1 FOR UPDATE";
         String goingCountSql = "SELECT COUNT(*) AS going_count FROM RSVPs WHERE event_id = ? AND status = 'Going'";
         String upsertSql = "INSERT INTO RSVPs (user_id, event_id, status, rsvp_time) VALUES (?, ?, ?, CURRENT_TIMESTAMP) " +
@@ -346,6 +346,7 @@ public class RsvpDAO {
 
             try {
                 Date eventDate;
+                Time eventEndTime;
                 Integer capacity;
 
                 try (PreparedStatement lockStmt = conn.prepareStatement(lockEventSql)) {
@@ -364,15 +365,23 @@ public class RsvpDAO {
                         }
 
                         eventDate = rs.getDate("date");
+                        eventEndTime = rs.getTime("end_time");
                         int capacityValue = rs.getInt("capacity");
                         capacity = rs.wasNull() ? null : capacityValue;
                     }
                 }
 
-                if (eventDate != null && eventDate.toLocalDate().isBefore(java.time.LocalDate.now())) {
-                    conn.rollback();
-                    conn.setAutoCommit(originalAutoCommit);
-                    return RegisterResult.failed("Cannot RSVP to a past event");
+                if (eventDate != null) {
+                    java.time.LocalDate today = java.time.LocalDate.now();
+                    java.time.LocalDate eventLocalDate = eventDate.toLocalDate();
+                    java.time.LocalTime now = java.time.LocalTime.now();
+                    boolean eventEnded = eventEndTime != null && !now.isBefore(eventEndTime.toLocalTime());
+
+                    if (eventLocalDate.isBefore(today) || (eventLocalDate.isEqual(today) && eventEnded)) {
+                        conn.rollback();
+                        conn.setAutoCommit(originalAutoCommit);
+                        return RegisterResult.failed("Cannot RSVP to a past event");
+                    }
                 }
 
                 try (PreparedStatement userStatusStmt = conn.prepareStatement(userStatusSql)) {

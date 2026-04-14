@@ -171,13 +171,13 @@ INSERT INTO Events (title, description, date, start_time, end_time, location, ca
 INSERT INTO RSVPs (user_id, event_id, status) VALUES
     (11, 1, 'Going'),
     (12, 2, 'Going'),
-    (13, 3, 'Interested'),
+    (13, 3, 'Going'),
     (14, 4, 'Going'),
     (15, 5, 'Going'),
-    (16, 6, 'Interested'),
+    (16, 6, 'Going'),
     (17, 7, 'Going'),
     (18, 8, 'Going'),
-    (19, 9, 'Interested'),
+    (19, 9, 'Going'),
     (20, 10, 'Going');
 
 -- BOOKMARKS (10 rows)

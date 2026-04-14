@@ -6,10 +6,16 @@
 <%
     String ctx = request.getContextPath();
     Integer userId = (Integer) session.getAttribute("userId");
+    Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
+    Boolean isClubOfficer = (Boolean) session.getAttribute("isClubOfficer");
+    if (isAdmin == null) isAdmin = false;
+    if (isClubOfficer == null) isClubOfficer = false;
     if (userId == null) {
         response.sendRedirect(ctx + "/login.jsp");
         return;
     }
+
+    request.setAttribute("activeNav", "");
 
     String csrfToken = CsrfUtil.getToken(session);
 
@@ -24,64 +30,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My RSVPs - SpartanClubConnect</title>
     <link rel="stylesheet" href="<%= ctx %>/css/global.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/landing.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/dashboard.css">
 </head>
-<body>
-<main style="max-width: 960px; margin: 24px auto; padding: 0 16px;">
-    <h1>My Upcoming RSVPs</h1>
+<%@ include file="/WEB-INF/jspf/dashboardShellStart.jspf" %>
+            <section class="dashboard-page-header">
+                <h1 class="dashboard-page-title">My Upcoming RSVPs</h1>
+                <p class="dashboard-page-subtitle">
+                    Review the events you’re attending or waitlisted for.
+                </p>
+            </section>
 
-    <p>
-        <a href="<%= ctx %>/events">All Events</a> |
-        <a href="<%= ctx %>/dashboard.jsp">Home</a>
-    </p>
+            <section class="dashboard-form-card">
+                <p>
+                    <a href="<%= ctx %>/events">All Events</a> |
+                    <a href="<%= ctx %>/dashboard.jsp">Home</a>
+                </p>
 
-    <% if (success != null && !success.isEmpty()) { %>
-        <p style="color: #0f7b0f;"><strong><%= HtmlEscape.escape(success) %></strong></p>
-    <% } %>
+                <% if (success != null && !success.isEmpty()) { %>
+                    <p style="color: #0f7b0f;"><strong><%= HtmlEscape.escape(success) %></strong></p>
+                <% } %>
 
-    <% if (error != null && !error.isEmpty()) { %>
-        <p style="color: #b00020;"><strong><%= HtmlEscape.escape(error) %></strong></p>
-    <% } %>
+                <% if (error != null && !error.isEmpty()) { %>
+                    <p style="color: #b00020;"><strong><%= HtmlEscape.escape(error) %></strong></p>
+                <% } %>
 
-    <% if (events == null || events.isEmpty()) { %>
-        <p>You have no upcoming RSVPs.</p>
-    <% } else { %>
-        <table border="1" cellpadding="8" cellspacing="0" width="100%">
-            <thead>
-            <tr>
-                <th>Event</th>
-                <th>Club</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Location</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <% for (EventView event : events) { %>
-                <tr>
-                    <td>
-                        <a href="<%= ctx %>/event-details?eventId=<%= event.getEventId() %>"><%= HtmlEscape.escape(event.getTitle()) %></a>
-                    </td>
-                    <td><%= HtmlEscape.escape(event.getClubName()) %></td>
-                    <td><%= event.getDate() %></td>
-                    <td><%= event.getStartTime() %> - <%= event.getEndTime() %></td>
-                    <td><%= HtmlEscape.escape(event.getLocation()) %></td>
-                    <td><%= HtmlEscape.escape(event.getUserRsvpStatus()) %></td>
-                    <td>
-                        <form action="<%= ctx %>/rsvp" method="post" style="margin: 0;">
-                            <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
-                            <input type="hidden" name="action" value="cancel">
-                            <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
-                            <input type="hidden" name="returnTo" value="my-rsvps">
-                            <button type="submit">Cancel RSVP</button>
-                        </form>
-                    </td>
-                </tr>
-            <% } %>
-            </tbody>
-        </table>
-    <% } %>
-</main>
-</body>
-</html>
+                <% if (events == null || events.isEmpty()) { %>
+                    <p class="empty-hint">You have no upcoming RSVPs.</p>
+                <% } else { %>
+                    <table border="1" cellpadding="8" cellspacing="0" width="100%">
+                        <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Club</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <% for (EventView event : events) { %>
+                            <tr>
+                                <td>
+                                    <a href="<%= ctx %>/event-details?eventId=<%= event.getEventId() %>"><%= HtmlEscape.escape(event.getTitle()) %></a>
+                                </td>
+                                <td><%= HtmlEscape.escape(event.getClubName()) %></td>
+                                <td><%= event.getDate() %></td>
+                                <td><%= event.getStartTime() %> - <%= event.getEndTime() %></td>
+                                <td><%= HtmlEscape.escape(event.getLocation()) %></td>
+                                <td><%= HtmlEscape.escape(event.getUserRsvpStatus()) %></td>
+                                <td>
+                                    <form action="<%= ctx %>/rsvp" method="post" style="margin: 0;">
+                                        <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
+                                        <input type="hidden" name="action" value="cancel">
+                                        <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
+                                        <input type="hidden" name="returnTo" value="my-rsvps">
+                                        <button type="submit">Cancel RSVP</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <% } %>
+                        </tbody>
+                    </table>
+                <% } %>
+            </section>
+<%@ include file="/WEB-INF/jspf/dashboardShellEnd.jspf" %>

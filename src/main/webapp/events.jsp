@@ -5,11 +5,16 @@
 <%
     String ctx = request.getContextPath();
     Integer userId = (Integer) session.getAttribute("userId");
-    Boolean isClubOfficer = Boolean.TRUE.equals(session.getAttribute("isClubOfficer"));
+    Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
+    Boolean isClubOfficer = (Boolean) session.getAttribute("isClubOfficer");
+    if (isAdmin == null) isAdmin = false;
+    if (isClubOfficer == null) isClubOfficer = false;
     if (userId == null) {
         response.sendRedirect(ctx + "/login.jsp");
         return;
     }
+
+    request.setAttribute("activeNav", "");
 
     List<EventView> events = (List<EventView>) request.getAttribute("events");
     if (events == null) {
@@ -26,68 +31,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Events - SpartanClubConnect</title>
     <link rel="stylesheet" href="<%= ctx %>/css/global.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/landing.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/dashboard.css">
 </head>
-<body>
-<main style="max-width: 960px; margin: 24px auto; padding: 0 16px;">
-    <h1>Upcoming Events</h1>
+<%@ include file="/WEB-INF/jspf/dashboardShellStart.jspf" %>
+            <section class="dashboard-page-header">
+                <h1 class="dashboard-page-title">Upcoming Events</h1>
+                <p class="dashboard-page-subtitle">
+                    Browse events across campus or jump into your RSVPs.
+                </p>
+            </section>
 
-    <p>
-        <a href="<%= ctx %>/dashboard.jsp">Home</a> |
-        <a href="<%= ctx %>/my-rsvps">My RSVPs</a> |
-        <a href="<%= ctx %>/events?feed=all">Browse All Events</a> |
-        <a href="#" onclick="return false;" title="Placeholder for teammate implementation">Browse Personalized Events (Coming Soon)</a>
-        <% if (isClubOfficer) { %>
-            | <a href="<%= ctx %>/officer-events">Manage My Club Events</a>
-        <% } %>
-    </p>
+            <section class="dashboard-form-card">
+                <p>
+                    <a href="<%= ctx %>/dashboard.jsp">Home</a> |
+                    <a href="<%= ctx %>/my-rsvps">My RSVPs</a> |
+                    <a href="<%= ctx %>/events?feed=all">Browse All Events</a> |
+                    <a href="#" onclick="return false;" title="Placeholder for teammate implementation">Browse Personalized Events (Coming Soon)</a>
+                    <% if (isClubOfficer) { %>
+                        | <a href="<%= ctx %>/officer-events">Manage My Club Events</a>
+                    <% } %>
+                </p>
 
-    <% if (success != null && !success.isEmpty()) { %>
-        <p style="color: #0f7b0f;"><strong><%= HtmlEscape.escape(success) %></strong></p>
-    <% } %>
+                <% if (success != null && !success.isEmpty()) { %>
+                    <p style="color: #0f7b0f;"><strong><%= HtmlEscape.escape(success) %></strong></p>
+                <% } %>
 
-    <% if (error != null && !error.isEmpty()) { %>
-        <p style="color: #b00020;"><strong><%= HtmlEscape.escape(error) %></strong></p>
-    <% } %>
+                <% if (error != null && !error.isEmpty()) { %>
+                    <p style="color: #b00020;"><strong><%= HtmlEscape.escape(error) %></strong></p>
+                <% } %>
 
-    <% if (events.isEmpty()) { %>
-        <p>No events available right now.</p>
-    <% } else { %>
-        <table border="1" cellpadding="8" cellspacing="0" width="100%">
-            <thead>
-            <tr>
-                <th>Title</th>
-                <th>Club</th>
-                <th>Category</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Location</th>
-                <th>Availability</th>
-                <th>Your RSVP</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <% for (EventView event : events) { %>
-                <tr>
-                    <td><%= HtmlEscape.escape(event.getTitle()) %></td>
-                    <td><%= HtmlEscape.escape(event.getClubName()) %></td>
-                    <td><%= event.getCategory() == null ? "-" : HtmlEscape.escape(event.getCategory()) %></td>
-                    <td><%= event.getDate() %></td>
-                    <td><%= event.getStartTime() %> - <%= event.getEndTime() %></td>
-                    <td><%= HtmlEscape.escape(event.getLocation()) %></td>
-                    <td>
-                        <%= event.getGoingCount() %>
-                        /
-                        <%= event.getCapacity() == null ? "No Limit" : event.getCapacity() %>
-                        <%= event.isFull() ? " (Full)" : "" %>
-                    </td>
-                    <td><%= event.getUserRsvpStatus() == null ? "Not RSVPed" : HtmlEscape.escape(event.getUserRsvpStatus()) %></td>
-                    <td><a href="<%= ctx %>/event-details?eventId=<%= event.getEventId() %>">View Details</a></td>
-                </tr>
-            <% } %>
-            </tbody>
-        </table>
-    <% } %>
-</main>
-</body>
-</html>
+                <% if (events.isEmpty()) { %>
+                    <p class="empty-hint">No events available right now.</p>
+                <% } else { %>
+                    <table border="1" cellpadding="8" cellspacing="0" width="100%">
+                        <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Club</th>
+                            <th>Category</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Location</th>
+                            <th>Availability</th>
+                            <th>Your RSVP</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <% for (EventView event : events) { %>
+                            <tr>
+                                <td><%= HtmlEscape.escape(event.getTitle()) %></td>
+                                <td><%= HtmlEscape.escape(event.getClubName()) %></td>
+                                <td><%= event.getCategory() == null ? "-" : HtmlEscape.escape(event.getCategory()) %></td>
+                                <td><%= event.getDate() %></td>
+                                <td><%= event.getStartTime() %> - <%= event.getEndTime() %></td>
+                                <td><%= HtmlEscape.escape(event.getLocation()) %></td>
+                                <td>
+                                    <%= event.getGoingCount() %>
+                                    /
+                                    <%= event.getCapacity() == null ? "No Limit" : event.getCapacity() %>
+                                    <%= event.isFull() ? " (Full)" : "" %>
+                                </td>
+                                <td><%= event.getUserRsvpStatus() == null ? "Not RSVPed" : HtmlEscape.escape(event.getUserRsvpStatus()) %></td>
+                                <td><a href="<%= ctx %>/event-details?eventId=<%= event.getEventId() %>">View Details</a></td>
+                            </tr>
+                        <% } %>
+                        </tbody>
+                    </table>
+                <% } %>
+            </section>
+<%@ include file="/WEB-INF/jspf/dashboardShellEnd.jspf" %>
