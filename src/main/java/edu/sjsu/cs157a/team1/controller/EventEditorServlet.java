@@ -73,7 +73,7 @@ public class EventEditorServlet extends HttpServlet {
         String eventIdParam = clean(req.getParameter("eventId"));
 
         if (!CsrfUtil.isValid(session, req.getParameter("csrfToken"))) {
-            redirectToForm(resp, eventIdParam, "Invalid request");
+            forwardToForm(req, resp, eventDAO, userId, eventIdParam, "Invalid request");
             return;
         }
 
@@ -101,7 +101,7 @@ public class EventEditorServlet extends HttpServlet {
             }
 
             if (!imageUrl.isEmpty() && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
-                redirectToForm(resp, eventIdParam, "Image URL must start with http:// or https://");
+                forwardToForm(req, resp, eventDAO, userId, eventIdParam, "Image URL must start with http:// or https://");
                 return;
             }
 
