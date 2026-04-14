@@ -1,6 +1,7 @@
 package edu.sjsu.cs157a.team1.controller;
 
 import edu.sjsu.cs157a.team1.dao.EventDAO;
+import edu.sjsu.cs157a.team1.util.CsrfUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -65,6 +66,12 @@ public class EventEditorServlet extends HttpServlet {
         EventDAO eventDAO = new EventDAO();
 
         String eventIdParam = clean(req.getParameter("eventId"));
+
+        if (!CsrfUtil.isValid(session, req.getParameter("csrfToken"))) {
+            redirectToForm(resp, eventIdParam, "Invalid request");
+            return;
+        }
+
         String clubIdParam = clean(req.getParameter("clubId"));
         String title = clean(req.getParameter("title"));
         String description = clean(req.getParameter("description"));

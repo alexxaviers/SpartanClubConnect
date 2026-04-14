@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,8 +59,7 @@ public class EventDetailsServlet extends HttpServlet {
 
             req.getRequestDispatcher("eventDetails.jsp").forward(req, resp);
         } catch (Exception e) {
-            req.setAttribute("error", "Unable to load event details right now.");
-            req.getRequestDispatcher("eventDetails.jsp").forward(req, resp);
+            resp.sendRedirect("events?error=" + URLEncoder.encode("Unable to load event details right now", StandardCharsets.UTF_8));
         }
     }
 }

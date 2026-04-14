@@ -3,12 +3,15 @@
 <%@ page import="edu.sjsu.cs157a.team1.dao.EventDAO.ClubView" %>
 <%@ page import="edu.sjsu.cs157a.team1.dao.EventDAO.ManagedEventView" %>
 <%@ page import="edu.sjsu.cs157a.team1.util.HtmlEscape" %>
+<%@ page import="edu.sjsu.cs157a.team1.util.CsrfUtil" %>
 <%
     Integer userId = (Integer) session.getAttribute("userId");
     if (userId == null) {
         response.sendRedirect("login.jsp");
         return;
     }
+
+    String csrfToken = CsrfUtil.getToken(session);
 
     ManagedEventView event = (ManagedEventView) request.getAttribute("event");
     List<ClubView> clubs = (List<ClubView>) request.getAttribute("clubs");
@@ -37,6 +40,7 @@
     <% } %>
 
     <form action="officer-event" method="post" style="display: grid; gap: 12px;">
+        <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
         <% if (isEdit) { %>
         <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
         <p><strong>Club:</strong> <%= HtmlEscape.escape(event.getClubName()) %></p>
