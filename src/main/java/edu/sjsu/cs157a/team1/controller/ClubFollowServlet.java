@@ -49,6 +49,10 @@ public class ClubFollowServlet extends HttpServlet{
         else if ("follow".equalsIgnoreCase(action)) {
         	followDAO.follow(userId, clubId);
         }
+        else {
+        	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Action");
+        	return;
+        }
 		
         if ("json".equals(request.getParameter("format"))) {
             response.setContentType("application/json;charset=UTF-8");

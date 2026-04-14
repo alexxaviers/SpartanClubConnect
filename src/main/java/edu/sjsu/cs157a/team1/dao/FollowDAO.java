@@ -21,12 +21,11 @@ public class FollowDAO{
 			return stmt.executeUpdate() == 1;
 		}
 		catch (SQLException e) {
-			if(e.getErrorCode() == 1062 || "23000".equals(e.getSQLState())) {
+			if(isDuplicateFollowError(e)) {
 				return false;
 			}
-			e.printStackTrace();
+			throw new IllegalStateException("DB Error: Cannot follow clubs");
 		}
-		return false;
 	}
 	
 	public boolean unfollow(int userId, int clubId) {
@@ -120,6 +119,10 @@ public class FollowDAO{
 		if(name != null && !name.isEmpty()) {
 			parts.add(name);
 		}
+	}
+	
+	private static boolean isDuplicateFollowError(SQLException e) {
+		return e.getErrorCode() == 1062;
 	}
 	
 	private static void applyCategoryList(Club club, List<String> parts) {
