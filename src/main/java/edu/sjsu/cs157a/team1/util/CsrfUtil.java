@@ -1,6 +1,7 @@
 package edu.sjsu.cs157a.team1.util;
 
 import javax.servlet.http.HttpSession;
+import java.security.MessageDigest;
 import java.util.UUID;
 
 public final class CsrfUtil {
@@ -24,6 +25,11 @@ public final class CsrfUtil {
             return false;
         }
         String sessionToken = (String) session.getAttribute(SESSION_KEY);
-        return submittedToken.equals(sessionToken);
+        if (sessionToken == null) {
+            return false;
+        }
+        return MessageDigest.isEqual(
+                sessionToken.getBytes(java.nio.charset.StandardCharsets.UTF_8),
+                submittedToken.getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }
 }
