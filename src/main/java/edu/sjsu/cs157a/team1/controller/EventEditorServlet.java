@@ -161,6 +161,8 @@ public class EventEditorServlet extends HttpServlet {
             }
 
             resp.sendRedirect("officer-events?success=" + encode("Event updated"));
+        } catch (NumberFormatException e) {
+            forwardToForm(req, resp, eventDAO, userId, eventIdParam, "Invalid numeric value");
         } catch (IllegalArgumentException e) {
             forwardToForm(req, resp, eventDAO, userId, eventIdParam, "Invalid date/time format");
         } catch (Exception e) {
