@@ -59,7 +59,7 @@ public class EventDetailsServlet extends HttpServlet {
 
             req.getRequestDispatcher("eventDetails.jsp").forward(req, resp);
         } catch (Exception e) {
-            resp.sendRedirect("events?error=" + URLEncoder.encode("Unable to load event details right now", StandardCharsets.UTF_8));
+            resp.sendRedirect("events?error=" + URLEncoder.encode("Unable to load event details right now.", StandardCharsets.UTF_8));
         }
     }
 }
