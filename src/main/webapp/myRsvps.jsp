@@ -4,9 +4,10 @@
 <%@ page import="edu.sjsu.cs157a.team1.util.HtmlEscape" %>
 <%@ page import="edu.sjsu.cs157a.team1.util.CsrfUtil" %>
 <%
+    String ctx = request.getContextPath();
     Integer userId = (Integer) session.getAttribute("userId");
     if (userId == null) {
-        response.sendRedirect("login.jsp");
+        response.sendRedirect(ctx + "/login.jsp");
         return;
     }
 
@@ -22,15 +23,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My RSVPs - SpartanClubConnect</title>
-    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/global.css">
 </head>
 <body>
 <main style="max-width: 960px; margin: 24px auto; padding: 0 16px;">
     <h1>My Upcoming RSVPs</h1>
 
     <p>
-        <a href="events">All Events</a> |
-        <a href="dashboard.jsp">Home</a>
+        <a href="<%= ctx %>/events">All Events</a> |
+        <a href="<%= ctx %>/dashboard.jsp">Home</a>
     </p>
 
     <% if (success != null && !success.isEmpty()) { %>
@@ -60,7 +61,7 @@
             <% for (EventView event : events) { %>
                 <tr>
                     <td>
-                        <a href="event-details?eventId=<%= event.getEventId() %>"><%= HtmlEscape.escape(event.getTitle()) %></a>
+                        <a href="<%= ctx %>/event-details?eventId=<%= event.getEventId() %>"><%= HtmlEscape.escape(event.getTitle()) %></a>
                     </td>
                     <td><%= HtmlEscape.escape(event.getClubName()) %></td>
                     <td><%= event.getDate() %></td>
@@ -68,7 +69,7 @@
                     <td><%= HtmlEscape.escape(event.getLocation()) %></td>
                     <td><%= HtmlEscape.escape(event.getUserRsvpStatus()) %></td>
                     <td>
-                        <form action="rsvp" method="post" style="margin: 0;">
+                        <form action="<%= ctx %>/rsvp" method="post" style="margin: 0;">
                             <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
                             <input type="hidden" name="action" value="cancel">
                             <input type="hidden" name="eventId" value="<%= event.getEventId() %>">

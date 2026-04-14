@@ -437,6 +437,97 @@ public class RsvpDAO {
         }
     }
 
+    public boolean cancelAndPromoteAtomically(int userId, int eventId) throws SQLException {
+        String lockEventSql = "SELECT capacity FROM Events WHERE event_id = ? FOR UPDATE";
+        String getUserStatusSql = "SELECT status FROM RSVPs WHERE user_id = ? AND event_id = ? LIMIT 1 FOR UPDATE";
+        String cancelSql = "UPDATE RSVPs SET status = 'Cancelled' WHERE user_id = ? AND event_id = ? AND status IN ('Going', 'Waitlisted')";
+        String goingCountSql = "SELECT COUNT(*) AS going_count FROM RSVPs WHERE event_id = ? AND status = 'Going'";
+        String promoteSql = "UPDATE RSVPs target " +
+                "JOIN (SELECT user_id FROM RSVPs WHERE event_id = ? AND status = 'Waitlisted' ORDER BY rsvp_time ASC LIMIT 1) candidate " +
+                "ON target.user_id = candidate.user_id AND target.event_id = ? " +
+                "SET target.status = 'Going', target.rsvp_time = CURRENT_TIMESTAMP";
+
+        try (Connection conn = DbUtil.getConnection()) {
+            boolean originalAutoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+            try {
+                Integer capacity;
+                try (PreparedStatement lockStmt = conn.prepareStatement(lockEventSql)) {
+                    lockStmt.setInt(1, eventId);
+                    try (ResultSet rs = lockStmt.executeQuery()) {
+                        if (!rs.next()) {
+                            conn.rollback();
+                            conn.setAutoCommit(originalAutoCommit);
+                            return false;
+                        }
+                        int capValue = rs.getInt("capacity");
+                        capacity = rs.wasNull() ? null : capValue;
+                    }
+                }
+
+                String oldStatus;
+                try (PreparedStatement statusStmt = conn.prepareStatement(getUserStatusSql)) {
+                    statusStmt.setInt(1, userId);
+                    statusStmt.setInt(2, eventId);
+                    try (ResultSet rs = statusStmt.executeQuery()) {
+                        if (!rs.next()) {
+                            conn.rollback();
+                            conn.setAutoCommit(originalAutoCommit);
+                            return false;
+                        }
+                        oldStatus = rs.getString("status");
+                    }
+                }
+
+                if (!"Going".equals(oldStatus) && !"Waitlisted".equals(oldStatus)) {
+                    conn.rollback();
+                    conn.setAutoCommit(originalAutoCommit);
+                    return false;
+                }
+
+                int cancelledRows;
+                try (PreparedStatement cancelStmt = conn.prepareStatement(cancelSql)) {
+                    cancelStmt.setInt(1, userId);
+                    cancelStmt.setInt(2, eventId);
+                    cancelledRows = cancelStmt.executeUpdate();
+                }
+
+                if (cancelledRows == 0) {
+                    conn.rollback();
+                    conn.setAutoCommit(originalAutoCommit);
+                    return false;
+                }
+
+                if ("Going".equals(oldStatus)) {
+                    int goingCount;
+                    try (PreparedStatement countStmt = conn.prepareStatement(goingCountSql)) {
+                        countStmt.setInt(1, eventId);
+                        try (ResultSet rs = countStmt.executeQuery()) {
+                            rs.next();
+                            goingCount = rs.getInt("going_count");
+                        }
+                    }
+
+                    if (capacity == null || goingCount < capacity) {
+                        try (PreparedStatement promoteStmt = conn.prepareStatement(promoteSql)) {
+                            promoteStmt.setInt(1, eventId);
+                            promoteStmt.setInt(2, eventId);
+                            promoteStmt.executeUpdate();
+                        }
+                    }
+                }
+
+                conn.commit();
+                conn.setAutoCommit(originalAutoCommit);
+                return true;
+            } catch (SQLException e) {
+                conn.rollback();
+                conn.setAutoCommit(originalAutoCommit);
+                throw e;
+            }
+        }
+    }
+
     public List<EventView> getMyUpcomingRsvps(int userId) throws SQLException {
         String sql = "SELECT e.event_id, e.club_id, c.club_name, e.title, e.description, e.date, e.start_time, e.end_time, " +
                 "e.location, e.category, e.image_url, e.capacity, " +

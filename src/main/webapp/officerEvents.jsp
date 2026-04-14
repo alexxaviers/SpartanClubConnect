@@ -4,9 +4,10 @@
 <%@ page import="edu.sjsu.cs157a.team1.util.HtmlEscape" %>
 <%@ page import="edu.sjsu.cs157a.team1.util.CsrfUtil" %>
 <%
+    String ctx = request.getContextPath();
     Integer userId = (Integer) session.getAttribute("userId");
     if (userId == null) {
-        response.sendRedirect("login.jsp");
+        response.sendRedirect(ctx + "/login.jsp");
         return;
     }
 
@@ -22,16 +23,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Events - SpartanClubConnect</title>
-    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/global.css">
 </head>
 <body>
 <main style="max-width: 1060px; margin: 24px auto; padding: 0 16px;">
     <h1>Manage Events</h1>
 
     <p>
-        <a href="dashboard.jsp">Home</a> |
-        <a href="events">Browse Events</a> |
-        <a href="officer-event">Create New Event</a>
+        <a href="<%= ctx %>/dashboard.jsp">Home</a> |
+        <a href="<%= ctx %>/events">Browse Events</a> |
+        <a href="<%= ctx %>/officer-event">Create New Event</a>
     </p>
 
     <% if (success != null && !success.isEmpty()) { %>
@@ -67,9 +68,9 @@
             <td><%= HtmlEscape.escape(event.getLocation()) %></td>
             <td><%= event.getCapacity() == null ? "No Limit" : event.getCapacity() %></td>
             <td>
-                <a href="officer-event?eventId=<%= event.getEventId() %>">Edit</a>
+                <a href="<%= ctx %>/officer-event?eventId=<%= event.getEventId() %>">Edit</a>
                 |
-                <form action="officer-events" method="post" style="display: inline; margin: 0;">
+                <form action="<%= ctx %>/officer-events" method="post" style="display: inline; margin: 0;">
                     <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
                     <input type="hidden" name="action" value="delete">
                     <input type="hidden" name="eventId" value="<%= event.getEventId() %>">

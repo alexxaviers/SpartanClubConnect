@@ -5,9 +5,10 @@
 <%@ page import="edu.sjsu.cs157a.team1.util.HtmlEscape" %>
 <%@ page import="edu.sjsu.cs157a.team1.util.CsrfUtil" %>
 <%
+    String ctx = request.getContextPath();
     Integer userId = (Integer) session.getAttribute("userId");
     if (userId == null) {
-        response.sendRedirect("login.jsp");
+        response.sendRedirect(ctx + "/login.jsp");
         return;
     }
 
@@ -24,16 +25,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Details - SpartanClubConnect</title>
-    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/global.css">
 </head>
 <body>
 <main style="max-width: 960px; margin: 24px auto; padding: 0 16px;">
     <h1>Event Details</h1>
 
     <p>
-        <a href="events">Back to Events</a> |
-        <a href="my-rsvps">My RSVPs</a> |
-        <a href="dashboard.jsp">Home</a>
+        <a href="<%= ctx %>/events">Back to Events</a> |
+        <a href="<%= ctx %>/my-rsvps">My RSVPs</a> |
+        <a href="<%= ctx %>/dashboard.jsp">Home</a>
     </p>
 
     <% if (error != null && !error.isEmpty()) { %>
@@ -74,7 +75,7 @@
 
         <section style="margin-bottom: 28px;">
             <% if ("Going".equals(event.getUserRsvpStatus()) || "Waitlisted".equals(event.getUserRsvpStatus())) { %>
-                <form action="rsvp" method="post">
+                <form action="<%= ctx %>/rsvp" method="post">
                     <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
                     <input type="hidden" name="action" value="cancel">
                     <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
@@ -82,7 +83,7 @@
                     <button type="submit"><%= "Waitlisted".equals(event.getUserRsvpStatus()) ? "Leave Waitlist" : "Cancel RSVP" %></button>
                 </form>
             <% } else { %>
-                <form action="rsvp" method="post">
+                <form action="<%= ctx %>/rsvp" method="post">
                     <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
                     <input type="hidden" name="action" value="register">
                     <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
@@ -94,9 +95,9 @@
 
         <% if (Boolean.TRUE.equals(canViewAttendees)) { %>
             <section style="margin-bottom: 20px;">
-                <a href="officer-event?eventId=<%= event.getEventId() %>">Edit Event</a>
+                <a href="<%= ctx %>/officer-event?eventId=<%= event.getEventId() %>">Edit Event</a>
                 |
-                <form action="officer-events" method="post" style="display: inline; margin: 0;">
+                <form action="<%= ctx %>/officer-events" method="post" style="display: inline; margin: 0;">
                     <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
                     <input type="hidden" name="action" value="delete">
                     <input type="hidden" name="eventId" value="<%= event.getEventId() %>">

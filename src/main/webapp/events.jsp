@@ -3,16 +3,17 @@
 <%@ page import="edu.sjsu.cs157a.team1.dao.RsvpDAO.EventView" %>
 <%@ page import="edu.sjsu.cs157a.team1.util.HtmlEscape" %>
 <%
+    String ctx = request.getContextPath();
     Integer userId = (Integer) session.getAttribute("userId");
     Boolean isClubOfficer = Boolean.TRUE.equals(session.getAttribute("isClubOfficer"));
     if (userId == null) {
-        response.sendRedirect("login.jsp");
+        response.sendRedirect(ctx + "/login.jsp");
         return;
     }
 
     List<EventView> events = (List<EventView>) request.getAttribute("events");
     if (events == null) {
-        response.sendRedirect("events");
+        response.sendRedirect(ctx + "/events");
         return;
     }
     String success = (String) request.getAttribute("success");
@@ -24,19 +25,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Events - SpartanClubConnect</title>
-    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/global.css">
 </head>
 <body>
 <main style="max-width: 960px; margin: 24px auto; padding: 0 16px;">
     <h1>Upcoming Events</h1>
 
     <p>
-        <a href="dashboard.jsp">Home</a> |
-        <a href="my-rsvps">My RSVPs</a> |
-        <a href="events?feed=all">Browse All Events</a> |
+        <a href="<%= ctx %>/dashboard.jsp">Home</a> |
+        <a href="<%= ctx %>/my-rsvps">My RSVPs</a> |
+        <a href="<%= ctx %>/events?feed=all">Browse All Events</a> |
         <a href="#" onclick="return false;" title="Placeholder for teammate implementation">Browse Personalized Events (Coming Soon)</a>
         <% if (isClubOfficer) { %>
-            | <a href="officer-events">Manage My Club Events</a>
+            | <a href="<%= ctx %>/officer-events">Manage My Club Events</a>
         <% } %>
     </p>
 
@@ -48,7 +49,7 @@
         <p style="color: #b00020;"><strong><%= HtmlEscape.escape(error) %></strong></p>
     <% } %>
 
-    <% if (events == null || events.isEmpty()) { %>
+    <% if (events.isEmpty()) { %>
         <p>No events available right now.</p>
     <% } else { %>
         <table border="1" cellpadding="8" cellspacing="0" width="100%">
@@ -81,7 +82,7 @@
                         <%= event.isFull() ? " (Full)" : "" %>
                     </td>
                     <td><%= event.getUserRsvpStatus() == null ? "Not RSVPed" : HtmlEscape.escape(event.getUserRsvpStatus()) %></td>
-                    <td><a href="event-details?eventId=<%= event.getEventId() %>">View Details</a></td>
+                    <td><a href="<%= ctx %>/event-details?eventId=<%= event.getEventId() %>">View Details</a></td>
                 </tr>
             <% } %>
             </tbody>

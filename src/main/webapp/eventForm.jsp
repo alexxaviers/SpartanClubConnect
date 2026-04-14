@@ -5,9 +5,10 @@
 <%@ page import="edu.sjsu.cs157a.team1.util.HtmlEscape" %>
 <%@ page import="edu.sjsu.cs157a.team1.util.CsrfUtil" %>
 <%
+    String ctx = request.getContextPath();
     Integer userId = (Integer) session.getAttribute("userId");
     if (userId == null) {
-        response.sendRedirect("login.jsp");
+        response.sendRedirect(ctx + "/login.jsp");
         return;
     }
 
@@ -24,22 +25,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= isEdit ? "Edit Event" : "Create Event" %> - SpartanClubConnect</title>
-    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/global.css">
 </head>
 <body>
 <main style="max-width: 760px; margin: 24px auto; padding: 0 16px;">
     <h1><%= isEdit ? "Edit Event" : "Create Event" %></h1>
 
     <p>
-        <a href="officer-events">Back to Manage Events</a> |
-        <a href="events">Browse Events</a>
+        <a href="<%= ctx %>/officer-events">Back to Manage Events</a> |
+        <a href="<%= ctx %>/events">Browse Events</a>
     </p>
 
     <% if (error != null && !error.isEmpty()) { %>
     <p style="color: #b00020;"><strong><%= HtmlEscape.escape(error) %></strong></p>
     <% } %>
 
-    <form action="officer-event" method="post" style="display: grid; gap: 12px;">
+    <form action="<%= ctx %>/officer-event" method="post" style="display: grid; gap: 12px;">
         <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
         <% if (isEdit) { %>
         <input type="hidden" name="eventId" value="<%= event.getEventId() %>">

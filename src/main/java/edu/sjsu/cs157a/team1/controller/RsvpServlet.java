@@ -77,20 +77,10 @@ public class RsvpServlet extends HttpServlet {
 
     private void handleCancel(RsvpDAO rsvpDAO, int userId, int eventId, String returnTo, HttpServletResponse resp)
             throws Exception {
-        if (!rsvpDAO.hasActiveRsvp(userId, eventId)) {
+        boolean cancelled = rsvpDAO.cancelAndPromoteAtomically(userId, eventId);
+        if (!cancelled) {
             redirectWithMessage(resp, returnTo, eventId, "error", "No active RSVP found");
             return;
-        }
-
-        String oldStatus = rsvpDAO.getRsvpStatus(userId, eventId);
-        boolean cancelled = rsvpDAO.cancelRsvp(userId, eventId);
-        if (!cancelled) {
-            redirectWithMessage(resp, returnTo, eventId, "error", "Could not cancel RSVP");
-            return;
-        }
-
-        if ("Going".equals(oldStatus)) {
-            rsvpDAO.promoteFirstWaitlisted(eventId);
         }
 
         redirectWithMessage(resp, returnTo, eventId, "success", "RSVP cancelled");
