@@ -14,6 +14,38 @@ import java.util.List;
 
 public class RsvpDAO {
 
+    public static class RegisterResult {
+        private final boolean saved;
+        private final String status;
+        private final String error;
+
+        private RegisterResult(boolean saved, String status, String error) {
+            this.saved = saved;
+            this.status = status;
+            this.error = error;
+        }
+
+        public static RegisterResult saved(String status) {
+            return new RegisterResult(true, status, null);
+        }
+
+        public static RegisterResult failed(String error) {
+            return new RegisterResult(false, null, error);
+        }
+
+        public boolean isSaved() {
+            return saved;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public String getError() {
+            return error;
+        }
+    }
+
     public static class EventView {
         private int eventId;
         private int clubId;
@@ -298,6 +330,99 @@ public class RsvpDAO {
             stmt.setInt(2, eventId);
             stmt.setString(3, status);
             return stmt.executeUpdate() > 0;
+        }
+    }
+
+    public RegisterResult registerUserAtomically(int userId, int eventId) throws SQLException {
+        String lockEventSql = "SELECT date, capacity, is_active FROM Events WHERE event_id = ? FOR UPDATE";
+        String userStatusSql = "SELECT status FROM RSVPs WHERE user_id = ? AND event_id = ? LIMIT 1 FOR UPDATE";
+        String goingCountSql = "SELECT COUNT(*) AS going_count FROM RSVPs WHERE event_id = ? AND status = 'Going'";
+        String upsertSql = "INSERT INTO RSVPs (user_id, event_id, status, rsvp_time) VALUES (?, ?, ?, CURRENT_TIMESTAMP) " +
+                "ON DUPLICATE KEY UPDATE status = VALUES(status), rsvp_time = CURRENT_TIMESTAMP";
+
+        try (Connection conn = DbUtil.getConnection()) {
+            boolean originalAutoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+
+            try {
+                Date eventDate;
+                Integer capacity;
+
+                try (PreparedStatement lockStmt = conn.prepareStatement(lockEventSql)) {
+                    lockStmt.setInt(1, eventId);
+                    try (ResultSet rs = lockStmt.executeQuery()) {
+                        if (!rs.next()) {
+                            conn.rollback();
+                            conn.setAutoCommit(originalAutoCommit);
+                            return RegisterResult.failed("Event not found");
+                        }
+
+                        if (!rs.getBoolean("is_active")) {
+                            conn.rollback();
+                            conn.setAutoCommit(originalAutoCommit);
+                            return RegisterResult.failed("Event not found");
+                        }
+
+                        eventDate = rs.getDate("date");
+                        int capacityValue = rs.getInt("capacity");
+                        capacity = rs.wasNull() ? null : capacityValue;
+                    }
+                }
+
+                if (eventDate != null && eventDate.toLocalDate().isBefore(java.time.LocalDate.now())) {
+                    conn.rollback();
+                    conn.setAutoCommit(originalAutoCommit);
+                    return RegisterResult.failed("Cannot RSVP to a past event");
+                }
+
+                try (PreparedStatement userStatusStmt = conn.prepareStatement(userStatusSql)) {
+                    userStatusStmt.setInt(1, userId);
+                    userStatusStmt.setInt(2, eventId);
+                    try (ResultSet rs = userStatusStmt.executeQuery()) {
+                        if (rs.next()) {
+                            String existingStatus = rs.getString("status");
+                            if ("Going".equals(existingStatus) || "Waitlisted".equals(existingStatus)) {
+                                conn.rollback();
+                                conn.setAutoCommit(originalAutoCommit);
+                                return RegisterResult.failed("Already RSVPed");
+                            }
+                        }
+                    }
+                }
+
+                int goingCount;
+                try (PreparedStatement countStmt = conn.prepareStatement(goingCountSql)) {
+                    countStmt.setInt(1, eventId);
+                    try (ResultSet rs = countStmt.executeQuery()) {
+                        rs.next();
+                        goingCount = rs.getInt("going_count");
+                    }
+                }
+
+                String targetStatus = (capacity != null && goingCount >= capacity) ? "Waitlisted" : "Going";
+
+                boolean saved;
+                try (PreparedStatement upsertStmt = conn.prepareStatement(upsertSql)) {
+                    upsertStmt.setInt(1, userId);
+                    upsertStmt.setInt(2, eventId);
+                    upsertStmt.setString(3, targetStatus);
+                    saved = upsertStmt.executeUpdate() > 0;
+                }
+
+                if (!saved) {
+                    conn.rollback();
+                    conn.setAutoCommit(originalAutoCommit);
+                    return RegisterResult.failed("Could not RSVP");
+                }
+
+                conn.commit();
+                conn.setAutoCommit(originalAutoCommit);
+                return RegisterResult.saved(targetStatus);
+            } catch (SQLException e) {
+                conn.rollback();
+                conn.setAutoCommit(originalAutoCommit);
+                throw e;
+            }
         }
     }
 

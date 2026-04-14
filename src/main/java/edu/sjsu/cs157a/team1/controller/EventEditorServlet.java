@@ -16,6 +16,11 @@ import java.sql.Time;
 
 public class EventEditorServlet extends HttpServlet {
 
+    private static final int MAX_TITLE_LENGTH = 200;
+    private static final int MAX_LOCATION_LENGTH = 200;
+    private static final int MAX_CATEGORY_LENGTH = 100;
+    private static final int MAX_IMAGE_URL_LENGTH = 255;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
@@ -97,6 +102,12 @@ public class EventEditorServlet extends HttpServlet {
 
             if (!imageUrl.isEmpty() && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
                 redirectToForm(resp, eventIdParam, "Image URL must start with http:// or https://");
+                return;
+            }
+
+            String lengthError = validateFieldLengths(title, location, category, imageUrl);
+            if (lengthError != null) {
+                redirectToForm(resp, eventIdParam, lengthError);
                 return;
             }
 
@@ -191,5 +202,25 @@ public class EventEditorServlet extends HttpServlet {
 
     private String encode(String value) {
         return URLEncoder.encode(value, StandardCharsets.UTF_8);
+    }
+
+    private String validateFieldLengths(String title, String location, String category, String imageUrl) {
+        if (title.length() > MAX_TITLE_LENGTH) {
+            return "Title cannot exceed " + MAX_TITLE_LENGTH + " characters";
+        }
+
+        if (location.length() > MAX_LOCATION_LENGTH) {
+            return "Location cannot exceed " + MAX_LOCATION_LENGTH + " characters";
+        }
+
+        if (!category.isEmpty() && category.length() > MAX_CATEGORY_LENGTH) {
+            return "Category cannot exceed " + MAX_CATEGORY_LENGTH + " characters";
+        }
+
+        if (!imageUrl.isEmpty() && imageUrl.length() > MAX_IMAGE_URL_LENGTH) {
+            return "Image URL cannot exceed " + MAX_IMAGE_URL_LENGTH + " characters";
+        }
+
+        return null;
     }
 }

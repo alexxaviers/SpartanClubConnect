@@ -11,7 +11,6 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
 
 public class RsvpServlet extends HttpServlet {
 
@@ -61,29 +60,13 @@ public class RsvpServlet extends HttpServlet {
 
     private void handleRegister(RsvpDAO rsvpDAO, int userId, int eventId, String returnTo, HttpServletResponse resp)
             throws Exception {
-        if (rsvpDAO.hasActiveRsvp(userId, eventId)) {
-            redirectWithMessage(resp, returnTo, eventId, "error", "Already RSVPed");
+        RsvpDAO.RegisterResult result = rsvpDAO.registerUserAtomically(userId, eventId);
+        if (!result.isSaved()) {
+            redirectWithMessage(resp, returnTo, eventId, "error", result.getError());
             return;
         }
 
-        RsvpDAO.EventView event = rsvpDAO.getEventById(eventId, userId);
-        if (event == null) {
-            redirectWithMessage(resp, returnTo, eventId, "error", "Event not found");
-            return;
-        }
-
-        if (event.getDate() != null && event.getDate().toLocalDate().isBefore(LocalDate.now())) {
-            redirectWithMessage(resp, returnTo, eventId, "error", "Cannot RSVP to a past event");
-            return;
-        }
-
-        String targetStatus = event.isFull() ? "Waitlisted" : "Going";
-        boolean saved = rsvpDAO.upsertRsvpStatus(userId, eventId, targetStatus);
-        if (!saved) {
-            redirectWithMessage(resp, returnTo, eventId, "error", "Could not RSVP");
-            return;
-        }
-
+        String targetStatus = result.getStatus();
         if ("Waitlisted".equals(targetStatus)) {
             redirectWithMessage(resp, returnTo, eventId, "success", "Event is full. You were added to the waitlist");
             return;
