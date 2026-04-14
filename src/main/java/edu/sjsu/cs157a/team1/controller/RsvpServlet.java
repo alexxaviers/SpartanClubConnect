@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 
 public class RsvpServlet extends HttpServlet {
 
@@ -62,6 +63,11 @@ public class RsvpServlet extends HttpServlet {
         RsvpDAO.EventView event = rsvpDAO.getEventById(eventId, userId);
         if (event == null) {
             redirectWithMessage(resp, returnTo, eventId, "error", "Event not found");
+            return;
+        }
+
+        if (event.getDate() != null && event.getDate().toLocalDate().isBefore(LocalDate.now())) {
+            redirectWithMessage(resp, returnTo, eventId, "error", "Cannot RSVP to a past event");
             return;
         }
 

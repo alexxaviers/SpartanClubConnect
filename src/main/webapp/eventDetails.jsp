@@ -2,6 +2,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="edu.sjsu.cs157a.team1.dao.RsvpDAO.EventView" %>
 <%@ page import="edu.sjsu.cs157a.team1.dao.RsvpDAO.AttendeeView" %>
+<%@ page import="edu.sjsu.cs157a.team1.util.HtmlEscape" %>
 <%
     Integer userId = (Integer) session.getAttribute("userId");
     if (userId == null) {
@@ -34,29 +35,31 @@
     </p>
 
     <% if (error != null && !error.isEmpty()) { %>
-        <p style="color: #b00020;"><strong><%= error %></strong></p>
+        <p style="color: #b00020;"><strong><%= HtmlEscape.escape(error) %></strong></p>
     <% } %>
 
     <% if (success != null && !success.isEmpty()) { %>
-        <p style="color: #0f7b0f;"><strong><%= success %></strong></p>
+        <p style="color: #0f7b0f;"><strong><%= HtmlEscape.escape(success) %></strong></p>
     <% } %>
 
     <% if (event == null) { %>
         <p>Event not found.</p>
     <% } else { %>
         <section style="margin-bottom: 20px;">
-            <h2><%= event.getTitle() %></h2>
-            <p><strong>Club:</strong> <%= event.getClubName() %></p>
-            <p><strong>Description:</strong> <%= event.getDescription() %></p>
+            <h2><%= HtmlEscape.escape(event.getTitle()) %></h2>
+            <p><strong>Club:</strong> <%= HtmlEscape.escape(event.getClubName()) %></p>
+            <p><strong>Description:</strong> <%= HtmlEscape.escape(event.getDescription()) %></p>
             <p><strong>Date:</strong> <%= event.getDate() %></p>
             <p><strong>Time:</strong> <%= event.getStartTime() %> - <%= event.getEndTime() %></p>
-            <p><strong>Location:</strong> <%= event.getLocation() %></p>
-            <p><strong>Category:</strong> <%= event.getCategory() == null ? "-" : event.getCategory() %></p>
-            <% if (event.getImageUrl() != null && !event.getImageUrl().isEmpty()) { %>
+            <p><strong>Location:</strong> <%= HtmlEscape.escape(event.getLocation()) %></p>
+            <p><strong>Category:</strong> <%= event.getCategory() == null ? "-" : HtmlEscape.escape(event.getCategory()) %></p>
+            <% if (event.getImageUrl() != null && !event.getImageUrl().isEmpty()) {
+                String safeImageUrl = event.getImageUrl();
+                if (safeImageUrl.startsWith("http://") || safeImageUrl.startsWith("https://")) { %>
                 <p>
-                    <img src="<%= event.getImageUrl() %>" alt="Event image" style="max-width: 100%; max-height: 320px; border-radius: 8px;">
+                    <img src="<%= HtmlEscape.escape(safeImageUrl) %>" alt="Event image" style="max-width: 100%; max-height: 320px; border-radius: 8px;">
                 </p>
-            <% } %>
+            <% } } %>
             <p>
                 <strong>Capacity:</strong>
                 <%= event.getGoingCount() %>
@@ -117,9 +120,9 @@
                         <% for (AttendeeView attendee : attendees) { %>
                             <tr>
                                 <td><%= attendee.getUserId() %></td>
-                                <td><%= attendee.getFullName() %></td>
-                                <td><%= attendee.getEmail() %></td>
-                                <td><%= attendee.getStatus() %></td>
+                                <td><%= HtmlEscape.escape(attendee.getFullName()) %></td>
+                                <td><%= HtmlEscape.escape(attendee.getEmail()) %></td>
+                                <td><%= HtmlEscape.escape(attendee.getStatus()) %></td>
                                 <td><%= attendee.getRsvpTime() %></td>
                             </tr>
                         <% } %>

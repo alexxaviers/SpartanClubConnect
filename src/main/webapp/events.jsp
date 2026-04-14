@@ -1,15 +1,20 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
 <%@ page import="edu.sjsu.cs157a.team1.dao.RsvpDAO.EventView" %>
+<%@ page import="edu.sjsu.cs157a.team1.util.HtmlEscape" %>
 <%
     Integer userId = (Integer) session.getAttribute("userId");
-    String role = (String) session.getAttribute("role");
+    Boolean isClubOfficer = Boolean.TRUE.equals(session.getAttribute("isClubOfficer"));
     if (userId == null) {
         response.sendRedirect("login.jsp");
         return;
     }
 
     List<EventView> events = (List<EventView>) request.getAttribute("events");
+    if (events == null) {
+        response.sendRedirect("events");
+        return;
+    }
     String success = (String) request.getAttribute("success");
     String error = (String) request.getAttribute("error");
 %>
@@ -30,17 +35,17 @@
         <a href="my-rsvps">My RSVPs</a> |
         <a href="events?feed=all">Browse All Events</a> |
         <a href="#" onclick="return false;" title="Placeholder for teammate implementation">Browse Personalized Events (Coming Soon)</a>
-        <% if ("Club Officer".equalsIgnoreCase(role)) { %>
+        <% if (isClubOfficer) { %>
             | <a href="officer-events">Manage My Club Events</a>
         <% } %>
     </p>
 
     <% if (success != null && !success.isEmpty()) { %>
-        <p style="color: #0f7b0f;"><strong><%= success %></strong></p>
+        <p style="color: #0f7b0f;"><strong><%= HtmlEscape.escape(success) %></strong></p>
     <% } %>
 
     <% if (error != null && !error.isEmpty()) { %>
-        <p style="color: #b00020;"><strong><%= error %></strong></p>
+        <p style="color: #b00020;"><strong><%= HtmlEscape.escape(error) %></strong></p>
     <% } %>
 
     <% if (events == null || events.isEmpty()) { %>
@@ -63,19 +68,19 @@
             <tbody>
             <% for (EventView event : events) { %>
                 <tr>
-                    <td><%= event.getTitle() %></td>
-                    <td><%= event.getClubName() %></td>
-                    <td><%= event.getCategory() == null ? "-" : event.getCategory() %></td>
+                    <td><%= HtmlEscape.escape(event.getTitle()) %></td>
+                    <td><%= HtmlEscape.escape(event.getClubName()) %></td>
+                    <td><%= event.getCategory() == null ? "-" : HtmlEscape.escape(event.getCategory()) %></td>
                     <td><%= event.getDate() %></td>
                     <td><%= event.getStartTime() %> - <%= event.getEndTime() %></td>
-                    <td><%= event.getLocation() %></td>
+                    <td><%= HtmlEscape.escape(event.getLocation()) %></td>
                     <td>
                         <%= event.getGoingCount() %>
                         /
                         <%= event.getCapacity() == null ? "No Limit" : event.getCapacity() %>
                         <%= event.isFull() ? " (Full)" : "" %>
                     </td>
-                    <td><%= event.getUserRsvpStatus() == null ? "Not RSVPed" : event.getUserRsvpStatus() %></td>
+                    <td><%= event.getUserRsvpStatus() == null ? "Not RSVPed" : HtmlEscape.escape(event.getUserRsvpStatus()) %></td>
                     <td><a href="event-details?eventId=<%= event.getEventId() %>">View Details</a></td>
                 </tr>
             <% } %>

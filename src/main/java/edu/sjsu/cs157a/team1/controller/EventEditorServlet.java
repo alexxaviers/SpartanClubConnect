@@ -88,6 +88,11 @@ public class EventEditorServlet extends HttpServlet {
                 return;
             }
 
+            if (!imageUrl.isEmpty() && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+                redirectToForm(resp, eventIdParam, "Image URL must start with http:// or https://");
+                return;
+            }
+
             Date eventDate = Date.valueOf(dateParam);
             Time startTime = Time.valueOf(startTimeParam + ":00");
             Time endTime = Time.valueOf(endTimeParam + ":00");
@@ -147,10 +152,26 @@ public class EventEditorServlet extends HttpServlet {
 
     private void redirectToForm(HttpServletResponse resp, String eventId, String error) throws IOException {
         StringBuilder redirect = new StringBuilder("officer-event?error=").append(encode(error));
-        if (eventId != null && !eventId.trim().isEmpty()) {
-            redirect.append("&eventId=").append(eventId);
+        String normalizedEventId = normalizeEventId(eventId);
+        if (normalizedEventId != null) {
+            redirect.append("&eventId=").append(encode(normalizedEventId));
         }
         resp.sendRedirect(redirect.toString());
+    }
+
+    private String normalizeEventId(String eventId) {
+        if (eventId == null) {
+            return null;
+        }
+        String trimmed = eventId.trim();
+        if (trimmed.isEmpty()) {
+            return null;
+        }
+        try {
+            return Integer.toString(Integer.parseInt(trimmed));
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     private String clean(String value) {

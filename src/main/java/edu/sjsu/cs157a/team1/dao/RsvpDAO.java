@@ -207,12 +207,13 @@ public class RsvpDAO {
     public List<EventView> getAllEventsForUser(int userId) throws SQLException {
         String sql = "SELECT e.event_id, e.club_id, c.club_name, e.title, e.description, e.date, e.start_time, e.end_time, " +
             "e.location, e.category, e.image_url, e.capacity, " +
-                "(SELECT COUNT(*) FROM RSVPs rc WHERE rc.event_id = e.event_id AND rc.status = 'Going') AS going_count, " +
+            "COALESCE(rc.going_count, 0) AS going_count, " +
             "CASE WHEN r.status IN ('Going', 'Waitlisted') THEN 1 ELSE 0 END AS has_rsvp, " +
             "r.status AS user_rsvp_status " +
                 "FROM Events e " +
                 "JOIN Clubs c ON c.club_id = e.club_id " +
             "LEFT JOIN RSVPs r ON r.event_id = e.event_id AND r.user_id = ? " +
+            "LEFT JOIN (SELECT event_id, COUNT(*) AS going_count FROM RSVPs WHERE status = 'Going' GROUP BY event_id) rc ON rc.event_id = e.event_id " +
             "WHERE e.is_active = TRUE AND e.date >= CURDATE() " +
                 "ORDER BY e.date ASC, e.start_time ASC";
 
@@ -233,12 +234,13 @@ public class RsvpDAO {
     public EventView getEventById(int eventId, int userId) throws SQLException {
         String sql = "SELECT e.event_id, e.club_id, c.club_name, e.title, e.description, e.date, e.start_time, e.end_time, " +
                 "e.location, e.category, e.image_url, e.capacity, " +
-                "(SELECT COUNT(*) FROM RSVPs rc WHERE rc.event_id = e.event_id AND rc.status = 'Going') AS going_count, " +
+                "COALESCE(rc.going_count, 0) AS going_count, " +
                 "CASE WHEN r.status IN ('Going', 'Waitlisted') THEN 1 ELSE 0 END AS has_rsvp, " +
                 "r.status AS user_rsvp_status " +
                 "FROM Events e " +
                 "JOIN Clubs c ON c.club_id = e.club_id " +
                 "LEFT JOIN RSVPs r ON r.event_id = e.event_id AND r.user_id = ? " +
+                "LEFT JOIN (SELECT event_id, COUNT(*) AS going_count FROM RSVPs WHERE status = 'Going' GROUP BY event_id) rc ON rc.event_id = e.event_id " +
                 "WHERE e.event_id = ? AND e.is_active = TRUE";
 
         try (Connection conn = DbUtil.getConnection();
@@ -313,12 +315,13 @@ public class RsvpDAO {
     public List<EventView> getMyUpcomingRsvps(int userId) throws SQLException {
         String sql = "SELECT e.event_id, e.club_id, c.club_name, e.title, e.description, e.date, e.start_time, e.end_time, " +
                 "e.location, e.category, e.image_url, e.capacity, " +
-                "(SELECT COUNT(*) FROM RSVPs rc WHERE rc.event_id = e.event_id AND rc.status = 'Going') AS going_count, " +
+                "COALESCE(rc.going_count, 0) AS going_count, " +
                 "1 AS has_rsvp, " +
                 "r.status AS user_rsvp_status " +
                 "FROM RSVPs r " +
                 "JOIN Events e ON e.event_id = r.event_id " +
                 "JOIN Clubs c ON c.club_id = e.club_id " +
+                "LEFT JOIN (SELECT event_id, COUNT(*) AS going_count FROM RSVPs WHERE status = 'Going' GROUP BY event_id) rc ON rc.event_id = e.event_id " +
                 "WHERE r.user_id = ? AND r.status IN ('Going', 'Waitlisted') AND e.is_active = TRUE AND e.date >= CURDATE() " +
                 "ORDER BY e.date ASC, e.start_time ASC";
 

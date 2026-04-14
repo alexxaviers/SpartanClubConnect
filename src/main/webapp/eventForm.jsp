@@ -2,6 +2,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="edu.sjsu.cs157a.team1.dao.EventDAO.ClubView" %>
 <%@ page import="edu.sjsu.cs157a.team1.dao.EventDAO.ManagedEventView" %>
+<%@ page import="edu.sjsu.cs157a.team1.util.HtmlEscape" %>
 <%
     Integer userId = (Integer) session.getAttribute("userId");
     if (userId == null) {
@@ -32,13 +33,13 @@
     </p>
 
     <% if (error != null && !error.isEmpty()) { %>
-    <p style="color: #b00020;"><strong><%= error %></strong></p>
+    <p style="color: #b00020;"><strong><%= HtmlEscape.escape(error) %></strong></p>
     <% } %>
 
     <form action="officer-event" method="post" style="display: grid; gap: 12px;">
         <% if (isEdit) { %>
         <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
-        <p><strong>Club:</strong> <%= event.getClubName() %></p>
+        <p><strong>Club:</strong> <%= HtmlEscape.escape(event.getClubName()) %></p>
         <% } else { %>
         <label>
             Club *
@@ -46,7 +47,7 @@
                 <option value="">Select a club</option>
                 <% if (clubs != null) {
                     for (ClubView club : clubs) { %>
-                <option value="<%= club.getClubId() %>"><%= club.getClubName() %></option>
+                <option value="<%= club.getClubId() %>"><%= HtmlEscape.escape(club.getClubName()) %></option>
                 <%  }
                 } %>
             </select>
@@ -55,12 +56,12 @@
 
         <label>
             Title *
-            <input type="text" name="title" maxlength="200" required value="<%= isEdit ? event.getTitle() : "" %>">
+            <input type="text" name="title" maxlength="200" required value="<%= isEdit ? HtmlEscape.escape(event.getTitle()) : "" %>">
         </label>
 
         <label>
             Description *
-            <textarea name="description" rows="5" required><%= isEdit ? event.getDescription() : "" %></textarea>
+            <textarea name="description" rows="5" required><%= isEdit ? HtmlEscape.escape(event.getDescription()) : "" %></textarea>
         </label>
 
         <label>
@@ -71,17 +72,17 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
             <label>
                 Start Time *
-                <input type="time" name="startTime" required value="<%= isEdit ? event.getStartTime().toString().substring(0, 5) : "" %>">
+                <input type="time" name="startTime" required value="<%= isEdit && event.getStartTime() != null ? event.getStartTime().toString().substring(0, 5) : "" %>">
             </label>
             <label>
                 End Time *
-                <input type="time" name="endTime" required value="<%= isEdit ? event.getEndTime().toString().substring(0, 5) : "" %>">
+                <input type="time" name="endTime" required value="<%= isEdit && event.getEndTime() != null ? event.getEndTime().toString().substring(0, 5) : "" %>">
             </label>
         </div>
 
         <label>
             Location *
-            <input type="text" name="location" maxlength="200" required value="<%= isEdit ? event.getLocation() : "" %>">
+            <input type="text" name="location" maxlength="200" required value="<%= isEdit ? HtmlEscape.escape(event.getLocation()) : "" %>">
         </label>
 
         <label>
@@ -91,12 +92,12 @@
 
         <label>
             Category (optional)
-            <input type="text" name="category" maxlength="100" value="<%= isEdit && event.getCategory() != null ? event.getCategory() : "" %>">
+            <input type="text" name="category" maxlength="100" value="<%= isEdit && event.getCategory() != null ? HtmlEscape.escape(event.getCategory()) : "" %>">
         </label>
 
         <label>
             Image URL (optional)
-            <input type="url" name="imageUrl" maxlength="255" value="<%= isEdit && event.getImageUrl() != null ? event.getImageUrl() : "" %>">
+            <input type="url" name="imageUrl" maxlength="255" value="<%= isEdit && event.getImageUrl() != null ? HtmlEscape.escape(event.getImageUrl()) : "" %>">
         </label>
 
         <button type="submit"><%= isEdit ? "Save Changes" : "Publish Event" %></button>

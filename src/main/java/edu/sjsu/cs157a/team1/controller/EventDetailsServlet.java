@@ -32,7 +32,7 @@ public class EventDetailsServlet extends HttpServlet {
         }
 
         Integer userId = (Integer) session.getAttribute("userId");
-        String role = (String) session.getAttribute("role");
+        Boolean isClubOfficer = Boolean.TRUE.equals(session.getAttribute("isClubOfficer"));
         RsvpDAO rsvpDAO = new RsvpDAO();
 
         try {
@@ -42,7 +42,7 @@ public class EventDetailsServlet extends HttpServlet {
                 return;
             }
 
-            boolean canViewAttendees = "Club Officer".equalsIgnoreCase(role)
+            boolean canViewAttendees = isClubOfficer
                     && rsvpDAO.canOfficerViewAttendees(userId, eventId);
 
             List<RsvpDAO.AttendeeView> attendees = canViewAttendees

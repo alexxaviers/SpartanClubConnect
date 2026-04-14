@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
 <%@ page import="edu.sjsu.cs157a.team1.dao.EventDAO.ManagedEventView" %>
+<%@ page import="edu.sjsu.cs157a.team1.util.HtmlEscape" %>
 <%
     Integer userId = (Integer) session.getAttribute("userId");
     if (userId == null) {
@@ -31,11 +32,11 @@
     </p>
 
     <% if (success != null && !success.isEmpty()) { %>
-    <p style="color: #0f7b0f;"><strong><%= success %></strong></p>
+    <p style="color: #0f7b0f;"><strong><%= HtmlEscape.escape(success) %></strong></p>
     <% } %>
 
     <% if (error != null && !error.isEmpty()) { %>
-    <p style="color: #b00020;"><strong><%= error %></strong></p>
+    <p style="color: #b00020;"><strong><%= HtmlEscape.escape(error) %></strong></p>
     <% } %>
 
     <% if (events == null || events.isEmpty()) { %>
@@ -56,11 +57,11 @@
         <tbody>
         <% for (ManagedEventView event : events) { %>
         <tr>
-            <td><%= event.getTitle() %></td>
-            <td><%= event.getClubName() %></td>
+            <td><%= HtmlEscape.escape(event.getTitle()) %></td>
+            <td><%= HtmlEscape.escape(event.getClubName()) %></td>
             <td><%= event.getDate() %></td>
             <td><%= event.getStartTime() %> - <%= event.getEndTime() %></td>
-            <td><%= event.getLocation() %></td>
+            <td><%= HtmlEscape.escape(event.getLocation()) %></td>
             <td><%= event.getCapacity() == null ? "No Limit" : event.getCapacity() %></td>
             <td>
                 <a href="officer-event?eventId=<%= event.getEventId() %>">Edit</a>

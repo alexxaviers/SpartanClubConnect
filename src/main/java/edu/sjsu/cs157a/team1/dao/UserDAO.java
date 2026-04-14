@@ -14,10 +14,10 @@ public class UserDAO {
         String sql = "SELECT u.user_id, u.full_name, u.email, u.password_hash, " +
         "u.is_active, " +
         "COALESCE(MAX(CASE " +
-        "WHEN r.role_name = 'Admin' THEN 'Admin' " +
-        "WHEN r.role_name = 'Club Officer' THEN 'Club Officer' " +
-        "WHEN r.role_name = 'Student' THEN 'Student' " +
-        "END), 'Student') AS role_name " +
+        "WHEN r.role_name = 'Admin' THEN 3 " +
+        "WHEN r.role_name = 'Club Officer' THEN 2 " +
+        "WHEN r.role_name = 'Student' THEN 1 " +
+        "END), 1) AS role_rank " +
         "FROM Users u " +
         "LEFT JOIN UserRoles ur ON u.user_id = ur.user_id " +
         "LEFT JOIN Roles r ON ur.role_id = r.role_id " +
@@ -36,9 +36,10 @@ public class UserDAO {
                     user.setFullName(rs.getString("full_name"));
                     user.setEmail(rs.getString("email"));
                     user.setPasswordHash(rs.getString("password_hash"));
-                    user.setRole(rs.getString("role_name"));
+                    int roleRank = rs.getInt("role_rank");
+                    String roleName = roleRank == 3 ? "Admin" : roleRank == 2 ? "Club Officer" : "Student";
+                    user.setRole(roleName);
                     user.setActive(rs.getBoolean("is_active"));
-                    user.setRole(rs.getString("role_name"));
                     return user;
                 }
             }
