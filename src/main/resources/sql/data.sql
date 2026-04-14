@@ -194,14 +194,14 @@ INSERT INTO Bookmarks (user_id, event_id) VALUES
     (20, 1);
 
 -- CLUB OFFICER REQUESTS (10 rows)
-INSERT INTO ClubOfficerRequests (sjsu_id, justification, status, user_id, reviewed_by) VALUES
-    ('016245781', 'I regularly attend ACM workshops and want to help organize technical practice sessions for new members.', 'Pending', 11, NULL),
-    ('016245782', 'I have prior outreach experience and would like to help SHPE coordinate industry networking events.', 'Approved', 12, 21),
-    ('016245783', 'I have been active in debate prep meetings and want to support tournament logistics and member onboarding.', 'Rejected', 13, 22),
-    ('016245784', 'I am experienced with Lightroom and campus event coverage and would like to help run photo walk programming.', 'Pending', 14, NULL),
-    ('016245785', 'I can help manage guest speakers and resume review events for Women in Business.', 'Approved', 15, 23),
-    ('016245786', 'I have helped moderate screening discussions and want to serve as a programming officer for Anime Club.', 'Pending', 16, NULL),
-    ('016245787', 'I volunteer regularly at sustainability events and would like to coordinate service activities for SEAC.', 'Approved', 17, 24),
-    ('016245788', 'I have experience organizing recreational leagues and want to help schedule soccer scrimmages.', 'Rejected', 18, 25),
-    ('016245789', 'I can help run beginner workshops and tournament check-ins for Chess and Strategy Club.', 'Approved', 19, 26),
-    ('016245790', 'I want to support rehearsal planning and performer outreach for the Music Performance Society.', 'Pending', 20, NULL);
+INSERT INTO ClubOfficerRequests (sjsu_id, club_name, justification, status, user_id, reviewed_by) VALUES
+                                                                                                      ('016245781', 'Association for Computing Machinery', 'I regularly attend ACM workshops and want to help organize technical practice sessions for new members.', 'Pending', 11, NULL),
+                                                                                                      ('016245782', 'Society of Hispanic Professional Engineers', 'I have prior outreach experience and would like to help SHPE coordinate industry networking events.', 'Approved', 12, 21),
+                                                                                                      ('016245783', 'Spartan Debate Society', 'I have been active in debate prep meetings and want to support tournament logistics and member onboarding.', 'Rejected', 13, 22),
+                                                                                                      ('016245784', 'SJSU Photography Collective', 'I am experienced with Lightroom and campus event coverage and would like to help run photo walk programming.', 'Pending', 14, NULL),
+                                                                                                      ('016245785', 'Women in Business at SJSU', 'I can help manage guest speakers and resume review events for Women in Business.', 'Approved', 15, 23),
+                                                                                                      ('016245786', 'Anime and Manga Association', 'I have helped moderate screening discussions and want to serve as a programming officer for Anime Club.', 'Pending', 16, NULL),
+                                                                                                      ('016245787', 'Spartan Environmental Action Coalition', 'I volunteer regularly at sustainability events and would like to coordinate service activities for SEAC.', 'Approved', 17, 24),
+                                                                                                      ('016245788', 'Intramural Soccer Club', 'I have experience organizing recreational leagues and want to help schedule soccer scrimmages.', 'Rejected', 18, 25),
+                                                                                                      ('016245789', 'Chess and Strategy Club', 'I can help run beginner workshops and tournament check-ins for Chess and Strategy Club.', 'Approved', 19, 26),
+                                                                                                      ('016245790', 'Music Performance Society', 'I want to support rehearsal planning and performer outreach for the Music Performance Society.', 'Pending', 20, NULL);

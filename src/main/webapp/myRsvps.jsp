@@ -26,7 +26,7 @@
 
     <p>
         <a href="events">All Events</a> |
-        <a href="home.jsp">Home</a>
+        <a href="dashboard.jsp">Home</a>
     </p>
 
     <% if (success != null && !success.isEmpty()) { %>

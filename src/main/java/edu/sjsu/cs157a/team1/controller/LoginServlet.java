@@ -20,7 +20,7 @@ public class LoginServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        email = email != null ? email.trim() : "";
+        email = email != null ? email.trim().toLowerCase() : "";
         password = password != null ? password.trim() : "";
 
         if (email.isEmpty() || password.isEmpty()) {
@@ -38,25 +38,42 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        boolean validPassword = PasswordUtil.verifyPassword(password, user.getPasswordHash());
+        if (!user.isActive()) {
+            request.setAttribute("error", "Your account is deactivated. Please contact an administrator.");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+            return;
+        }
 
-        if (!validPassword) {
+        if (!PasswordUtil.verifyPassword(password, user.getPasswordHash())) {
             request.setAttribute("error", "Invalid email or password.");
             request.getRequestDispatcher("login.jsp").forward(request, response);
             return;
         }
 
-        String role = user.getRole();
-        if (role == null || role.trim().isEmpty()) {
-            role = "Student";
+        boolean isAdmin = userDAO.userHasRole(user.getUserId(), "Admin");
+        boolean isClubOfficer = userDAO.userHasRole(user.getUserId(), "Club Officer");
+
+        String role = "Student";
+        if (isAdmin) {
+            role = "Admin";
+        } else if (isClubOfficer) {
+            role = "Club Officer";
         }
 
-        HttpSession session = request.getSession();
+        HttpSession oldSession = request.getSession(false);
+        if (oldSession != null) {
+            oldSession.invalidate();
+        }
+
+        HttpSession session = request.getSession(true);
         session.setAttribute("userId", user.getUserId());
         session.setAttribute("fullName", user.getFullName());
         session.setAttribute("email", user.getEmail());
         session.setAttribute("role", role);
+        session.setAttribute("isAdmin", isAdmin);
+        session.setAttribute("isClubOfficer", isClubOfficer);
+        session.setMaxInactiveInterval(15 * 60);
 
-        response.sendRedirect("home.jsp");
+        response.sendRedirect("dashboard.jsp");
     }
 }

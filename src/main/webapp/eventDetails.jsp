@@ -30,7 +30,7 @@
     <p>
         <a href="events">Back to Events</a> |
         <a href="my-rsvps">My RSVPs</a> |
-        <a href="home.jsp">Home</a>
+        <a href="dashboard.jsp">Home</a>
     </p>
 
     <% if (error != null && !error.isEmpty()) { %>

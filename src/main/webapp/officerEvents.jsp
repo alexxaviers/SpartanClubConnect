@@ -25,7 +25,7 @@
     <h1>Manage Events</h1>
 
     <p>
-        <a href="home.jsp">Home</a> |
+        <a href="dashboard.jsp">Home</a> |
         <a href="events">Browse Events</a> |
         <a href="officer-event">Create New Event</a>
     </p>

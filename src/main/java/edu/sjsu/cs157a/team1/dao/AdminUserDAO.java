@@ -1,0 +1,108 @@
+package edu.sjsu.cs157a.team1.dao;
+
+import edu.sjsu.cs157a.team1.model.User;
+import edu.sjsu.cs157a.team1.util.DbUtil;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class AdminUserDAO {
+
+    public List<User> getAllUsers() throws SQLException {
+        String sql = """
+                SELECT user_id, full_name, email, password_hash, is_active
+                FROM Users
+                ORDER BY user_id ASC
+                """;
+
+        List<User> users = new ArrayList<>();
+
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                User user = new User();
+                user.setUserId(rs.getInt("user_id"));
+                user.setFullName(rs.getString("full_name"));
+                user.setEmail(rs.getString("email"));
+                user.setPasswordHash(rs.getString("password_hash"));
+                user.setActive(rs.getBoolean("is_active"));
+                users.add(user);
+            }
+        }
+
+        return users;
+    }
+
+    public User getUserById(int userId) throws SQLException {
+        String sql = """
+                SELECT user_id, full_name, email, password_hash, is_active
+                FROM Users
+                WHERE user_id = ?
+                LIMIT 1
+                """;
+
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setUserId(rs.getInt("user_id"));
+                    user.setFullName(rs.getString("full_name"));
+                    user.setEmail(rs.getString("email"));
+                    user.setPasswordHash(rs.getString("password_hash"));
+                    user.setActive(rs.getBoolean("is_active"));
+                    return user;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public boolean updateAccountStatus(int userId, boolean isActive) throws SQLException {
+        String sql = """
+                UPDATE Users
+                SET is_active = ?
+                WHERE user_id = ?
+                """;
+
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setBoolean(1, isActive);
+            stmt.setInt(2, userId);
+
+            return stmt.executeUpdate() == 1;
+        }
+    }
+
+    public boolean userHasRole(int userId, String roleName) throws SQLException {
+        String sql = """
+                SELECT 1
+                FROM UserRoles ur
+                JOIN Roles r ON ur.role_id = r.role_id
+                WHERE ur.user_id = ? AND r.role_name = ?
+                LIMIT 1
+                """;
+
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            stmt.setString(2, roleName);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+}

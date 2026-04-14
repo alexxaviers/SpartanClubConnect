@@ -6,6 +6,7 @@ public class User {
     private String email;
     private String passwordHash;
     private String role;
+    private boolean active;
 
     public User() {
     }
@@ -56,5 +57,13 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

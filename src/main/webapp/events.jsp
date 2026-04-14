@@ -26,7 +26,7 @@
     <h1>Upcoming Events</h1>
 
     <p>
-        <a href="home.jsp">Home</a> |
+        <a href="dashboard.jsp">Home</a> |
         <a href="my-rsvps">My RSVPs</a> |
         <a href="events?feed=all">Browse All Events</a> |
         <a href="#" onclick="return false;" title="Placeholder for teammate implementation">Browse Personalized Events (Coming Soon)</a>
