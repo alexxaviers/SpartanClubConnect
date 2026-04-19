@@ -10,6 +10,33 @@ import java.sql.SQLException;
 
 public class UserDAO {
 
+    public User findById(int userId) {
+        String sql = "SELECT user_id, full_name, email, password_hash, is_active FROM Users WHERE user_id = ?";
+
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setUserId(rs.getInt("user_id"));
+                    user.setFullName(rs.getString("full_name"));
+                    user.setEmail(rs.getString("email"));
+                    user.setPasswordHash(rs.getString("password_hash"));
+                    user.setActive(rs.getBoolean("is_active"));
+                    return user;
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     public User findByEmail(String email) {
         String sql = "SELECT u.user_id, u.full_name, u.email, u.password_hash, " +
         "u.is_active, " +

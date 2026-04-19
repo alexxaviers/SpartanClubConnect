@@ -32,6 +32,7 @@
     <link rel="stylesheet" href="<%= ctx %>/css/global.css">
     <link rel="stylesheet" href="<%= ctx %>/css/landing.css">
     <link rel="stylesheet" href="<%= ctx %>/css/dashboard.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/clubs.css">
 </head>
 <%@ include file="/WEB-INF/jspf/dashboardShellStart.jspf" %>
             <section class="dashboard-page-header">
@@ -41,7 +42,7 @@
                 </p>
             </section>
 
-            <section class="dashboard-form-card">
+            <section class="dashboard-form-card clubs-shell-card">
                 <p>
                     <a href="<%= ctx %>/dashboard.jsp">Home</a> |
                     <a href="<%= ctx %>/events">Browse Events</a> |
@@ -59,28 +60,20 @@
                 <% if (events == null || events.isEmpty()) { %>
                 <p class="empty-hint">You do not have active events yet. Create one to publish it in the event feed.</p>
                 <% } else { %>
-                <table border="1" cellpadding="8" cellspacing="0" width="100%">
-                    <thead>
-                    <tr>
-                        <th>Event</th>
-                        <th>Club</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Location</th>
-                        <th>Capacity</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
+                <ul class="club-list">
                     <% for (ManagedEventView event : events) { %>
-                    <tr>
-                        <td><%= HtmlEscape.escape(event.getTitle()) %></td>
-                        <td><%= HtmlEscape.escape(event.getClubName()) %></td>
-                        <td><%= event.getDate() %></td>
-                        <td><%= event.getStartTime() %> - <%= event.getEndTime() %></td>
-                        <td><%= HtmlEscape.escape(event.getLocation()) %></td>
-                        <td><%= event.getCapacity() == null ? "No Limit" : event.getCapacity() %></td>
-                        <td>
+                    <li class="club-list-item">
+                        <h2><%= HtmlEscape.escape(event.getTitle()) %></h2>
+                        <p class="club-meta">
+                            <%= HtmlEscape.escape(event.getClubName()) %>
+                            &middot; <%= event.getDate() %>
+                            &middot; <%= event.getStartTime() %> - <%= event.getEndTime() %>
+                            &middot; <%= HtmlEscape.escape(event.getLocation()) %>
+                        </p>
+                        <p class="club-meta">
+                            Capacity: <%= event.getCapacity() == null ? "No Limit" : event.getCapacity() %>
+                        </p>
+                        <p style="margin-top: 8px; margin-bottom: 0;">
                             <a href="<%= ctx %>/officer-event?eventId=<%= event.getEventId() %>">Edit</a>
                             |
                             <form action="<%= ctx %>/officer-events" method="post" style="display: inline; margin: 0;">
@@ -89,11 +82,10 @@
                                 <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
                                 <button type="submit" onclick="return confirm('Delete this event?');">Delete</button>
                             </form>
-                        </td>
-                    </tr>
+                        </p>
+                    </li>
                     <% } %>
-                    </tbody>
-                </table>
+                </ul>
                 <% } %>
             </section>
 <%@ include file="/WEB-INF/jspf/dashboardShellEnd.jspf" %>

@@ -1,6 +1,7 @@
 package edu.sjsu.cs157a.team1.controller;
 
 import edu.sjsu.cs157a.team1.dao.RsvpDAO;
+import edu.sjsu.cs157a.team1.dao.UserDAO;
 import edu.sjsu.cs157a.team1.util.CsrfUtil;
 
 import javax.servlet.ServletException;
@@ -25,6 +26,14 @@ public class RsvpServlet extends HttpServlet {
         Integer userId = (Integer) session.getAttribute("userId");
         String action = req.getParameter("action");
         String returnTo = req.getParameter("returnTo");
+        UserDAO userDAO = new UserDAO();
+
+        if (userDAO.findById(userId) == null) {
+            session.invalidate();
+            req.setAttribute("error", "Your session is no longer valid. Please log in again.");
+            req.getRequestDispatcher("login.jsp").forward(req, resp);
+            return;
+        }
 
         if (!CsrfUtil.isValid(session, req.getParameter("csrfToken"))) {
             resp.sendRedirect("events?error=Invalid+request");
@@ -54,6 +63,7 @@ public class RsvpServlet extends HttpServlet {
 
             redirectWithMessage(resp, returnTo, eventId, "error", "Unknown action");
         } catch (Exception e) {
+            log("Unexpected RSVP processing failure for userId=" + userId + ", eventId=" + eventId, e);
             redirectWithMessage(resp, returnTo, eventId, "error", "Unable to process RSVP right now");
         }
     }
