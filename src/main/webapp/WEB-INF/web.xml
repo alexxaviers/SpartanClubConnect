@@ -50,6 +50,36 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>EventDetailsServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.EventDetailsServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>EventDetailsServlet</servlet-name>
+        <url-pattern>/event-details</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RsvpServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.RsvpServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>RsvpServlet</servlet-name>
+        <url-pattern>/rsvp</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MyRsvpsServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.MyRsvpsServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>MyRsvpsServlet</servlet-name>
+        <url-pattern>/my-rsvps</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>BrowseClubsServlet</servlet-name>
         <servlet-class>edu.sjsu.cs157a.team1.controller.BrowseClubsServlet</servlet-class>
     </servlet>
@@ -147,5 +177,25 @@
     <servlet-mapping>
         <servlet-name>AdminUsersServlet</servlet-name>
         <url-pattern>/admin/users</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OfficerEventsServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.OfficerEventsServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>OfficerEventsServlet</servlet-name>
+        <url-pattern>/officer-events</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>EventEditorServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.EventEditorServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>EventEditorServlet</servlet-name>
+        <url-pattern>/officer-event</url-pattern>
     </servlet-mapping>
 </web-app>

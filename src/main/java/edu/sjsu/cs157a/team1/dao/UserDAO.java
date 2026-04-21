@@ -10,11 +10,46 @@ import java.sql.SQLException;
 
 public class UserDAO {
 
+    public User findById(int userId) {
+        String sql = "SELECT user_id, full_name, email, password_hash, is_active FROM Users WHERE user_id = ?";
+
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setUserId(rs.getInt("user_id"));
+                    user.setFullName(rs.getString("full_name"));
+                    user.setEmail(rs.getString("email"));
+                    user.setPasswordHash(rs.getString("password_hash"));
+                    user.setActive(rs.getBoolean("is_active"));
+                    return user;
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     public User findByEmail(String email) {
-        String sql =
-                "SELECT user_id, full_name, email, password_hash, is_active " +
-                        "FROM Users " +
-                        "WHERE email = ?";
+        String sql = "SELECT u.user_id, u.full_name, u.email, u.password_hash, " +
+        "u.is_active, " +
+        "COALESCE(MAX(CASE " +
+        "WHEN r.role_name = 'Admin' THEN 3 " +
+        "WHEN r.role_name = 'Club Officer' THEN 2 " +
+        "WHEN r.role_name = 'Student' THEN 1 " +
+        "END), 1) AS role_rank " +
+        "FROM Users u " +
+        "LEFT JOIN UserRoles ur ON u.user_id = ur.user_id " +
+        "LEFT JOIN Roles r ON ur.role_id = r.role_id " +
+        "WHERE u.email = ? " +
+        "GROUP BY u.user_id, u.full_name, u.email, u.password_hash, u.is_active";
 
         try (Connection conn = DbUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -28,6 +63,9 @@ public class UserDAO {
                     user.setFullName(rs.getString("full_name"));
                     user.setEmail(rs.getString("email"));
                     user.setPasswordHash(rs.getString("password_hash"));
+                    int roleRank = rs.getInt("role_rank");
+                    String roleName = roleRank == 3 ? "Admin" : roleRank == 2 ? "Club Officer" : "Student";
+                    user.setRole(roleName);
                     user.setActive(rs.getBoolean("is_active"));
                     return user;
                 }

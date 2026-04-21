@@ -42,6 +42,7 @@ CREATE TABLE Events (
     start_time TIME,
     end_time TIME,
     location VARCHAR(200),
+    category VARCHAR(100),
     capacity INT,
     image_url VARCHAR(255),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
