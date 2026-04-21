@@ -20,6 +20,16 @@ public class EventEditorServlet extends HttpServlet {
     private static final int MAX_LOCATION_LENGTH = 200;
     private static final int MAX_CATEGORY_LENGTH = 100;
     private static final int MAX_IMAGE_URL_LENGTH = 255;
+    private static final String[] ALLOWED_CATEGORY_OPTIONS = {
+            "Academic",
+            "Workshop",
+            "Networking / Career",
+            "Social",
+            "Volunteer / Service",
+            "Competition / Tournament",
+            "Performance / Showcase",
+            "Sports / Recreation"
+    };
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -85,7 +95,9 @@ public class EventEditorServlet extends HttpServlet {
         String endTimeParam = clean(req.getParameter("endTime"));
         String location = clean(req.getParameter("location"));
         String capacityParam = clean(req.getParameter("capacity"));
-        String category = clean(req.getParameter("category"));
+        String categoryPreset = clean(req.getParameter("categoryPreset"));
+        String categoryOther = clean(req.getParameter("categoryOther"));
+        String legacyCategory = clean(req.getParameter("category"));
         String imageUrl = clean(req.getParameter("imageUrl"));
 
         try {
@@ -102,6 +114,12 @@ public class EventEditorServlet extends HttpServlet {
 
             if (!imageUrl.isEmpty() && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
                 forwardToForm(req, resp, eventDAO, userId, eventIdParam, "Image URL must start with http:// or https://");
+                return;
+            }
+
+            String category = resolveCategory(categoryPreset, categoryOther, legacyCategory);
+            if (category == null && !categoryPreset.isEmpty() && !"other".equals(categoryPreset) && !isAllowedCategory(categoryPreset)) {
+                forwardToForm(req, resp, eventDAO, userId, eventIdParam, "Please select a valid category");
                 return;
             }
 
@@ -235,5 +253,36 @@ public class EventEditorServlet extends HttpServlet {
         }
 
         return null;
+    }
+
+    private String resolveCategory(String categoryPreset, String categoryOther, String legacyCategory) {
+        if (categoryPreset.isEmpty()) {
+            if (!legacyCategory.isEmpty() && isAllowedCategory(legacyCategory)) {
+                return legacyCategory;
+            }
+            return null;
+        }
+
+        if ("other".equals(categoryPreset)) {
+            if (categoryOther.isEmpty()) {
+                return null;
+            }
+            return categoryOther;
+        }
+
+        if (isAllowedCategory(categoryPreset)) {
+            return categoryPreset;
+        }
+
+        return null;
+    }
+
+    private boolean isAllowedCategory(String category) {
+        for (String option : ALLOWED_CATEGORY_OPTIONS) {
+            if (option.equals(category)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
