@@ -22,6 +22,10 @@
 			<%if (!isAdmin){ %>
             <a href="<%= ctx %>/clubs"
                class="dashboard-sidebar-link<%= "browseClubs".equals(activeNav) ? " active" : "" %>">Browse Club</a>
+            <a href="<%= ctx %>/events"
+               class="dashboard-sidebar-link<%= "browseEvents".equals(activeNav) ? " active" : "" %>">Browse Events</a>
+			<a href="<%= ctx %>/my-rsvps"
+               class="dashboard-sidebar-link<%= "myRsvps".equals(activeNav) ? " active" : "" %>">My RSVPs</a>
 			<a href="<%= ctx %>/followedClubs"
                class="dashboard-sidebar-link<%= "followedClubs".equals(activeNav) ? " active" : "" %>">Followed Clubs</a>
             <% } %>

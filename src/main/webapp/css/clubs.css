@@ -10,6 +10,16 @@
     color: #0055A2;
 }
 
+.club-profile-dashboard-header .dashboard-page-subtitle a {
+    color: #0055A2;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.club-profile-dashboard-header .dashboard-page-subtitle a:hover {
+    text-decoration: underline;
+}
+
 .club-profile-dashboard-meta {
     margin-top: 0;
     margin-bottom: 6px;
@@ -32,6 +42,14 @@
     margin: 0 auto 20px;
     padding: 0 0 16px;
     border-bottom: 1px solid var(--border-light, #e5e7eb);
+}
+
+.event-details-top-nav .club-profile-actions-row a.event-details-nav-link.secondary-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-sizing: border-box;
 }
 
 .club-edit-back-link {
@@ -187,10 +205,58 @@
 }
 
 
+
+.event-details-cta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 960px;
+    margin: 20px auto 0;
+    padding: 0 8px;
+    box-sizing: border-box;
+}
+
+.event-details-cta form {
+    margin: 0;
+    display: inline;
+}
+
+.event-details-cta .primary-btn.event-details-action-btn,
+.event-details-cta .secondary-btn.event-details-action-btn {
+    width: auto;
+    min-width: 12rem;
+    padding-left: 22px;
+    padding-right: 22px;
+    box-sizing: border-box;
+}
+
+.event-details-cta .club-profile-edit-btn.event-details-edit-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 12rem;
+    box-sizing: border-box;
+}
+
+.event-details-image {
+    max-width: 100%;
+    max-height: 320px;
+    border-radius: 8px;
+    vertical-align: middle;
+}
+
 .top-nav {
     margin-bottom: 18px;
 }
 
+
+
+.event-details-capacity {
+    white-space: nowrap;
+}
 
 .club-profile-nav-dot {
     color: #9ca3af;
@@ -334,7 +400,8 @@
     padding: 16px 0;
 }
 
-
-
-
+.secondary-link.active {
+    background: #0055A2;
+    color: #ffffff;
+}
 

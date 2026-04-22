@@ -41,12 +41,13 @@
                     Review the events you’re attending or waitlisted for.
                 </p>
             </section>
-
+			<div class="club-profile-actions club-profile-actions--shell event-details-top-nav">
+                <div class="club-profile-actions-row">
+                    <a href="<%= ctx %>/events" class="secondary-btn club-profile-follow-btn event-details-nav-link">All Events</a>
+                    <a href="<%= ctx %>/dashboard.jsp" class="secondary-btn club-profile-follow-btn event-details-nav-link">Home</a>
+                </div>
+            </div>
             <section class="dashboard-form-card clubs-shell-card">
-                <p>
-                    <a href="<%= ctx %>/events">All Events</a> |
-                    <a href="<%= ctx %>/dashboard.jsp">Home</a>
-                </p>
 
                 <% if (success != null && !success.isEmpty()) { %>
                     <p style="color: #0f7b0f;"><strong><%= HtmlEscape.escape(success) %></strong></p>
@@ -61,24 +62,28 @@
                 <% } else { %>
                     <ul class="club-list">
                         <% for (EventView event : events) { %>
-                        <li class="club-list-item">
-                            <h2><a href="<%= ctx %>/event-details?eventId=<%= event.getEventId() %>"><%= HtmlEscape.escape(event.getTitle()) %></a></h2>
-                            <p class="club-meta">
-                                <%= HtmlEscape.escape(event.getClubName()) %>
-                                &middot; <%= event.getDate() %>
-                                &middot; <%= event.getStartTime() %> - <%= event.getEndTime() %>
-                                &middot; <%= HtmlEscape.escape(event.getLocation()) %>
-                            </p>
-                            <p class="club-meta">
-                                Status: <strong><%= HtmlEscape.escape(event.getUserRsvpStatus()) %></strong>
-                            </p>
-                            <form action="<%= ctx %>/rsvp" method="post" style="margin-top: 8px;">
-                                <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
-                                <input type="hidden" name="action" value="cancel">
-                                <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
-                                <input type="hidden" name="returnTo" value="my-rsvps">
-                                <button type="submit">Cancel RSVP</button>
-                            </form>
+       					<li class="club-list-item">
+                            <div class="club-list-item-body">
+                                <h2><a href="<%= ctx %>/event-details?eventId=<%= event.getEventId() %>"><%= HtmlEscape.escape(event.getTitle()) %></a></h2>
+                                <p class="club-meta">
+                                    <%= HtmlEscape.escape(event.getClubName()) %>
+                                    &middot; <%= event.getDate() %>
+                                    &middot; <%= event.getStartTime() %> - <%= event.getEndTime() %>
+                                    &middot; <%= HtmlEscape.escape(event.getLocation()) %>
+                                </p>
+                                <p class="club-meta">
+                                    Status: <strong><%= HtmlEscape.escape(event.getUserRsvpStatus()) %></strong>
+                                </p>
+                            </div>
+                            <div class="event-details-cta event-details-cta--in-card">
+                                <form action="<%= ctx %>/rsvp" method="post">
+                                    <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
+                                    <input type="hidden" name="action" value="cancel">
+                                    <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
+                                    <input type="hidden" name="returnTo" value="my-rsvps">
+                                    <button type="submit" class="secondary-btn event-details-action-btn"><%= "Waitlisted".equals(event.getUserRsvpStatus()) ? "Leave Waitlist" : "Cancel RSVP" %></button>
+                                </form>
+                            </div>
                         </li>
                         <% } %>
                     </ul>

@@ -30,25 +30,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Details - SpartanClubConnect</title>
+    <title><% if (event != null) { %><%= HtmlEscape.escape(event.getTitle()) %> - SpartanClubConnect<% } else { %>Event Details - SpartanClubConnect<% } %></title>
     <link rel="stylesheet" href="<%= ctx %>/css/global.css">
     <link rel="stylesheet" href="<%= ctx %>/css/landing.css">
     <link rel="stylesheet" href="<%= ctx %>/css/dashboard.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/clubs.css">
 </head>
 <%@ include file="/WEB-INF/jspf/dashboardShellStart.jspf" %>
+            <% if (event != null) { %>
+            <section class="dashboard-page-header club-profile-dashboard-header">
+                <h1 class="dashboard-page-title"><%= HtmlEscape.escape(event.getTitle()) %></h1>
+                <p class="dashboard-page-subtitle club-profile-dashboard-meta">
+                    <a href="<%= ctx %>/club?id=<%= event.getClubId() %>"><%= HtmlEscape.escape(event.getClubName()) %></a>
+                </p>
+            </section>
+            <% } else { %>
             <section class="dashboard-page-header">
                 <h1 class="dashboard-page-title">Event Details</h1>
                 <p class="dashboard-page-subtitle">
                     Review event information, RSVP, and manage the event if you are an officer.
                 </p>
             </section>
+            <% } %>
+			            <div class="club-profile-actions club-profile-actions--shell event-details-top-nav">
+                <div class="club-profile-actions-row">
+                    <a href="<%= ctx %>/events" class="secondary-btn club-profile-follow-btn event-details-nav-link">Back to Events</a>
+                    <a href="<%= ctx %>/my-rsvps" class="secondary-btn club-profile-follow-btn event-details-nav-link">My RSVPs</a>
+                    <a href="<%= ctx %>/dashboard.jsp" class="secondary-btn club-profile-follow-btn event-details-nav-link">Home</a>
+                </div>
+            </div>
+            
+            <section class="dashboard-form-card clubs-shell-card">
 
-            <section class="dashboard-form-card">
-                <p>
-                    <a href="<%= ctx %>/events">Back to Events</a> |
-                    <a href="<%= ctx %>/my-rsvps">My RSVPs</a> |
-                    <a href="<%= ctx %>/dashboard.jsp">Home</a>
-                </p>
 
                 <% if (error != null && !error.isEmpty()) { %>
                     <p style="color: #b00020;"><strong><%= HtmlEscape.escape(error) %></strong></p>
@@ -61,65 +74,90 @@
                 <% if (event == null) { %>
                     <p class="empty-hint">Event not found.</p>
                 <% } else { %>
-                    <div class="event-details-grid" style="display: grid; gap: 20px;">
-                        <div>
-                            <h2><%= HtmlEscape.escape(event.getTitle()) %></h2>
-                            <p><strong>Club:</strong> <%= HtmlEscape.escape(event.getClubName()) %></p>
-                            <p><strong>Description:</strong> <%= HtmlEscape.escape(event.getDescription()) %></p>
-                            <p><strong>Date:</strong> <%= event.getDate() %></p>
-                            <p><strong>Time:</strong> <%= event.getStartTime() %> - <%= event.getEndTime() %></p>
-                            <p><strong>Location:</strong> <%= HtmlEscape.escape(event.getLocation()) %></p>
-                            <p><strong>Category:</strong> <%= event.getCategory() == null ? "-" : HtmlEscape.escape(event.getCategory()) %></p>
-                            <% if (event.getImageUrl() != null && !event.getImageUrl().isEmpty()) {
-                                String safeImageUrl = event.getImageUrl();
-                                if (safeImageUrl.startsWith("http://") || safeImageUrl.startsWith("https://")) { %>
-                                    <p>
-                                        <img src="<%= HtmlEscape.escape(safeImageUrl) %>" alt="Event image" style="max-width: 100%; max-height: 320px; border-radius: 8px;">
-                                    </p>
-                            <%  }
-                            } %>
-                            <p>
-                                <strong>Capacity:</strong>
-                                <%= event.getGoingCount() %>
-                                /
-                                <%= event.getCapacity() == null ? "No Limit" : event.getCapacity() %>
-                                <%= event.isFull() ? " (Full)" : "" %>
-                            </p>
-                            <p><strong>Your RSVP Status:</strong> <%= event.getUserRsvpStatus() == null ? "Not RSVPed" : HtmlEscape.escape(event.getUserRsvpStatus()) %></p>
-                        </div>
-
-                        <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
-                            <% if ("Going".equals(event.getUserRsvpStatus()) || "Waitlisted".equals(event.getUserRsvpStatus())) { %>
-                                <form action="<%= ctx %>/rsvp" method="post" style="margin: 0;">
-                                    <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
-                                    <input type="hidden" name="action" value="cancel">
-                                    <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
-                                    <input type="hidden" name="returnTo" value="event-details">
-                                    <button type="submit"><%= "Waitlisted".equals(event.getUserRsvpStatus()) ? "Leave Waitlist" : "Cancel RSVP" %></button>
-                                </form>
+                                        <ul class="club-list club-profile-details">
+                        <li class="club-list-item">
+                            <h2 class="club-profile-block-heading">Description</h2>
+                            <% if (event.getDescription() != null && !event.getDescription().isEmpty()) { %>
+                            <p class="club-profile-block-text"><%= HtmlEscape.escape(event.getDescription()) %></p>
                             <% } else { %>
-                                <form action="<%= ctx %>/rsvp" method="post" style="margin: 0;">
-                                    <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
-                                    <input type="hidden" name="action" value="register">
-                                    <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
-                                    <input type="hidden" name="returnTo" value="event-details">
-                                    <button type="submit"><%= event.isFull() ? "Join Waitlist" : "RSVP / Register" %></button>
-                                </form>
+                            <p class="club-profile-block-text club-profile-block-text--muted">No description provided.</p>
                             <% } %>
-
-                            <% if (Boolean.TRUE.equals(canViewAttendees)) { %>
-                                <a href="<%= ctx %>/officer-event?eventId=<%= event.getEventId() %>">Edit Event</a>
-                                <form action="<%= ctx %>/officer-events" method="post" style="display: inline; margin: 0;">
-                                    <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
-                                    <input type="hidden" name="action" value="delete">
-                                    <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
-                                    <button type="submit" onclick="return confirm('Delete this event?');">Delete Event</button>
-                                </form>
+                        </li>
+                        <li class="club-list-item">
+                            <h2 class="club-profile-block-heading">Date</h2>
+                            <p class="club-profile-block-text"><%= event.getDate() %></p>
+                        </li>
+                        <li class="club-list-item">
+                            <h2 class="club-profile-block-heading">Time</h2>
+                            <p class="club-profile-block-text"><%= event.getStartTime() %> – <%= event.getEndTime() %></p>
+                        </li>
+                        <li class="club-list-item">
+                            <h2 class="club-profile-block-heading">Location</h2>
+                            <p class="club-profile-block-text"><%= HtmlEscape.escape(event.getLocation()) %></p>
+                        </li>
+                        <li class="club-list-item">
+                            <h2 class="club-profile-block-heading">Category</h2>
+                            <% if (event.getCategory() != null && !event.getCategory().isEmpty()) { %>
+                            <p class="club-profile-block-text"><%= HtmlEscape.escape(event.getCategory()) %></p>
+                            <% } else { %>
+                            <p class="club-profile-block-text club-profile-block-text--muted">—</p>
                             <% } %>
-                        </div>
-                    </div>
+                        </li>
+                        <% if (event.getImageUrl() != null && !event.getImageUrl().isEmpty()) {
+                            String safeImageUrl = event.getImageUrl();
+                            if (safeImageUrl.startsWith("http://") || safeImageUrl.startsWith("https://")) { %>
+                        <li class="club-list-item">
+                            <h2 class="club-profile-block-heading">Event image</h2>
+                            <p class="club-profile-block-text">
+                                <img src="<%= HtmlEscape.escape(safeImageUrl) %>" alt="Event image" class="event-details-image">
+                            </p>
+                        </li>
+                        <%  }
+                        } %>
+                        <li class="club-list-item">
+                            <h2 class="club-profile-block-heading">Capacity</h2>
+                            <p class="club-profile-block-text event-details-capacity"><%= event.getGoingCount() %> / <%= event.getCapacity() == null ? "No limit" : event.getCapacity() %><%= event.isFull() ? " (full)" : "" %></p>
+                            
+                        </li>
+                        <li class="club-list-item">
+                            <h2 class="club-profile-block-heading">Your RSVP status</h2>
+                            <p class="club-profile-block-text"><%= event.getUserRsvpStatus() == null ? "Not RSVPed" : HtmlEscape.escape(event.getUserRsvpStatus()) %></p>
+                        </li>
+                    </ul>
                 <% } %>
             </section>
+
+            <% if (event != null) { %>
+            <div class="event-details-cta">
+                <% if ("Going".equals(event.getUserRsvpStatus()) || "Waitlisted".equals(event.getUserRsvpStatus())) { %>
+                <form action="<%= ctx %>/rsvp" method="post">
+                    <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
+                    <input type="hidden" name="action" value="cancel">
+                    <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
+                    <input type="hidden" name="returnTo" value="event-details">
+                    <button type="submit" class="secondary-btn event-details-action-btn"><%= "Waitlisted".equals(event.getUserRsvpStatus()) ? "Leave Waitlist" : "Cancel RSVP" %></button>
+                </form>
+                <% } else { %>
+                <form action="<%= ctx %>/rsvp" method="post">
+                    <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
+                    <input type="hidden" name="action" value="register">
+                    <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
+                    <input type="hidden" name="returnTo" value="event-details">
+                    <button type="submit" class="primary-btn event-details-action-btn"><%= event.isFull() ? "Join Waitlist" : "RSVP / Register" %></button>
+                </form>
+                <% } %>
+
+                <% if (Boolean.TRUE.equals(canViewAttendees)) { %>
+                <a href="<%= ctx %>/officer-event?eventId=<%= event.getEventId() %>" class="club-profile-edit-btn event-details-edit-link">Edit event</a>
+                <form action="<%= ctx %>/officer-events" method="post">
+                    <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
+                    <button type="submit" class="secondary-btn event-details-action-btn" onclick="return confirm('Delete this event?');">Delete event</button>
+                </form>
+                <% } %>
+            </div>
+            <% } %>
 
             <% if (Boolean.TRUE.equals(canViewAttendees)) { %>
                 <section class="dashboard-form-card">

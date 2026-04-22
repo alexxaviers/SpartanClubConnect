@@ -262,7 +262,36 @@ public class RsvpDAO {
 
         return events;
     }
+    
+    public List<EventView> getFollowedClubEventsForUser(int userId) throws SQLException {
+        String sql = "SELECT e.event_id, e.club_id, c.club_name, e.title, e.description, e.date, e.start_time, e.end_time, " +
+                "e.location, e.category, e.image_url, e.capacity, " +
+                "COALESCE(rc.going_count, 0) AS going_count, " +
+                "CASE WHEN r.status IN ('Going', 'Waitlisted') THEN 1 ELSE 0 END AS has_rsvp, " +
+                "CASE WHEN r.status IN ('Going', 'Waitlisted') THEN r.status ELSE NULL END AS user_rsvp_status " +
+                "FROM Events e " +
+                "JOIN Clubs c ON c.club_id = e.club_id " +
+                "JOIN Follows f ON f.club_id = e.club_id AND f.user_id = ? " +
+                "LEFT JOIN RSVPs r ON r.event_id = e.event_id AND r.user_id = ? " +
+                "LEFT JOIN (SELECT event_id, COUNT(*) AS going_count FROM RSVPs WHERE status = 'Going' GROUP BY event_id) rc ON rc.event_id = e.event_id " +
+                "WHERE e.is_active = TRUE AND e.date >= CURDATE() " +
+                "ORDER BY e.date ASC, e.start_time ASC";
 
+        List<EventView> events = new ArrayList<>();
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setInt(2, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    events.add(mapEventRow(rs));
+                }
+            }
+        }
+
+        return events;
+    }
+    
     public EventView getEventById(int eventId, int userId) throws SQLException {
         String sql = "SELECT e.event_id, e.club_id, c.club_name, e.title, e.description, e.date, e.start_time, e.end_time, " +
                 "e.location, e.category, e.image_url, e.capacity, " +

@@ -22,12 +22,19 @@ public class EventsServlet extends HttpServlet {
 
         Integer userId = (Integer) session.getAttribute("userId");
         RsvpDAO rsvpDAO = new RsvpDAO();
+        String feedParam = req.getParameter("feed");
+        String feedMode = "personalized".equalsIgnoreCase(feedParam) ? "personalized" : "all";
 
         req.setAttribute("success", req.getParameter("success"));
         req.setAttribute("error", req.getParameter("error"));
-
+        req.setAttribute("feedMode", feedMode);
+        
         try {
-            req.setAttribute("events", rsvpDAO.getAllEventsForUser(userId));
+            if ("personalized".equals(feedMode)) {
+                req.setAttribute("events", rsvpDAO.getFollowedClubEventsForUser(userId));
+            } else {
+                req.setAttribute("events", rsvpDAO.getAllEventsForUser(userId));
+            }
         } catch (Exception e) {
             req.setAttribute("events", Collections.emptyList());
             req.setAttribute("error", "Unable to load events right now.");

@@ -23,6 +23,11 @@
     }
     String success = (String) request.getAttribute("success");
     String error = (String) request.getAttribute("error");
+    String feedMode = (String) request.getAttribute("feedMode");
+    if (feedMode == null || feedMode.isEmpty()) {
+        feedMode = "all";
+    }
+    boolean personalizedFeed = "personalized".equalsIgnoreCase(feedMode);
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,8 +52,8 @@
                 <div class="clubs-toolbar">
                     <div class="toolbar-actions">
                         <a href="<%= ctx %>/my-rsvps" class="secondary-link">My RSVPs</a>
-                        <a href="<%= ctx %>/events?feed=all" class="secondary-link">Browse All Events</a>
-                        <a href="#" class="secondary-link" onclick="return false;" title="Placeholder for teammate implementation">Browse Personalized Events (Coming Soon)</a>
+						<a href="<%= ctx %>/events?feed=all" class="secondary-link<%= !personalizedFeed ? " active" : "" %>">Browse All Events</a>
+                        <a href="<%= ctx %>/events?feed=personalized" class="secondary-link<%= personalizedFeed ? " active" : "" %>">Browse Personalized Events</a>
                         <% if (isClubOfficer) { %>
                             <a href="<%= ctx %>/officer-events" class="secondary-link">Manage My Club Events</a>
                         <% } %>
@@ -64,7 +69,14 @@
                 <% } %>
 
                 <% if (events.isEmpty()) { %>
-                    <p class="empty-hint">No events available right now.</p>
+                    <% if (personalizedFeed) { %>
+                        <p class="empty-hint">
+                            No upcoming events from clubs you follow yet.
+                            <a href="<%= ctx %>/clubs">Browse clubs</a> to follow organizations and personalize this feed.
+                        </p>
+                    <% } else { %>
+                        <p class="empty-hint">No events available right now.</p>
+                    <% } %>
                 <% } else { %>
                     <ul class="club-list">
                         <% for (EventView event : events) { %>
