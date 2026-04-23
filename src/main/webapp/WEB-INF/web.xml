@@ -38,6 +38,25 @@
         <servlet-name>LogoutServlet</servlet-name>
         <url-pattern>/LogoutServlet</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>BookmarkServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.BookmarkServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>BookmarkServlet</servlet-name>
+        <url-pattern>/bookmark</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MyBookmarksServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.MyBookmarksServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>MyBookmarksServlet</servlet-name>
+        <url-pattern>/my-bookmarks</url-pattern>
+    </servlet-mapping>
 
     <servlet>
         <servlet-name>EventsServlet</servlet-name>

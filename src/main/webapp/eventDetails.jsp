@@ -21,6 +21,7 @@
     String csrfToken = CsrfUtil.getToken(session);
     EventView event = (EventView) request.getAttribute("event");
     Boolean canViewAttendees = (Boolean) request.getAttribute("canViewAttendees");
+    Boolean isBookmarked = (Boolean) request.getAttribute("isBookmarked");
     List<AttendeeView> attendees = (List<AttendeeView>) request.getAttribute("attendees");
     String success = (String) request.getAttribute("success");
     String error = (String) request.getAttribute("error");
@@ -146,7 +147,18 @@
                     <button type="submit" class="primary-btn event-details-action-btn"><%= event.isFull() ? "Join Waitlist" : "RSVP / Register" %></button>
                 </form>
                 <% } %>
-
+                <form action="<%= ctx %>/bookmark" method="post">
+                    <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
+                    <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
+                    <input type="hidden" name="returnTo" value="event-details">
+                    <% if (Boolean.TRUE.equals(isBookmarked)) { %>
+                        <input type="hidden" name="action" value="remove">
+                        <button type="submit" class="secondary-btn event-details-action-btn">Remove Bookmark</button>
+                    <% } else { %>
+                        <input type="hidden" name="action" value="save">
+                        <button type="submit" class="primary-btn event-details-action-btn">Save Event</button>
+                    <% } %>
+                </form>
                 <% if (Boolean.TRUE.equals(canViewAttendees)) { %>
                 <a href="<%= ctx %>/officer-event?eventId=<%= event.getEventId() %>" class="club-profile-edit-btn event-details-edit-link">Edit event</a>
                 <form action="<%= ctx %>/officer-events" method="post">
