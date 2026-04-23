@@ -52,6 +52,55 @@
     box-sizing: border-box;
 }
 
+.event-details-top-nav .club-profile-actions-row a.event-details-nav-link.secondary-btn.active {
+    background: #0055A2;
+    border-color: #0055A2;
+    color: #ffffff;
+}
+
+.event-details-attendees-table-wrap {
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    overflow: auto;
+    background: #ffffff;
+}
+
+.event-details-attendees-heading {
+    margin: 0 0 14px;
+    color: #111827;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.event-details-attendees-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: none;
+    min-width: 680px;
+    font-size: 0.95rem;
+    color: #374151;
+}
+
+.event-details-attendees-table th,
+.event-details-attendees-table td {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+.event-details-attendees-table thead th {
+    background: #f9fafb;
+    font-weight: 700;
+    color: #111827;
+    border-bottom: 1px solid #d1d5db;
+}
+
+.event-details-attendees-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
 .club-edit-back-link {
     color: #0055A2;
     font-weight: 600;

@@ -22,6 +22,10 @@
     EventView event = (EventView) request.getAttribute("event");
     Boolean canViewAttendees = (Boolean) request.getAttribute("canViewAttendees");
     Boolean isBookmarked = (Boolean) request.getAttribute("isBookmarked");
+    String activeTab = (String) request.getAttribute("activeTab");
+    if (activeTab == null || activeTab.isEmpty()) {
+        activeTab = "details";
+    }
     List<AttendeeView> attendees = (List<AttendeeView>) request.getAttribute("attendees");
     String success = (String) request.getAttribute("success");
     String error = (String) request.getAttribute("error");
@@ -53,17 +57,22 @@
                 </p>
             </section>
             <% } %>
-			            <div class="club-profile-actions club-profile-actions--shell event-details-top-nav">
+			<div class="club-profile-actions club-profile-actions--shell event-details-top-nav">
                 <div class="club-profile-actions-row">
                     <a href="<%= ctx %>/events" class="secondary-btn club-profile-follow-btn event-details-nav-link">Back to Events</a>
                     <a href="<%= ctx %>/my-rsvps" class="secondary-btn club-profile-follow-btn event-details-nav-link">My RSVPs</a>
                     <a href="<%= ctx %>/dashboard.jsp" class="secondary-btn club-profile-follow-btn event-details-nav-link">Home</a>
+                    <% if (event != null && Boolean.TRUE.equals(canViewAttendees)) { %>
+                        <a href="<%= ctx %>/event-details?eventId=<%= event.getEventId() %>&tab=details"
+                           class="secondary-btn club-profile-follow-btn event-details-nav-link<%= "details".equals(activeTab) ? " active" : "" %>">Details</a>
+                        <a href="<%= ctx %>/event-details?eventId=<%= event.getEventId() %>&tab=attendees"
+                           class="secondary-btn club-profile-follow-btn event-details-nav-link<%= "attendees".equals(activeTab) ? " active" : "" %>">Attendees</a>
+                    <% } %>
                 </div>
             </div>
             
+            <% if (!"attendees".equals(activeTab)) { %>
             <section class="dashboard-form-card clubs-shell-card">
-
-
                 <% if (error != null && !error.isEmpty()) { %>
                     <p style="color: #b00020;"><strong><%= HtmlEscape.escape(error) %></strong></p>
                 <% } %>
@@ -75,7 +84,7 @@
                 <% if (event == null) { %>
                     <p class="empty-hint">Event not found.</p>
                 <% } else { %>
-                                        <ul class="club-list club-profile-details">
+                     <ul class="club-list club-profile-details">
                         <li class="club-list-item">
                             <h2 class="club-profile-block-heading">Description</h2>
                             <% if (event.getDescription() != null && !event.getDescription().isEmpty()) { %>
@@ -127,8 +136,10 @@
                     </ul>
                 <% } %>
             </section>
+			<% } %>
 
-            <% if (event != null) { %>
+
+            <% if (event != null && !"attendees".equals(activeTab)) { %>
             <div class="event-details-cta">
                 <% if ("Going".equals(event.getUserRsvpStatus()) || "Waitlisted".equals(event.getUserRsvpStatus())) { %>
                 <form action="<%= ctx %>/rsvp" method="post">
@@ -171,13 +182,14 @@
             </div>
             <% } %>
 
-            <% if (Boolean.TRUE.equals(canViewAttendees)) { %>
+            <% if (Boolean.TRUE.equals(canViewAttendees) && "attendees".equals(activeTab)) { %>
                 <section class="dashboard-form-card">
-                    <h3>Attendee List</h3>
+                    <h3 class="event-details-attendees-heading">Attendee List</h3>
                     <% if (attendees == null || attendees.isEmpty()) { %>
                         <p class="empty-hint">No attendees yet.</p>
                     <% } else { %>
-                        <table border="1" cellpadding="8" cellspacing="0" width="100%">
+						<div class="event-details-attendees-table-wrap">
+                        <table class="event-details-attendees-table">
                             <thead>
                             <tr>
                                 <th>User ID</th>
@@ -199,6 +211,7 @@
                             <% } %>
                             </tbody>
                         </table>
+                        </div>
                     <% } %>
                 </section>
             <% } %>

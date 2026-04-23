@@ -65,7 +65,7 @@
                 <ul class="club-list">
                     <% for (ManagedEventView event : events) { %>
                     <li class="club-list-item">
-                        <h2><%= HtmlEscape.escape(event.getTitle()) %></h2>
+                        <h2><a href="<%= ctx %>/event-details?eventId=<%= event.getEventId() %>"><%= HtmlEscape.escape(event.getTitle()) %></a></h2>
                         <p class="club-meta">
                             <%= HtmlEscape.escape(event.getClubName()) %>
                             &middot; <%= event.getDate() %>

@@ -48,13 +48,19 @@ public class EventDetailsServlet extends HttpServlet {
 
             boolean canViewAttendees = isClubOfficer
                     && rsvpDAO.canOfficerViewAttendees(userId, eventId);
-
+            String tabParam = req.getParameter("tab");
+            String activeTab = "attendees".equalsIgnoreCase(tabParam) ? "attendees" : "details";
+            if (!canViewAttendees) {
+                activeTab = "details";
+            }
+            
             List<RsvpDAO.AttendeeView> attendees = canViewAttendees
                     ? rsvpDAO.getAttendeesForEvent(eventId)
                     : Collections.emptyList();
 
             req.setAttribute("event", event);
             req.setAttribute("canViewAttendees", canViewAttendees);
+            req.setAttribute("activeTab", activeTab);
             req.setAttribute("attendees", attendees);
             req.setAttribute("isBookmarked", bookmarkDAO.isBookmarked(userId, eventId));
             req.setAttribute("success", req.getParameter("success"));
