@@ -235,7 +235,8 @@ public class RsvpDAO {
             this.rsvpTime = rsvpTime;
         }
     }
-
+    //We are using COALESCE to get the count of those who are going, if there are none then 
+    //just have it as 0
     public List<EventView> getAllEventsForUser(int userId) throws SQLException {
         String sql = "SELECT e.event_id, e.club_id, c.club_name, e.title, e.description, e.date, e.start_time, e.end_time, " +
             "e.location, e.category, e.image_url, e.capacity, " +

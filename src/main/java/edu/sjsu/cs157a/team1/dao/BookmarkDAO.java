@@ -13,7 +13,9 @@ import java.util.Set;
 
 public class BookmarkDAO{
 	
+	
 	public boolean addBookmark(int userId, int eventId) throws SQLException{
+		//Insert to the Bookmarks table that maps a user id to an event id
 		String sql = "INSERT INTO Bookmarks (user_id, event_id) VALUES (?,?)";
 		try(Connection conn = DbUtil.getConnection();
 				PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -30,6 +32,7 @@ public class BookmarkDAO{
 	}
 	
 	public boolean removeBookmark(int userId, int eventId) throws SQLException{
+		//Get rid of the mapping between user id and event id for users who removed their bookmark for a specific event.
 		String sql = "DELETE FROM Bookmarks WHERE user_id = ? AND event_id = ?";
 		try(Connection conn = DbUtil.getConnection();
 				PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -40,6 +43,7 @@ public class BookmarkDAO{
 	}
 	
 	public boolean isBookmarked(int userId, int eventId) throws SQLException{
+		//Check if a user has already bookmarked an event
 		String sql = "SELECT 1 FROM Bookmarks WHERE user_id = ? AND event_id = ? LIMIT 1";
 		try(Connection conn = DbUtil.getConnection();
 				PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -51,6 +55,7 @@ public class BookmarkDAO{
 		}
 	}
     public Set<Integer> getBookmarkedEventIds(int userId) throws SQLException {
+    	//Get all the event id that a specific user bookmarked
         String sql = "SELECT event_id FROM Bookmarks WHERE user_id = ?";
         Set<Integer> bookmarked = new HashSet<>();
         try (Connection conn = DbUtil.getConnection();
@@ -66,6 +71,8 @@ public class BookmarkDAO{
     }
 
     public List<RsvpDAO.EventView> getBookmarkedUpcomingEvents(int userId) throws SQLException {
+    	//Get the upcoming event that were bookmarked with information about the events
+    	//We used COALESCE to get the count of people going else if no one RSVPed yet then it is 0
         String sql = "SELECT e.event_id, e.club_id, c.club_name, e.title, e.description, e.date, e.start_time, e.end_time, " +
                 "e.location, e.category, e.image_url, e.capacity, " +
                 "COALESCE(rc.going_count, 0) AS going_count, " +

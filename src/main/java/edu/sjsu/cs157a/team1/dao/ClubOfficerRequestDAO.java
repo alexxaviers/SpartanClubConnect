@@ -10,6 +10,7 @@ import java.util.List;
 public class ClubOfficerRequestDAO {
 
     public boolean hasPendingRequest(int userId) throws SQLException {
+    	//Check user who are currently waiting for approval to become club officer
         String sql = """
                 SELECT 1
                 FROM ClubOfficerRequests
@@ -28,6 +29,7 @@ public class ClubOfficerRequestDAO {
     }
 
     public boolean createRequest(ClubOfficerRequest request) throws SQLException {
+    	//Insert new club officer requests along with provided information from user
         String sql = """
                 INSERT INTO ClubOfficerRequests
                 (sjsu_id, club_name, justification, status, created_at, user_id)
@@ -47,6 +49,7 @@ public class ClubOfficerRequestDAO {
     }
 
     public boolean userHasRole(int userId, String roleName) throws SQLException {
+    	//Map user to their roles such as 1 for student, 2 for club officer, and 3 for admin
         String sql = """
                 SELECT 1
                 FROM UserRoles ur
@@ -67,6 +70,7 @@ public class ClubOfficerRequestDAO {
     }
 
     public List<ClubOfficerRequest> getPendingRequests() throws SQLException {
+    	//Get a list of users who currently have a pending request
         String sql = """
             SELECT
                 cor.request_id,
@@ -118,6 +122,7 @@ public class ClubOfficerRequestDAO {
     }
 
     public Integer getRoleIdByName(String roleName) throws SQLException {
+    	//Get name of roles that correspond to their role id
         String sql = """
                 SELECT role_id
                 FROM Roles
@@ -144,7 +149,7 @@ public class ClubOfficerRequestDAO {
         try {
             conn = DbUtil.getConnection();
             conn.setAutoCommit(false);
-
+            //Get pending club officer request from user for updating 
             String selectRequestSql = """
                     SELECT user_id
                     FROM ClubOfficerRequests
@@ -167,6 +172,7 @@ public class ClubOfficerRequestDAO {
             }
 
             Integer clubOfficerRoleId = null;
+            //Get the role id that correspond to club officer, which is 2
             String findRoleSql = """
                     SELECT role_id
                     FROM Roles
@@ -185,7 +191,7 @@ public class ClubOfficerRequestDAO {
                 conn.rollback();
                 throw new SQLException("Club Officer role does not exist in Roles table.");
             }
-
+            //Update request from pending to approve and track the admin that approved the request
             String updateRequestSql = """
                     UPDATE ClubOfficerRequests
                     SET status = 'Approved',
@@ -203,7 +209,7 @@ public class ClubOfficerRequestDAO {
                     return false;
                 }
             }
-
+            //Check the current role of the user 
             String checkUserRoleSql = """
                     SELECT 1
                     FROM UserRoles
@@ -222,6 +228,7 @@ public class ClubOfficerRequestDAO {
             }
 
             if (!alreadyHasRole) {
+            	//Change the role of the user from student to club officer
                 String insertUserRoleSql = """
                         INSERT INTO UserRoles (user_id, role_id, assigned_at)
                         VALUES (?, ?, NOW())
@@ -251,6 +258,7 @@ public class ClubOfficerRequestDAO {
     }
 
     public boolean denyRequest(int requestId, int adminUserId) throws SQLException {
+    	//Update the pending request to denied and track which admin reviewed it
         String sql = """
                 UPDATE ClubOfficerRequests
                 SET status = 'Denied',
@@ -269,6 +277,7 @@ public class ClubOfficerRequestDAO {
     }
 
     public List<ClubOfficerRequest> getReviewedRequests() throws SQLException {
+    	//Get list of reviewed requests with status as approved or denied
         String sql = """
             SELECT
                 cor.request_id,
