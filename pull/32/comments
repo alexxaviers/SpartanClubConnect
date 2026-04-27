@@ -1,1 +1,0 @@
-The servlet should validate eventId parameter type before parsing. If Integer.parseInt fails, you catch and redirect, but you're not logging the specific error. Consider adding logging: catch (NumberFormatException e) { log("Invalid eventId parameter: " + req.getParameter("eventId"), e); ...}
