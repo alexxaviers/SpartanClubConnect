@@ -31,6 +31,7 @@ public class EventsServlet extends HttpServlet {
         req.setAttribute("success", req.getParameter("success"));
         req.setAttribute("error", req.getParameter("error"));
         req.setAttribute("feedMode", feedMode);
+        req.setAttribute("activeNav", "browseEvents");
         
         try {
             if ("personalized".equals(feedMode)) {
