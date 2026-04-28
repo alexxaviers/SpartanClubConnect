@@ -160,16 +160,16 @@ INSERT INTO Follows (user_id, club_id) VALUES
 
 -- EVENTS (10 rows)
 INSERT INTO Events (title, description, date, start_time, end_time, location, category, capacity, image_url, is_active, club_id, created_by) VALUES
-    ('ACM Technical Interview Prep', 'A workshop covering data structures, whiteboard practice, and internship interview strategies.', '2026-04-08', '18:00:00', '20:00:00', 'Engineering Building Room 189', 'Technology', 80, NULL, TRUE, 1, 1),
-    ('SHPE Networking Night', 'Meet alumni and local professionals for career advice and internship networking.', '2026-04-10', '18:30:00', '20:30:00', 'Student Union Ballroom B', 'Professional Development', 120, NULL, TRUE, 2, 2),
-    ('Spartan Debate Showcase', 'An exhibition round featuring current members and open audience Q&A.', '2026-04-12', '17:00:00', '19:00:00', 'Student Union Theater', 'Academic', 60, NULL, TRUE, 3, 3),
-    ('Campus Golden Hour Photo Walk', 'Guided photo walk across campus with composition and lighting tips.', '2026-04-14', '17:30:00', '19:00:00', 'Tower Lawn', 'Arts', 35, NULL, TRUE, 4, 4),
-    ('Women in Business Resume Review', 'Resume critique and LinkedIn profile workshop led by upperclassmen and alumni.', '2026-04-16', '18:00:00', '20:00:00', 'BBC Room 032', 'Business', 70, NULL, TRUE, 5, 5),
-    ('Anime Screening Night', 'Club screening of a feature-length anime film followed by discussion.', '2026-04-18', '18:30:00', '21:00:00', 'Student Union Room 3A', 'Media & Entertainment', 90, NULL, TRUE, 6, 6),
-    ('Earth Day Tree Planting', 'Volunteer event focused on planting and maintaining native trees near campus.', '2026-04-22', '09:00:00', '12:00:00', '7th Street Plaza', 'Community Service', 50, NULL, TRUE, 7, 7),
-    ('Weekend Soccer Scrimmage', 'Friendly scrimmage open to all members with rotating teams and short matches.', '2026-04-25', '14:00:00', '16:00:00', 'Spartan Recreation Field', 'Recreation & Sports', 40, NULL, TRUE, 8, 8),
-    ('Blitz Chess Tournament', 'Fast-paced campus chess tournament with a small prize for top finishers.', '2026-04-27', '18:00:00', '21:00:00', 'Clark Hall Room 111', 'Academic', 32, NULL, TRUE, 9, 9),
-    ('Spring Open Mic Showcase', 'Student musicians perform solo and group sets in an open mic format.', '2026-04-30', '19:00:00', '21:30:00', 'Music Building Recital Room', 'Arts', 100, NULL, TRUE, 10, 10);
+    ('ACM Technical Interview Prep', 'A workshop covering data structures, whiteboard practice, and internship interview strategies.', '2026-09-08', '18:00:00', '20:00:00', 'Engineering Building Room 189', 'Technology', 80, NULL, TRUE, 1, 1),
+    ('SHPE Networking Night', 'Meet alumni and local professionals for career advice and internship networking.', '2026-09-10', '18:30:00', '20:30:00', 'Student Union Ballroom B', 'Professional Development', 120, NULL, TRUE, 2, 2),
+    ('Spartan Debate Showcase', 'An exhibition round featuring current members and open audience Q&A.', '2026-09-12', '17:00:00', '19:00:00', 'Student Union Theater', 'Academic', 60, NULL, TRUE, 3, 3),
+    ('Campus Golden Hour Photo Walk', 'Guided photo walk across campus with composition and lighting tips.', '2026-09-14', '17:30:00', '19:00:00', 'Tower Lawn', 'Arts', 35, NULL, TRUE, 4, 4),
+    ('Women in Business Resume Review', 'Resume critique and LinkedIn profile workshop led by upperclassmen and alumni.', '2026-09-16', '18:00:00', '20:00:00', 'BBC Room 032', 'Business', 70, NULL, TRUE, 5, 5),
+    ('Anime Screening Night', 'Club screening of a feature-length anime film followed by discussion.', '2026-09-18', '18:30:00', '21:00:00', 'Student Union Room 3A', 'Media & Entertainment', 90, NULL, TRUE, 6, 6),
+    ('Earth Day Tree Planting', 'Volunteer event focused on planting and maintaining native trees near campus.', '2026-09-22', '09:00:00', '12:00:00', '7th Street Plaza', 'Community Service', 50, NULL, TRUE, 7, 7),
+    ('Weekend Soccer Scrimmage', 'Friendly scrimmage open to all members with rotating teams and short matches.', '2026-09-25', '14:00:00', '16:00:00', 'Spartan Recreation Field', 'Recreation & Sports', 40, NULL, TRUE, 8, 8),
+    ('Blitz Chess Tournament', 'Fast-paced campus chess tournament with a small prize for top finishers.', '2026-09-27', '18:00:00', '21:00:00', 'Clark Hall Room 111', 'Academic', 32, NULL, TRUE, 9, 9),
+    ('Spring Open Mic Showcase', 'Student musicians perform solo and group sets in an open mic format.', '2026-09-30', '19:00:00', '21:30:00', 'Music Building Recital Room', 'Arts', 100, NULL, TRUE, 10, 10);
 
 -- RSVPS (10 rows)
 INSERT INTO RSVPs (user_id, event_id, status) VALUES

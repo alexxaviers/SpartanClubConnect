@@ -30,8 +30,6 @@
                class="dashboard-sidebar-link<%= "myBookmarks".equals(activeNav) ? " active" : "" %>">My Bookmarks</a>
 			<a href="<%= ctx %>/followedClubs"
                class="dashboard-sidebar-link<%= "followedClubs".equals(activeNav) ? " active" : "" %>">Followed Clubs</a>
-            <a href="<%= ctx %>/my-rsvps"
-               class="dashboard-sidebar-link<%= "myRsvps".equals(activeNav) ? " active" : "" %>">My RSVPs</a>
             <% } %>
 			
             <% if (!isClubOfficer && !isAdmin) { %>

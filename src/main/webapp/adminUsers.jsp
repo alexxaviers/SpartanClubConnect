@@ -109,7 +109,7 @@
                         <form method="post" action="<%= ctx %>/admin/users">
                             <input type="hidden" name="userId" value="<%= user.getUserId() %>">
                             <input type="hidden" name="action" value="deactivate">
-                            <input type="text" name="reason" maxlength="255" placeholder="Optional reason" style="margin-bottom: 8px;">
+                            <input type="text" name="reason" maxlength="255" placeholder="Optional reason">
                             <button type="submit" class="secondary-btn request-action-btn"
                                     onclick="return confirm('Deactivate this user account?');">
                                 Deactivate

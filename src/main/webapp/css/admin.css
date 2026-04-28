@@ -39,8 +39,27 @@
 .admin-action-stack {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    min-width: 160px;
+    gap: 8px;
+    width: 220px;
+    min-width: 220px;
+}
+
+.admin-action-stack form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.admin-action-stack input[type="text"] {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.request-action-btn {
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .admin-self-note {
@@ -65,10 +84,16 @@
 .admin-table-users th:nth-child(4),
 .admin-table-users td:nth-child(4),
 .admin-table-users th:nth-child(5),
-.admin-table-users td:nth-child(5),
+.admin-table-users td:nth-child(5) {
+    white-space: nowrap;
+}
+
 .admin-table-users th:nth-child(6),
 .admin-table-users td:nth-child(6) {
-    white-space: nowrap;
+    width: 240px;
+    min-width: 240px;
+    white-space: normal;
+    vertical-align: top;
 }
 
 .admin-table-events th:nth-child(2),
@@ -94,5 +119,7 @@
 
 .admin-table-events th:nth-child(8),
 .admin-table-events td:nth-child(8) {
-    min-width: 140px;
+    width: 240px;
+    min-width: 240px;
+    vertical-align: top;
 }
