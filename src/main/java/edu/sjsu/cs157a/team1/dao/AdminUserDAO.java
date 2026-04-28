@@ -11,8 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdminUserDAO {
-
+	
+	
     public List<User> getAllUsers() throws SQLException {
+    	//Get informations of all users and order by user_id
         String sql = """
                 SELECT user_id, full_name, email, password_hash, is_active
                 FROM Users
@@ -38,8 +40,9 @@ public class AdminUserDAO {
 
         return users;
     }
-
+    
     public User getUserById(int userId) throws SQLException {
+    	//Get information of a user based on their user id.
         String sql = """
                 SELECT user_id, full_name, email, password_hash, is_active
                 FROM Users
@@ -67,8 +70,9 @@ public class AdminUserDAO {
 
         return null;
     }
-
+    
     public boolean updateAccountStatus(int userId, boolean isActive) throws SQLException {
+    	//Update the status of the user account between active and inactive.
         String sql = """
                 UPDATE Users
                 SET is_active = ?
@@ -84,8 +88,9 @@ public class AdminUserDAO {
             return stmt.executeUpdate() == 1;
         }
     }
-
+   
     public boolean userHasRole(int userId, String roleName) throws SQLException {
+    	 //Get the role to the user based on their user id and role id
         String sql = """
                 SELECT 1
                 FROM UserRoles ur

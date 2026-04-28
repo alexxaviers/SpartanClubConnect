@@ -1,7 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.Set" %>
 <%@ page import="edu.sjsu.cs157a.team1.dao.RsvpDAO.EventView" %>
 <%@ page import="edu.sjsu.cs157a.team1.util.HtmlEscape" %>
+<%@ page import="edu.sjsu.cs157a.team1.util.CsrfUtil" %>
 <%
     String ctx = request.getContextPath();
     Integer userId = (Integer) session.getAttribute("userId");
@@ -17,12 +19,23 @@
     request.setAttribute("activeNav", "");
 
     List<EventView> events = (List<EventView>) request.getAttribute("events");
+    Set<Integer> bookmarkedEventIds = (Set<Integer>) request.getAttribute("bookmarkedEventIds");
+
     if (events == null) {
         response.sendRedirect(ctx + "/events");
         return;
     }
+    if (bookmarkedEventIds == null) {
+        bookmarkedEventIds = java.util.Collections.emptySet();
+    }
     String success = (String) request.getAttribute("success");
     String error = (String) request.getAttribute("error");
+    String csrfToken = CsrfUtil.getToken(session);
+    String feedMode = (String) request.getAttribute("feedMode");
+    if (feedMode == null || feedMode.isEmpty()) {
+        feedMode = "all";
+    }
+    boolean personalizedFeed = "personalized".equalsIgnoreCase(feedMode);
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,8 +60,8 @@
                 <div class="clubs-toolbar">
                     <div class="toolbar-actions">
                         <a href="<%= ctx %>/my-rsvps" class="secondary-link">My RSVPs</a>
-                        <a href="<%= ctx %>/events?feed=all" class="secondary-link">Browse All Events</a>
-                        <a href="#" class="secondary-link" onclick="return false;" title="Placeholder for teammate implementation">Browse Personalized Events (Coming Soon)</a>
+						<a href="<%= ctx %>/events?feed=all" class="secondary-link<%= !personalizedFeed ? " active" : "" %>">Browse All Events</a>
+                        <a href="<%= ctx %>/events?feed=personalized" class="secondary-link<%= personalizedFeed ? " active" : "" %>">Browse Personalized Events</a>
                         <% if (isClubOfficer) { %>
                             <a href="<%= ctx %>/officer-events" class="secondary-link">Manage My Club Events</a>
                         <% } %>
@@ -64,7 +77,14 @@
                 <% } %>
 
                 <% if (events.isEmpty()) { %>
-                    <p class="empty-hint">No events available right now.</p>
+                    <% if (personalizedFeed) { %>
+                        <p class="empty-hint">
+                            No upcoming events from clubs you follow yet.
+                            <a href="<%= ctx %>/clubs">Browse clubs</a> to follow organizations and personalize this feed.
+                        </p>
+                    <% } else { %>
+                        <p class="empty-hint">No events available right now.</p>
+                    <% } %>
                 <% } else { %>
                     <ul class="club-list">
                         <% for (EventView event : events) { %>
@@ -90,6 +110,21 @@
                                     Attendance: <%= event.getGoingCount() %>/<%= event.getCapacity() == null ? "No Limit" : event.getCapacity() %>
                                     <%= event.isFull() ? " (Full)" : "" %>
                                 </p>
+                                <div class="event-details-cta event-details-cta--in-card">
+                                    <form action="<%= ctx %>/bookmark" method="post">
+                                        <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
+                                        <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
+                                        <input type="hidden" name="returnTo" value="events">
+                                        <input type="hidden" name="returnFeed" value="<%= personalizedFeed ? "personalized" : "all" %>">
+                                        <% if (bookmarkedEventIds.contains(event.getEventId())) { %>
+                                            <input type="hidden" name="action" value="remove">
+                                            <button type="submit" class="secondary-btn event-details-action-btn">Remove Bookmark</button>
+                                        <% } else { %>
+                                            <input type="hidden" name="action" value="save">
+                                            <button type="submit" class="primary-btn event-details-action-btn">Save Event</button>
+                                        <% } %>
+                                    </form>
+                                </div>
                             </li>
                         <% } %>
                     </ul>

@@ -41,13 +41,15 @@
                     Create, edit, and remove events for the clubs you manage.
                 </p>
             </section>
-
+			<div class="club-profile-actions club-profile-actions--shell event-details-top-nav">
+                <div class="club-profile-actions-row">
+                    <a href="<%= ctx %>/dashboard.jsp" class="secondary-btn club-profile-follow-btn event-details-nav-link">Home</a>
+                    <a href="<%= ctx %>/events" class="secondary-btn club-profile-follow-btn event-details-nav-link">Browse Events</a>
+                    <a href="<%= ctx %>/officer-event" class="secondary-btn club-profile-follow-btn event-details-nav-link">Create New Event</a>
+                </div>
+            </div>
             <section class="dashboard-form-card clubs-shell-card">
-                <p>
-                    <a href="<%= ctx %>/dashboard.jsp">Home</a> |
-                    <a href="<%= ctx %>/events">Browse Events</a> |
-                    <a href="<%= ctx %>/officer-event">Create New Event</a>
-                </p>
+
 
                 <% if (success != null && !success.isEmpty()) { %>
                 <p style="color: #0f7b0f;"><strong><%= HtmlEscape.escape(success) %></strong></p>
@@ -63,7 +65,7 @@
                 <ul class="club-list">
                     <% for (ManagedEventView event : events) { %>
                     <li class="club-list-item">
-                        <h2><%= HtmlEscape.escape(event.getTitle()) %></h2>
+                        <h2><a href="<%= ctx %>/event-details?eventId=<%= event.getEventId() %>"><%= HtmlEscape.escape(event.getTitle()) %></a></h2>
                         <p class="club-meta">
                             <%= HtmlEscape.escape(event.getClubName()) %>
                             &middot; <%= event.getDate() %>
@@ -73,16 +75,15 @@
                         <p class="club-meta">
                             Capacity: <%= event.getCapacity() == null ? "No Limit" : event.getCapacity() %>
                         </p>
-                        <p style="margin-top: 8px; margin-bottom: 0;">
-                            <a href="<%= ctx %>/officer-event?eventId=<%= event.getEventId() %>">Edit</a>
-                            |
-                            <form action="<%= ctx %>/officer-events" method="post" style="display: inline; margin: 0;">
+                        <div class="event-details-cta event-details-cta--in-card">
+                            <a href="<%= ctx %>/officer-event?eventId=<%= event.getEventId() %>" class="club-profile-edit-btn event-details-edit-link">Edit event</a>
+                            <form action="<%= ctx %>/officer-events" method="post">
                                 <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
-                                <button type="submit" onclick="return confirm('Delete this event?');">Delete</button>
+                                <button type="submit" class="secondary-btn event-details-action-btn" onclick="return confirm('Delete this event?');">Delete event</button>
                             </form>
-                        </p>
+                        </div>
                     </li>
                     <% } %>
                 </ul>

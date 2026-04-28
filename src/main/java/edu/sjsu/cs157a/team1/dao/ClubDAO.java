@@ -17,6 +17,7 @@ public class ClubDAO {
         if (name == null) {
             return false;
         }
+        //Check if a club with a certain name exists
         String sql = ""
                 + "SELECT 1 "
                 + "FROM Clubs "
@@ -38,6 +39,7 @@ public class ClubDAO {
         if (name == null) {
             return false;
         }
+        //Check if another club is already using a certain name
         String sql = ""
                 + "SELECT 1 "
                 + "FROM Clubs "
@@ -58,6 +60,7 @@ public class ClubDAO {
     }
 
     public Club findById(int clubId) {
+    	//Find a club based on its club id
         String sql = ""
                 + clubSelectBase()
                 + "FROM Clubs c "
@@ -77,6 +80,7 @@ public class ClubDAO {
     }
 
     public boolean isOfficer(int clubId, int userId) {
+    	//Check if a user is a club officer for a certain club
         String sql = ""
                 + "SELECT 1 "
                 + "FROM Manages "
@@ -98,9 +102,11 @@ public class ClubDAO {
 
 
     public Integer createClub(Club club, int creatorUserId) {
+    	//Create a new club and insert into the Clubs table
         String insertClub = ""
                 + "INSERT INTO Clubs (club_name, description, contact_email, meeting_info) "
                 + "VALUES (?, ?, ?, ?)";
+        //Assign a user to be the club officer/manager of a club
         String insertManage = ""
                 + "INSERT INTO Manages (user_id, club_id) "
                 + "VALUES (?, ?)";
@@ -147,6 +153,7 @@ public class ClubDAO {
     }
 
     public boolean updateClub(Club club) {
+    	//Update the club's information based on its club id.
         String sql = ""
                 + "UPDATE Clubs "
                 + "SET club_name = ?, "
@@ -188,7 +195,8 @@ public class ClubDAO {
         sql.append("FROM Clubs c ");
         sql.append("WHERE 1 = 1 ");
         List<Object> params = new ArrayList<>();
-
+        
+        //Search by keyword such as name, desciption, and category of the clubs
         if (keyword != null && !keyword.trim().isEmpty()) {
             String like = "%" + keyword.trim() + "%";
             sql.append("AND ( ");
@@ -207,7 +215,7 @@ public class ClubDAO {
             params.add(like);
             params.add(like);
         }
-
+        //Search by category of the clubs
         if (categoryFilter != null && !categoryFilter.trim().isEmpty()) {
             sql.append("AND EXISTS ( ");
             sql.append("    SELECT 1 ");
@@ -219,7 +227,7 @@ public class ClubDAO {
             sql.append(") ");
             params.add("%" + categoryFilter.trim() + "%");
         }
-
+        //Sort by club name either in ascending or descending order 
         if ("name_desc".equalsIgnoreCase(sort)) {
             sql.append("ORDER BY c.club_name DESC ");
         } else {
@@ -244,6 +252,7 @@ public class ClubDAO {
     }
 
     private static String clubSelectBase() {
+    	//Select the club's information + the name of club manager + all the categories of the club
         return ""
                 + "SELECT "
                 + "    c.club_id, "
@@ -269,6 +278,7 @@ public class ClubDAO {
     }
 
     private static void replaceClubCategories(Connection conn, int clubId, String categoryLabel) throws SQLException {
+    	//Delete certain categories of a club
         String deleteMaps = ""
                 + "DELETE FROM ClubCategoryMaps "
                 + "WHERE club_id = ?";
@@ -280,6 +290,7 @@ public class ClubDAO {
             return;
         }
         int categoryId = findOrCreateCategory(conn, categoryLabel.trim());
+        //Map a club with its category
         String insertMap = ""
                 + "INSERT INTO ClubCategoryMaps (club_id, category_id) "
                 + "VALUES (?, ?)";
@@ -291,6 +302,7 @@ public class ClubDAO {
     }
 
     private static int findOrCreateCategory(Connection conn, String name) throws SQLException {
+    	//Get existing categories based on its name
         String selectCategory = ""
                 + "SELECT category_id "
                 + "FROM ClubCategories "
@@ -303,6 +315,7 @@ public class ClubDAO {
                 }
             }
         }
+        //Add new categories into ClubCategories
         String insertCategory = ""
                 + "INSERT INTO ClubCategories (category_name) "
                 + "VALUES (?)";

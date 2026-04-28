@@ -148,6 +148,7 @@ public class EventDAO {
     }
 
     public List<Event> getAllEventsForAdmin() throws SQLException {
+    	//Get information of all events along with club name and who created the event.
         String sql = """
                 SELECT
                     e.event_id,
@@ -186,6 +187,7 @@ public class EventDAO {
     }
 
     public Event getEventById(int eventId) throws SQLException {
+    	//Get event by their id
         String sql = """
                 SELECT
                     e.event_id,
@@ -226,6 +228,7 @@ public class EventDAO {
     }
 
     public boolean setEventActiveStatus(int eventId, boolean isActive) throws SQLException {
+    	//Update the event status to be active
         String sql = """
                 UPDATE Events
                 SET is_active = ?
@@ -243,6 +246,7 @@ public class EventDAO {
     }
 
     public List<Event> getApprovedEvents() throws SQLException {
+
         String sql = """
                 SELECT
                     e.event_id,

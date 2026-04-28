@@ -1,6 +1,7 @@
 package edu.sjsu.cs157a.team1.controller;
 
 import edu.sjsu.cs157a.team1.dao.RsvpDAO;
+import edu.sjsu.cs157a.team1.dao.BookmarkDAO;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -36,6 +37,7 @@ public class EventDetailsServlet extends HttpServlet {
         Integer userId = (Integer) session.getAttribute("userId");
         Boolean isClubOfficer = Boolean.TRUE.equals(session.getAttribute("isClubOfficer"));
         RsvpDAO rsvpDAO = new RsvpDAO();
+        BookmarkDAO bookmarkDAO = new BookmarkDAO();
 
         try {
             RsvpDAO.EventView event = rsvpDAO.getEventById(eventId, userId);
@@ -46,14 +48,21 @@ public class EventDetailsServlet extends HttpServlet {
 
             boolean canViewAttendees = isClubOfficer
                     && rsvpDAO.canOfficerViewAttendees(userId, eventId);
-
+            String tabParam = req.getParameter("tab");
+            String activeTab = "attendees".equalsIgnoreCase(tabParam) ? "attendees" : "details";
+            if (!canViewAttendees) {
+                activeTab = "details";
+            }
+            
             List<RsvpDAO.AttendeeView> attendees = canViewAttendees
                     ? rsvpDAO.getAttendeesForEvent(eventId)
                     : Collections.emptyList();
 
             req.setAttribute("event", event);
             req.setAttribute("canViewAttendees", canViewAttendees);
+            req.setAttribute("activeTab", activeTab);
             req.setAttribute("attendees", attendees);
+            req.setAttribute("isBookmarked", bookmarkDAO.isBookmarked(userId, eventId));
             req.setAttribute("success", req.getParameter("success"));
             req.setAttribute("error", req.getParameter("error"));
 
