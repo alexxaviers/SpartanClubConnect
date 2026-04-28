@@ -26,26 +26,33 @@ public class AdminEventsServlet extends HttpServlet {
         return userId != null && eventDAO.userHasRole(userId, "Admin");
     }
 
+    private boolean requireAdmin(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+        Integer sessionUserId = getSessionUserId(request);
+
+        if (sessionUserId == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return false;
+        }
+
+        if (!isAdmin(request)) {
+            response.sendRedirect(request.getContextPath() + "/dashboard");
+            return false;
+        }
+
+        return true;
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         try {
-            Integer sessionUserId = getSessionUserId(request);
-
-            if (sessionUserId == null) {
-                response.sendRedirect("login.jsp");
-                return;
-            }
-
-            if (!isAdmin(request)) {
-                response.sendRedirect("dashboard.jsp");
+            if (!requireAdmin(request, response)) {
                 return;
             }
 
             List<Event> events = eventDAO.getAllEventsForAdmin();
             request.setAttribute("events", events);
-
             request.getRequestDispatcher("/adminEvents.jsp").forward(request, response);
 
         } catch (SQLException e) {
@@ -60,15 +67,7 @@ public class AdminEventsServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            Integer sessionUserId = getSessionUserId(request);
-
-            if (sessionUserId == null) {
-                response.sendRedirect("login.jsp");
-                return;
-            }
-
-            if (!isAdmin(request)) {
-                response.sendRedirect("dashboard.jsp");
+            if (!requireAdmin(request, response)) {
                 return;
             }
 
@@ -99,7 +98,12 @@ public class AdminEventsServlet extends HttpServlet {
                     return;
                 }
 
-                success = eventDAO.setEventActiveStatus(eventId, false);
+                String moderationReason = request.getParameter("reason");
+                success = eventDAO.disableEventWithAudit(eventId, getSessionUserId(request), moderationReason);
+                request.getSession().setAttribute(
+                        "adminEventsMessage",
+                        success ? "Event disabled successfully." : "No changes were made."
+                );
 
             } else if ("enable".equalsIgnoreCase(action)) {
                 if (targetEvent.isActive()) {
@@ -108,18 +112,17 @@ public class AdminEventsServlet extends HttpServlet {
                     return;
                 }
 
-                success = eventDAO.setEventActiveStatus(eventId, true);
+                success = eventDAO.enableEventAndClearAudit(eventId);
+                request.getSession().setAttribute(
+                        "adminEventsMessage",
+                        success ? "Event enabled successfully." : "No changes were made."
+                );
 
             } else {
                 request.getSession().setAttribute("adminEventsMessage", "Invalid action.");
                 response.sendRedirect(request.getContextPath() + "/admin/events");
                 return;
             }
-
-            request.getSession().setAttribute(
-                    "adminEventsMessage",
-                    success ? "Event updated successfully." : "No changes were made."
-            );
 
             response.sendRedirect(request.getContextPath() + "/admin/events");
 

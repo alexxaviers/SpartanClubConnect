@@ -28,62 +28,64 @@
     <link rel="stylesheet" href="<%= ctx %>/css/dashboard.css">
 </head>
 <%@ include file="/WEB-INF/jspf/dashboardShellStart.jspf" %>
-            <section class="dashboard-hero-block">
-                <h1 class="landing-title">Welcome back,<br><em><%= fullName %></em></h1>
-                <p class="landing-subtitle">
-                    Search clubs, browse events, and explore opportunities across SJSU.
-                </p>
-            </section>
 
-            <section class="dashboard-search-section">
-                <div class="landing-search-wrap">
-                    <form class="landing-search-bar" action="<%= ctx %>/clubs" method="get">
-                        <input type="text" name="q" placeholder="Search clubs or events..." autocomplete="off">
-                        <button type="submit">Search</button>
-                    </form>
-                </div>
+<section class="dashboard-hero-block">
+    <h1 class="landing-title">Welcome back,<br><em><%= fullName %></em></h1>
+    <p class="landing-subtitle">
+        Search clubs, browse events, and explore opportunities across SJSU.
+    </p>
+</section>
 
-                <div class="landing-chips">
-                    <a href="<%= ctx %>/clubs" class="landing-chip">Academic</a>
-                    <a href="<%= ctx %>/clubs" class="landing-chip">Engineering</a>
-                    <a href="<%= ctx %>/clubs" class="landing-chip">Business</a>
-                    <a href="<%= ctx %>/clubs" class="landing-chip">Cultural</a>
-                    <a href="<%= ctx %>/clubs" class="landing-chip">Arts</a>
-                    <a href="<%= ctx %>/clubs" class="landing-chip">Technology</a>
-                    <a href="<%= ctx %>/clubs" class="landing-chip">Recreation &amp; Sports</a>
-                    <a href="<%= ctx %>/clubs" class="landing-chip">Community Service</a>
-                </div>
-            </section>
+<section class="dashboard-search-section">
+    <div class="landing-search-wrap">
+        <form class="landing-search-bar" action="<%= ctx %>/clubs" method="get">
+            <input type="text" name="q" placeholder="Search clubs or events..." autocomplete="off">
+            <button type="submit">Search</button>
+        </form>
+    </div>
 
-            <section class="dashboard-main-cards">
-                <a href="<%= ctx %>/clubs" class="landing-gateway-card">
-                    <div class="landing-card-icon landing-card-icon-blue">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                             stroke="#0055A2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="9" cy="7" r="3"/>
-                            <path d="M3 20v-2a6 6 0 0 1 9.17-5.1"/>
-                            <circle cx="17" cy="11" r="3"/>
-                            <path d="M11 20v-2a6 6 0 0 1 12 0v2"/>
-                        </svg>
-                    </div>
-                    <h2>Browse Clubs</h2>
-                    <p>View student organizations by category, interest, and keyword.</p>
-                    <span class="landing-card-arrow">Go to clubs →</span>
-                </a>
+    <div class="landing-chips">
+        <a href="<%= ctx %>/clubs?category=Academic" class="landing-chip">Academic</a>
+        <a href="<%= ctx %>/clubs?category=Engineering" class="landing-chip">Engineering</a>
+        <a href="<%= ctx %>/clubs?category=Business" class="landing-chip">Business</a>
+        <a href="<%= ctx %>/clubs?category=Cultural" class="landing-chip">Cultural</a>
+        <a href="<%= ctx %>/clubs?category=Arts" class="landing-chip">Arts</a>
+        <a href="<%= ctx %>/clubs?category=Technology" class="landing-chip">Technology</a>
+        <a href="<%= ctx %>/clubs?category=Recreation%20%26%20Sports" class="landing-chip">Recreation &amp; Sports</a>
+        <a href="<%= ctx %>/clubs?category=Community%20Service" class="landing-chip">Community Service</a>
+    </div>
+</section>
 
-                <a href="<%= ctx %>/events.jsp" class="landing-gateway-card">
-                    <div class="landing-card-icon landing-card-icon-gold">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                             stroke="#92660a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="4" width="18" height="18" rx="2"/>
-                            <line x1="16" y1="2" x2="16" y2="6"/>
-                            <line x1="8" y1="2" x2="8" y2="6"/>
-                            <line x1="3" y1="10" x2="21" y2="10"/>
-                        </svg>
-                    </div>
-                    <h2>Browse Events</h2>
-                    <p>See upcoming events happening across campus and club communities.</p>
-                    <span class="landing-card-arrow">Go to events →</span>
-                </a>
-            </section>
+<section class="dashboard-main-cards">
+    <a href="<%= ctx %>/clubs" class="landing-gateway-card">
+        <div class="landing-card-icon landing-card-icon-blue">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 stroke="#0055A2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="7" r="3"/>
+                <path d="M3 20v-2a6 6 0 0 1 9.17-5.1"/>
+                <circle cx="17" cy="11" r="3"/>
+                <path d="M11 20v-2a6 6 0 0 1 12 0v2"/>
+            </svg>
+        </div>
+        <h2>Browse Clubs</h2>
+        <p>View student organizations by category, interest, and keyword.</p>
+        <span class="landing-card-arrow">Go to clubs →</span>
+    </a>
+
+    <a href="<%= ctx %>/events" class="landing-gateway-card">
+        <div class="landing-card-icon landing-card-icon-gold">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 stroke="#92660a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+        </div>
+        <h2>Browse Events</h2>
+        <p>See upcoming events happening across campus and club communities.</p>
+        <span class="landing-card-arrow">Go to events →</span>
+    </a>
+</section>
+
 <%@ include file="/WEB-INF/jspf/dashboardShellEnd.jspf" %>

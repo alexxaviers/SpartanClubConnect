@@ -14,9 +14,9 @@
         </div>
 
         <nav class="dashboard-sidebar-nav">
-            <a href="<%= ctx %>/dashboard.jsp"
+            <a href="<%= ctx %>/dashboard"
                class="dashboard-sidebar-link<%= "dashboard".equals(activeNav) ? " active" : "" %>">Dashboard</a>
-            <a href="<%= ctx %>/profile.jsp"
+            <a href="<%= ctx %>/profile"
                class="dashboard-sidebar-link<%= "profile".equals(activeNav) ? " active" : "" %>">Profile</a>
                
 			<%if (!isAdmin){ %>
@@ -30,18 +30,22 @@
                class="dashboard-sidebar-link<%= "myBookmarks".equals(activeNav) ? " active" : "" %>">My Bookmarks</a>
 			<a href="<%= ctx %>/followedClubs"
                class="dashboard-sidebar-link<%= "followedClubs".equals(activeNav) ? " active" : "" %>">Followed Clubs</a>
+            <a href="<%= ctx %>/my-rsvps"
+               class="dashboard-sidebar-link<%= "myRsvps".equals(activeNav) ? " active" : "" %>">My RSVPs</a>
             <% } %>
 			
             <% if (!isClubOfficer && !isAdmin) { %>
-            <a href="<%= ctx %>/clubOfficerRequest.jsp"
+            <a href="<%= ctx %>/clubOfficerRequest"
                class="dashboard-sidebar-link<%= "clubOfficer".equals(activeNav) ? " active" : "" %>">Request Club Officer Role</a>
             <% } %>
 
             <% if (isClubOfficer) { %>
-            <a href="<%= ctx %>/createClub.jsp"
+            <a href="<%= ctx %>/createClub"
                class="dashboard-sidebar-link<%= "createClub".equals(activeNav) ? " active" : "" %>">Create Club</a>
             <a href="<%= ctx %>/createEvent.jsp"
                class="dashboard-sidebar-link<%= "createEvent".equals(activeNav) ? " active" : "" %>">Create Event</a>
+            <a href="<%= ctx %>/officer-events"
+               class="dashboard-sidebar-link<%= "officerEvents".equals(activeNav) ? " active" : "" %>">Manage Events</a>
             <% } %>
 
             <% if (isAdmin) { %>

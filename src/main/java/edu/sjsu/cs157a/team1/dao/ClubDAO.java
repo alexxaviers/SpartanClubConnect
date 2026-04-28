@@ -223,13 +223,15 @@ public class ClubDAO {
             sql.append("    JOIN ClubCategories ccf ");
             sql.append("      ON ccf.category_id = ccmf.category_id ");
             sql.append("    WHERE ccmf.club_id = c.club_id ");
-            sql.append("      AND ccf.category_name LIKE ? ");
+            sql.append("      AND ccf.category_name = ? ");
             sql.append(") ");
-            params.add("%" + categoryFilter.trim() + "%");
+            params.add(categoryFilter.trim());
         }
         //Sort by club name either in ascending or descending order 
         if ("name_desc".equalsIgnoreCase(sort)) {
             sql.append("ORDER BY c.club_name DESC ");
+        } else if ("newest".equalsIgnoreCase(sort)) {
+            sql.append("ORDER BY c.created_at DESC, c.club_name ASC ");
         } else {
             sql.append("ORDER BY c.club_name ASC ");
         }

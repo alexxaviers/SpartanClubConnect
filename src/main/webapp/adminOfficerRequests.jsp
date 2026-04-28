@@ -7,7 +7,7 @@
     Integer userId = (Integer) session.getAttribute("userId");
 
     if (userId == null) {
-        response.sendRedirect(ctx + "/login.jsp");
+        response.sendRedirect(ctx + "/login");
         return;
     }
 
@@ -22,6 +22,9 @@
     if (actionMessage != null) {
         session.removeAttribute("adminOfficerRequestMessage");
     }
+
+    int pendingCount = pendingRequests == null ? 0 : pendingRequests.size();
+    int reviewedCount = reviewedRequests == null ? 0 : reviewedRequests.size();
 
     SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
 
@@ -57,6 +60,10 @@
     <% if (actionMessage != null) { %>
     <p class="message success-message-box"><%= actionMessage %></p>
     <% } %>
+
+    <p class="club-meta" style="margin-bottom: 18px;">
+        <strong><%= pendingCount %></strong> pending
+    </p>
 
     <h2 class="request-section-title">Pending Requests</h2>
 
@@ -125,6 +132,10 @@
 </section>
 
 <section class="dashboard-form-card dashboard-table-card request-history-card">
+    <p class="club-meta" style="margin-bottom: 18px;">
+        <strong><%= reviewedCount %></strong> reviewed
+    </p>
+
     <h2 class="request-section-title">Request History</h2>
 
     <% if (reviewedRequests == null || reviewedRequests.isEmpty()) { %>

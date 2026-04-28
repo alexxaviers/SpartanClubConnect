@@ -524,4 +524,51 @@ public class EventDAO {
         event.setImageUrl(rs.getString("image_url"));
         return event;
     }
+
+    public boolean disableEventWithAudit(int eventId, int adminUserId, String reason) throws SQLException {
+        String sql = """
+            UPDATE Events
+            SET is_active = FALSE,
+                moderated_by = ?,
+                moderated_at = NOW(),
+                moderation_reason = ?
+            WHERE event_id = ?
+            """;
+
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, adminUserId);
+            stmt.setString(2, normalizeReason(reason));
+            stmt.setInt(3, eventId);
+
+            return stmt.executeUpdate() == 1;
+        }
+    }
+
+    public boolean enableEventAndClearAudit(int eventId) throws SQLException {
+        String sql = """
+            UPDATE Events
+            SET is_active = TRUE,
+                moderated_by = NULL,
+                moderated_at = NULL,
+                moderation_reason = NULL
+            WHERE event_id = ?
+            """;
+
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, eventId);
+            return stmt.executeUpdate() == 1;
+        }
+    }
+
+    private String normalizeReason(String reason) {
+        if (reason == null) {
+            return null;
+        }
+        String trimmed = reason.trim();
+        return trimmed.isEmpty() ? null : trimmed;
+    }
 }

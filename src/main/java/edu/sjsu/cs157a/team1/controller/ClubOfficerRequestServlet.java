@@ -17,12 +17,25 @@ public class ClubOfficerRequestServlet extends HttpServlet {
     private final ClubOfficerRequestDAO requestDAO = new ClubOfficerRequestDAO();
 
     @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("userId") == null) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
+
+        request.getRequestDispatcher("/clubOfficerRequest.jsp").forward(request, response);
+    }
+
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("userId") == null) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
 
@@ -40,19 +53,19 @@ public class ClubOfficerRequestServlet extends HttpServlet {
             String validationError = validateInput(sjsuId, clubName, justification);
             if (validationError != null) {
                 request.setAttribute("errorMessage", validationError);
-                request.getRequestDispatcher("clubOfficerRequest.jsp").forward(request, response);
+                request.getRequestDispatcher("/clubOfficerRequest.jsp").forward(request, response);
                 return;
             }
 
             if (requestDAO.userHasRole(sessionUserId, "Club Officer")) {
                 request.setAttribute("errorMessage", "You already have the Club Officer role.");
-                request.getRequestDispatcher("clubOfficerRequest.jsp").forward(request, response);
+                request.getRequestDispatcher("/clubOfficerRequest.jsp").forward(request, response);
                 return;
             }
 
             if (requestDAO.hasPendingRequest(sessionUserId)) {
                 request.setAttribute("errorMessage", "You already have a pending officer request.");
-                request.getRequestDispatcher("clubOfficerRequest.jsp").forward(request, response);
+                request.getRequestDispatcher("/clubOfficerRequest.jsp").forward(request, response);
                 return;
             }
 
@@ -73,12 +86,12 @@ public class ClubOfficerRequestServlet extends HttpServlet {
                 request.setAttribute("errorMessage", "Unable to submit request. Please try again.");
             }
 
-            request.getRequestDispatcher("clubOfficerRequest.jsp").forward(request, response);
+            request.getRequestDispatcher("/clubOfficerRequest.jsp").forward(request, response);
 
         } catch (SQLException e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "A database error occurred while submitting your request.");
-            request.getRequestDispatcher("clubOfficerRequest.jsp").forward(request, response);
+            request.getRequestDispatcher("/clubOfficerRequest.jsp").forward(request, response);
         }
     }
 

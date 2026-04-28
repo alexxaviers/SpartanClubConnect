@@ -165,7 +165,7 @@
 
     <servlet-mapping>
         <servlet-name>ClubOfficerRequestServlet</servlet-name>
-        <url-pattern>/ClubOfficerRequestServlet</url-pattern>
+        <url-pattern>/clubOfficerRequest</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -216,5 +216,55 @@
     <servlet-mapping>
         <servlet-name>EventEditorServlet</servlet-name>
         <url-pattern>/officer-event</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DashboardServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.DashboardServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>DashboardServlet</servlet-name>
+        <url-pattern>/dashboard</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ProfileServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.ProfileServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ProfileServlet</servlet-name>
+        <url-pattern>/profile</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ProfileUpdateServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.ProfileUpdateServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ProfileUpdateServlet</servlet-name>
+        <url-pattern>/profile/update</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LoginPageServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.LoginPageServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>LoginPageServlet</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CreateAccountPageServlet</servlet-name>
+        <servlet-class>edu.sjsu.cs157a.team1.controller.CreateAccountPageServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>CreateAccountPageServlet</servlet-name>
+        <url-pattern>/createAccount</url-pattern>
     </servlet-mapping>
 </web-app>

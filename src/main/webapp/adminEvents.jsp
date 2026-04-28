@@ -19,6 +19,8 @@
         session.removeAttribute("adminEventsMessage");
     }
 
+    int eventCount = events == null ? 0 : events.size();
+
     SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy");
 
     request.setAttribute("activeAdminPage", "events");
@@ -41,11 +43,15 @@
 <section class="dashboard-page-header">
     <h1 class="dashboard-page-title">Moderate Events</h1>
     <p class="dashboard-page-subtitle">
-        Review all event records and disable events that should not appear in the platform.
+        Review event records and enable or disable events shown on the platform.
     </p>
 </section>
 
 <section class="dashboard-form-card dashboard-table-card">
+    <p class="club-meta" style="margin-bottom: 18px;">
+        <strong><%= eventCount %></strong> <%= eventCount == 1 ? "event" : "events" %> found
+    </p>
+
     <% if (errorMessage != null) { %>
     <p class="message error-message-box"><%= errorMessage %></p>
     <% } %>
@@ -53,8 +59,6 @@
     <% if (actionMessage != null) { %>
     <p class="message success-message-box"><%= actionMessage %></p>
     <% } %>
-
-    <h2 class="request-section-title">All Events</h2>
 
     <% if (events == null || events.isEmpty()) { %>
     <div class="dashboard-note-box">
@@ -95,6 +99,7 @@
                         <form method="post" action="<%= ctx %>/admin/events">
                             <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
                             <input type="hidden" name="action" value="disable">
+                            <input type="text" name="reason" maxlength="255" placeholder="Optional reason" style="margin-bottom: 8px;">
                             <button type="submit" class="secondary-btn request-action-btn"
                                     onclick="return confirm('Disable this event?');">
                                 Disable

@@ -28,25 +28,32 @@ public class AdminUsersServlet extends HttpServlet {
         return userId != null && adminUserDAO.userHasRole(userId, "Admin");
     }
 
+    private boolean requireAdmin(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+        Integer sessionUserId = getSessionUserId(request);
+
+        if (sessionUserId == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return false;
+        }
+
+        if (!isAdmin(request)) {
+            response.sendRedirect(request.getContextPath() + "/dashboard");
+            return false;
+        }
+
+        return true;
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         try {
-            Integer sessionUserId = getSessionUserId(request);
-
-            if (sessionUserId == null) {
-                response.sendRedirect("login.jsp");
-                return;
-            }
-
-            if (!isAdmin(request)) {
-                response.sendRedirect("dashboard.jsp");
+            if (!requireAdmin(request, response)) {
                 return;
             }
 
             List<User> users = adminUserDAO.getAllUsers();
-
             Map<Integer, String> userDisplayRoleMap = new LinkedHashMap<>();
 
             for (User user : users) {
@@ -63,7 +70,6 @@ public class AdminUsersServlet extends HttpServlet {
 
             request.setAttribute("users", users);
             request.setAttribute("userDisplayRoleMap", userDisplayRoleMap);
-
             request.getRequestDispatcher("/adminUsers.jsp").forward(request, response);
 
         } catch (SQLException e) {
@@ -78,18 +84,11 @@ public class AdminUsersServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
+            if (!requireAdmin(request, response)) {
+                return;
+            }
+
             Integer sessionUserId = getSessionUserId(request);
-
-            if (sessionUserId == null) {
-                response.sendRedirect("login.jsp");
-                return;
-            }
-
-            if (!isAdmin(request)) {
-                response.sendRedirect("dashboard.jsp");
-                return;
-            }
-
             String action = request.getParameter("action");
             String userIdParam = request.getParameter("userId");
 
@@ -116,11 +115,20 @@ public class AdminUsersServlet extends HttpServlet {
                         return;
                     }
 
-                    success = adminUserDAO.updateAccountStatus(targetUserId, false);
+                    String deactivateReason = request.getParameter("reason");
+                    success = adminUserDAO.deactivateAccountWithAudit(targetUserId, sessionUserId, deactivateReason);
+                    request.getSession().setAttribute(
+                            "adminUsersMessage",
+                            success ? "User deactivated successfully." : "No changes were made."
+                    );
                     break;
 
                 case "reactivate":
-                    success = adminUserDAO.updateAccountStatus(targetUserId, true);
+                    success = adminUserDAO.reactivateAccountAndClearAudit(targetUserId);
+                    request.getSession().setAttribute(
+                            "adminUsersMessage",
+                            success ? "User reactivated successfully." : "No changes were made."
+                    );
                     break;
 
                 default:
@@ -128,11 +136,6 @@ public class AdminUsersServlet extends HttpServlet {
                     response.sendRedirect(request.getContextPath() + "/admin/users");
                     return;
             }
-
-            request.getSession().setAttribute(
-                    "adminUsersMessage",
-                    success ? "User updated successfully." : "No changes were made."
-            );
 
             response.sendRedirect(request.getContextPath() + "/admin/users");
 

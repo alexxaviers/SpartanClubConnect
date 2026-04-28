@@ -126,7 +126,9 @@ INSERT INTO ClubCategoryMaps (club_id, category_id) VALUES
     (7, 8),
     (8, 7),
     (9, 1),
-    (10, 4);
+    (10, 4),
+    (1, 1),
+    (2, 6);
 
 -- MANAGES RELATIONSHIP (10 rows)
 INSERT INTO Manages (user_id, club_id) VALUES
@@ -152,7 +154,9 @@ INSERT INTO Follows (user_id, club_id) VALUES
     (17, 7),
     (18, 8),
     (19, 9),
-    (20, 10);
+    (20, 10),
+    (1, 2),
+    (2, 3);
 
 -- EVENTS (10 rows)
 INSERT INTO Events (title, description, date, start_time, end_time, location, category, capacity, image_url, is_active, club_id, created_by) VALUES
@@ -178,7 +182,9 @@ INSERT INTO RSVPs (user_id, event_id, status) VALUES
     (17, 7, 'Going'),
     (18, 8, 'Going'),
     (19, 9, 'Going'),
-    (20, 10, 'Going');
+    (20, 10, 'Going'),
+    (1, 1, 'Going'),
+    (2, 2, 'Waitlisted');
 
 -- BOOKMARKS (10 rows)
 INSERT INTO Bookmarks (user_id, event_id) VALUES
@@ -195,13 +201,13 @@ INSERT INTO Bookmarks (user_id, event_id) VALUES
 
 -- CLUB OFFICER REQUESTS (10 rows)
 INSERT INTO ClubOfficerRequests (sjsu_id, club_name, justification, status, user_id, reviewed_by) VALUES
-                                                                                                      ('016245781', 'Association for Computing Machinery', 'I regularly attend ACM workshops and want to help organize technical practice sessions for new members.', 'Pending', 11, NULL),
-                                                                                                      ('016245782', 'Society of Hispanic Professional Engineers', 'I have prior outreach experience and would like to help SHPE coordinate industry networking events.', 'Approved', 12, 21),
-                                                                                                      ('016245783', 'Spartan Debate Society', 'I have been active in debate prep meetings and want to support tournament logistics and member onboarding.', 'Rejected', 13, 22),
-                                                                                                      ('016245784', 'SJSU Photography Collective', 'I am experienced with Lightroom and campus event coverage and would like to help run photo walk programming.', 'Pending', 14, NULL),
-                                                                                                      ('016245785', 'Women in Business at SJSU', 'I can help manage guest speakers and resume review events for Women in Business.', 'Approved', 15, 23),
-                                                                                                      ('016245786', 'Anime and Manga Association', 'I have helped moderate screening discussions and want to serve as a programming officer for Anime Club.', 'Pending', 16, NULL),
-                                                                                                      ('016245787', 'Spartan Environmental Action Coalition', 'I volunteer regularly at sustainability events and would like to coordinate service activities for SEAC.', 'Approved', 17, 24),
-                                                                                                      ('016245788', 'Intramural Soccer Club', 'I have experience organizing recreational leagues and want to help schedule soccer scrimmages.', 'Rejected', 18, 25),
-                                                                                                      ('016245789', 'Chess and Strategy Club', 'I can help run beginner workshops and tournament check-ins for Chess and Strategy Club.', 'Approved', 19, 26),
-                                                                                                      ('016245790', 'Music Performance Society', 'I want to support rehearsal planning and performer outreach for the Music Performance Society.', 'Pending', 20, NULL);
+    ('016245781', 'Association for Computing Machinery', 'I regularly attend ACM workshops and want to help organize technical practice sessions for new members.', 'Pending', 11, NULL),
+    ('016245782', 'Society of Hispanic Professional Engineers', 'I have prior outreach experience and would like to help SHPE coordinate industry networking events.', 'Approved', 12, 21),
+    ('016245783', 'Spartan Debate Society', 'I have been active in debate prep meetings and want to support tournament logistics and member onboarding.', 'Rejected', 13, 22),
+    ('016245784', 'SJSU Photography Collective', 'I am experienced with Lightroom and campus event coverage and would like to help run photo walk programming.', 'Pending', 14, NULL),
+    ('016245785', 'Women in Business at SJSU', 'I can help manage guest speakers and resume review events for Women in Business.', 'Approved', 15, 23),
+    ('016245786', 'Anime and Manga Association', 'I have helped moderate screening discussions and want to serve as a programming officer for Anime Club.', 'Pending', 16, NULL),
+    ('016245787', 'Spartan Environmental Action Coalition', 'I volunteer regularly at sustainability events and would like to coordinate service activities for SEAC.', 'Approved', 17, 24),
+    ('016245788', 'Intramural Soccer Club', 'I have experience organizing recreational leagues and want to help schedule soccer scrimmages.', 'Rejected', 18, 25),
+    ('016245789', 'Chess and Strategy Club', 'I can help run beginner workshops and tournament check-ins for Chess and Strategy Club.', 'Approved', 19, 26),
+    ('016245790', 'Music Performance Society', 'I want to support rehearsal planning and performer outreach for the Music Performance Society.', 'Pending', 20, NULL);

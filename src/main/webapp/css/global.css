@@ -150,3 +150,32 @@ a:hover {
     max-width: 1200px;
     margin: 0 auto;
 }
+
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #111827;
+    color: white;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 999;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast.success {
+    background: #047857;
+}
+
+.toast.error {
+    background: #b91c1c;
+}

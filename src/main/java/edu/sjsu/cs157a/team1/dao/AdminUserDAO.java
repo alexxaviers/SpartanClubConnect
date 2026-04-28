@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdminUserDAO {
-	
-	
+
+
     public List<User> getAllUsers() throws SQLException {
     	//Get informations of all users and order by user_id
         String sql = """
@@ -40,7 +40,7 @@ public class AdminUserDAO {
 
         return users;
     }
-    
+
     public User getUserById(int userId) throws SQLException {
     	//Get information of a user based on their user id.
         String sql = """
@@ -70,7 +70,7 @@ public class AdminUserDAO {
 
         return null;
     }
-    
+
     public boolean updateAccountStatus(int userId, boolean isActive) throws SQLException {
     	//Update the status of the user account between active and inactive.
         String sql = """
@@ -88,7 +88,47 @@ public class AdminUserDAO {
             return stmt.executeUpdate() == 1;
         }
     }
-   
+
+    public boolean deactivateAccountWithAudit(int targetUserId, int adminUserId, String reason) throws SQLException {
+        String sql = """
+                UPDATE Users
+                SET is_active = FALSE,
+                    deactivated_by = ?,
+                    deactivated_at = NOW(),
+                    deactivation_reason = ?
+                WHERE user_id = ?
+                """;
+
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, adminUserId);
+            stmt.setString(2, normalizeReason(reason));
+            stmt.setInt(3, targetUserId);
+
+            return stmt.executeUpdate() == 1;
+        }
+    }
+
+    public boolean reactivateAccountAndClearAudit(int targetUserId) throws SQLException {
+        String sql = """
+                UPDATE Users
+                SET is_active = TRUE,
+                    deactivated_by = NULL,
+                    deactivated_at = NULL,
+                    deactivation_reason = NULL
+                WHERE user_id = ?
+                """;
+
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, targetUserId);
+            return stmt.executeUpdate() == 1;
+        }
+    }
+
+
     public boolean userHasRole(int userId, String roleName) throws SQLException {
     	 //Get the role to the user based on their user id and role id
         String sql = """
@@ -109,5 +149,13 @@ public class AdminUserDAO {
                 return rs.next();
             }
         }
+    }
+
+    private String normalizeReason(String reason) {
+        if (reason == null) {
+            return null;
+        }
+        String trimmed = reason.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }

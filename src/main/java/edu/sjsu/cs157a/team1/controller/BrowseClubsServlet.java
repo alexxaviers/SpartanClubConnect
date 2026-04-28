@@ -26,6 +26,7 @@ public class BrowseClubsServlet extends HttpServlet {
         String keyword = request.getParameter("q");
         String category = request.getParameter("category");
         String sort = request.getParameter("sort");
+
         if (sort == null || sort.trim().isEmpty()) {
             sort = "name_asc";
         }
@@ -33,10 +34,12 @@ public class BrowseClubsServlet extends HttpServlet {
         ClubDAO clubDAO = new ClubDAO();
         List<Club> clubs = clubDAO.searchClubs(keyword, category, sort);
 
+        request.setAttribute("activeNav", "browseClubs");
         request.setAttribute("clubs", clubs);
         request.setAttribute("q", keyword != null ? keyword : "");
         request.setAttribute("category", category != null ? category : "");
         request.setAttribute("sort", sort);
+
         request.getRequestDispatcher("/clubs.jsp").forward(request, response);
     }
 }

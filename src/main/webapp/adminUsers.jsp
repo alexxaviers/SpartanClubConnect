@@ -21,6 +21,8 @@
         session.removeAttribute("adminUsersMessage");
     }
 
+    int userCount = users == null ? 0 : users.size();
+
     request.setAttribute("activeAdminPage", "users");
 %>
 <!DOCTYPE html>
@@ -41,11 +43,15 @@
 <section class="dashboard-page-header">
     <h1 class="dashboard-page-title">Manage Users</h1>
     <p class="dashboard-page-subtitle">
-        View registered users, review account roles, and update account status.
+        Review user accounts, roles, and account status across the platform.
     </p>
 </section>
 
 <section class="dashboard-form-card dashboard-table-card">
+    <p class="club-meta" style="margin-bottom: 18px;">
+        <strong><%= userCount %></strong> <%= userCount == 1 ? "user" : "users" %> found
+    </p>
+
     <% if (errorMessage != null) { %>
     <p class="message error-message-box"><%= errorMessage %></p>
     <% } %>
@@ -53,8 +59,6 @@
     <% if (actionMessage != null) { %>
     <p class="message success-message-box"><%= actionMessage %></p>
     <% } %>
-
-    <h2 class="request-section-title">All Users</h2>
 
     <% if (users == null || users.isEmpty()) { %>
     <div class="dashboard-note-box">
@@ -105,6 +109,7 @@
                         <form method="post" action="<%= ctx %>/admin/users">
                             <input type="hidden" name="userId" value="<%= user.getUserId() %>">
                             <input type="hidden" name="action" value="deactivate">
+                            <input type="text" name="reason" maxlength="255" placeholder="Optional reason" style="margin-bottom: 8px;">
                             <button type="submit" class="secondary-btn request-action-btn"
                                     onclick="return confirm('Deactivate this user account?');">
                                 Deactivate

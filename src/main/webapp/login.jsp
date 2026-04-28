@@ -63,7 +63,7 @@
 
         <p class="bottom-link">
             Don't have an account?
-            <a href="<%= ctx %>/createAccount.jsp">Create Account</a>
+            <a href="<%= ctx %>/createAccount">Create Account</a>
         </p>
     </section>
 </main>

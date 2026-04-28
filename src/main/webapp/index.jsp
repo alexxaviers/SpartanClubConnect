@@ -3,7 +3,7 @@
     String ctx = request.getContextPath();
     Integer userId = (Integer) session.getAttribute("userId");
     if (userId != null) {
-        response.sendRedirect(ctx + "/dashboard.jsp");
+        response.sendRedirect(ctx + "/dashboard");
         return;
     }
 %>
@@ -26,7 +26,7 @@
         <a class="landing-logo" href="<%= ctx %>/index.jsp">
             <span class="blue">Spartan</span><span class="gold">Club</span><span class="blue">Connect</span>
         </a>
-        <a class="landing-login-btn" href="<%= ctx %>/login.jsp">Log In</a>
+        <a class="landing-login-btn" href="<%= ctx %>/login">Log In</a>
     </div>
 </nav>
 
@@ -40,25 +40,25 @@
     <p class="landing-subtitle">Log in to explore clubs, events, and campus activities.</p>
 
     <div class="landing-search-wrap">
-        <form class="landing-search-bar" action="<%= ctx %>/login.jsp" method="get">
+        <form class="landing-search-bar" action="<%= ctx %>/login" method="get">
             <input type="text" name="q" placeholder="Search clubs or events..." autocomplete="off">
             <button type="submit">Search</button>
         </form>
     </div>
 
     <div class="landing-chips">
-        <a href="<%= ctx %>/login.jsp" class="landing-chip">Academic</a>
-        <a href="<%= ctx %>/login.jsp" class="landing-chip">Engineering</a>
-        <a href="<%= ctx %>/login.jsp" class="landing-chip">Business</a>
-        <a href="<%= ctx %>/login.jsp" class="landing-chip">Cultural</a>
-        <a href="<%= ctx %>/login.jsp" class="landing-chip">Arts</a>
-        <a href="<%= ctx %>/login.jsp" class="landing-chip">Technology</a>
-        <a href="<%= ctx %>/login.jsp" class="landing-chip">Recreation &amp; Sports</a>
-        <a href="<%= ctx %>/login.jsp" class="landing-chip">Community Service</a>
+        <a href="<%= ctx %>/login" class="landing-chip">Academic</a>
+        <a href="<%= ctx %>/login" class="landing-chip">Engineering</a>
+        <a href="<%= ctx %>/login" class="landing-chip">Business</a>
+        <a href="<%= ctx %>/login" class="landing-chip">Cultural</a>
+        <a href="<%= ctx %>/login" class="landing-chip">Arts</a>
+        <a href="<%= ctx %>/login" class="landing-chip">Technology</a>
+        <a href="<%= ctx %>/login" class="landing-chip">Recreation &amp; Sports</a>
+        <a href="<%= ctx %>/login" class="landing-chip">Community Service</a>
     </div>
 
     <div class="landing-gateway-cards">
-        <a href="<%= ctx %>/login.jsp" class="landing-gateway-card">
+        <a href="<%= ctx %>/login" class="landing-gateway-card">
             <div class="landing-card-icon landing-card-icon-blue">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                      stroke="#0055A2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -73,7 +73,7 @@
             <span class="landing-card-arrow">Browse clubs →</span>
         </a>
 
-        <a href="<%= ctx %>/login.jsp" class="landing-gateway-card">
+        <a href="<%= ctx %>/login" class="landing-gateway-card">
             <div class="landing-card-icon landing-card-icon-gold">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                      stroke="#92660a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
