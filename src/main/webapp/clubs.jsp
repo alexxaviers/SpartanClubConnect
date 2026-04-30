@@ -1,5 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.net.URLEncoder" %>
+<%@ page import="java.nio.charset.StandardCharsets" %>
 <%@ page import="edu.sjsu.cs157a.team1.model.Club" %>
 <%@ page import="edu.sjsu.cs157a.team1.util.HtmlEscape" %>
 <%
@@ -21,12 +23,22 @@
     String q = (String) request.getAttribute("q");
     String category = (String) request.getAttribute("category");
     String sort = (String) request.getAttribute("sort");
+    Integer currentPageAttr = (Integer) request.getAttribute("currentPage");
+    Integer totalPagesAttr = (Integer) request.getAttribute("totalPages");
+    Integer totalClubsAttr = (Integer) request.getAttribute("totalClubs");
 
     if (q == null) q = "";
     if (category == null) category = "";
     if (sort == null || sort.trim().isEmpty()) sort = "name_asc";
+    int currentPage = currentPageAttr != null ? currentPageAttr : 1;
+    int totalPages = totalPagesAttr != null ? totalPagesAttr : 0;
 
-    int resultCount = clubs != null ? clubs.size() : 0;
+    int resultCount = totalClubsAttr != null ? totalClubsAttr : (clubs != null ? clubs.size() : 0);
+
+    String qParam = URLEncoder.encode(q, StandardCharsets.UTF_8.toString());
+    String categoryParam = URLEncoder.encode(category, StandardCharsets.UTF_8.toString());
+    String sortParam = URLEncoder.encode(sort, StandardCharsets.UTF_8.toString());
+    String paginationBase = ctx + "/clubs?q=" + qParam + "&category=" + categoryParam + "&sort=" + sortParam;
 
     request.setAttribute("activeNav", "browseClubs");
 %>
@@ -50,6 +62,7 @@
 
 <section class="dashboard-form-card clubs-shell-card">
     <form class="clubs-toolbar" action="<%= ctx %>/clubs" method="get" id="clubsFilterForm">
+        <input type="hidden" name="page" value="1">
         <div class="form-group">
             <label for="q">Search</label>
             <input
@@ -153,6 +166,27 @@
     <%
         }
     %>
+    
+    <% if (totalPages > 1) { %>
+    <nav class="clubs-pagination" aria-label="Clubs pagination">
+        <a class="pagination-btn <%= currentPage == 1 ? "disabled" : "" %>"
+           href="<%= currentPage == 1 ? "#" : paginationBase + "&page=" + (currentPage - 1) %>"
+           aria-disabled="<%= currentPage == 1 %>"
+        >&lsaquo;</a>
+
+        <% for (int pageNum = 1; pageNum <= totalPages; pageNum++) { %>
+        <a class="pagination-btn <%= pageNum == currentPage ? "active" : "" %>"
+           href="<%= paginationBase + "&page=" + pageNum %>"
+           <%= pageNum == currentPage ? "aria-current=\"page\"" : "" %>><%= pageNum %></a>
+        <% } %>
+
+        <a class="pagination-btn <%= currentPage == totalPages ? "disabled" : "" %>"
+           href="<%= currentPage == totalPages ? "#" : paginationBase + "&page=" + (currentPage + 1) %>"
+           aria-disabled="<%= currentPage == totalPages %>"
+        >&rsaquo;</a>
+    </nav>
+    <% } %>
+    
 </section>
 
 <%@ include file="/WEB-INF/jspf/dashboardShellEnd.jspf" %>

@@ -29,7 +29,12 @@
         return;
     }
 
-    int resultCount = followedClubs.size();
+    Integer currentPageAttr = (Integer) request.getAttribute("currentPage");
+    Integer totalPagesAttr = (Integer) request.getAttribute("totalPages");
+    Integer totalClubsAttr = (Integer) request.getAttribute("totalClubs");
+    int currentPage = currentPageAttr != null ? currentPageAttr : 1;
+    int totalPages = totalPagesAttr != null ? totalPagesAttr : 0;
+    int resultCount = totalClubsAttr != null ? totalClubsAttr : followedClubs.size();
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -107,6 +112,21 @@
         </li>
         <% } %>
     </ul>
+    <% if (totalPages > 1) { %>
+    <nav class="clubs-pagination" aria-label="Followed clubs pagination">
+        <a class="pagination-btn <%= currentPage == 1 ? "disabled" : "" %>"
+           href="<%= currentPage == 1 ? "#" : (ctx + "/followedClubs?page=" + (currentPage - 1)) %>"
+           aria-disabled="<%= currentPage == 1 %>">&lsaquo;</a>
+        <% for (int pageNum = 1; pageNum <= totalPages; pageNum++) { %>
+        <a class="pagination-btn <%= pageNum == currentPage ? "active" : "" %>"
+           href="<%= ctx + "/followedClubs?page=" + pageNum %>"
+           <%= pageNum == currentPage ? "aria-current=\"page\"" : "" %>><%= pageNum %></a>
+        <% } %>
+        <a class="pagination-btn <%= currentPage == totalPages ? "disabled" : "" %>"
+           href="<%= currentPage == totalPages ? "#" : (ctx + "/followedClubs?page=" + (currentPage + 1)) %>"
+           aria-disabled="<%= currentPage == totalPages %>">&rsaquo;</a>
+    </nav>
+    <% } %>
     <% } %>
 </section>
 

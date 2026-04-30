@@ -548,6 +548,49 @@
     margin-bottom: 12px;
 }
 
+.clubs-pagination {
+    margin-top: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.pagination-btn {
+    min-width: 42px;
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: #f9fafb;
+    color: #374151;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.pagination-btn:hover {
+    border-color: #93c5fd;
+    background: #ffffff;
+}
+
+.pagination-btn.active {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: #ffffff;
+}
+
+.pagination-btn.disabled {
+    color: #9ca3af;
+    background: #f3f4f6;
+    pointer-events: none;
+}
+
+
 .category-badge {
     display: inline-block;
     padding: 6px 12px;

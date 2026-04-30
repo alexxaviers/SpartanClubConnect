@@ -1,6 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Set" %>
+<%@ page import="java.net.URLEncoder" %>
+<%@ page import="java.nio.charset.StandardCharsets" %>
 <%@ page import="edu.sjsu.cs157a.team1.dao.RsvpDAO.EventView" %>
 <%@ page import="edu.sjsu.cs157a.team1.util.HtmlEscape" %>
 <%@ page import="edu.sjsu.cs157a.team1.util.CsrfUtil" %>
@@ -44,10 +46,18 @@
 
     String selectedClubName = (String) request.getAttribute("selectedClubName");
     Integer selectedClubId = (Integer) request.getAttribute("selectedClubId");
+    Integer currentPageAttr = (Integer) request.getAttribute("currentPage");
+    Integer totalPagesAttr = (Integer) request.getAttribute("totalPages");
+    Integer totalEventsAttr = (Integer) request.getAttribute("totalEvents");
 
     boolean filteredByClub = selectedClubName != null && !selectedClubName.isEmpty();
     boolean personalizedFeed = "personalized".equalsIgnoreCase(feedMode) && !filteredByClub;
-    int eventCount = events.size();
+    int currentPage = currentPageAttr != null ? currentPageAttr : 1;
+    int totalPages = totalPagesAttr != null ? totalPagesAttr : 0;
+    int eventCount = totalEventsAttr != null ? totalEventsAttr : events.size();
+    String feedParamValue = URLEncoder.encode(feedMode, StandardCharsets.UTF_8.toString());
+    String clubIdQuery = selectedClubId != null ? "&clubId=" + selectedClubId : "";
+    String paginationBase = ctx + "/events?feed=" + feedParamValue + clubIdQuery;
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -161,6 +171,21 @@
         </li>
         <% } %>
     </ul>
+    <% if (totalPages > 1) { %>
+    <nav class="clubs-pagination" aria-label="Events pagination">
+        <a class="pagination-btn <%= currentPage == 1 ? "disabled" : "" %>"
+           href="<%= currentPage == 1 ? "#" : paginationBase + "&page=" + (currentPage - 1) %>"
+           aria-disabled="<%= currentPage == 1 %>">&lsaquo;</a>
+        <% for (int pageNum = 1; pageNum <= totalPages; pageNum++) { %>
+        <a class="pagination-btn <%= pageNum == currentPage ? "active" : "" %>"
+           href="<%= paginationBase + "&page=" + pageNum %>"
+           <%= pageNum == currentPage ? "aria-current=\"page\"" : "" %>><%= pageNum %></a>
+        <% } %>
+        <a class="pagination-btn <%= currentPage == totalPages ? "disabled" : "" %>"
+           href="<%= currentPage == totalPages ? "#" : paginationBase + "&page=" + (currentPage + 1) %>"
+           aria-disabled="<%= currentPage == totalPages %>">&rsaquo;</a>
+    </nav>
+    <% } %>
     <% } %>
 </section>
 

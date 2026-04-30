@@ -1,6 +1,7 @@
 package edu.sjsu.cs157a.team1.controller;
 
 import edu.sjsu.cs157a.team1.dao.FollowDAO;
+import edu.sjsu.cs157a.team1.util.PaginationUtil;
 import edu.sjsu.cs157a.team1.model.Club;
 
 import javax.servlet.ServletException;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class FollowedClubsServlet extends HttpServlet{
+    private static final int PAGE_SIZE = 5;
 	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -29,9 +31,15 @@ public class FollowedClubsServlet extends HttpServlet{
 		
 		Integer userId = (Integer) session.getAttribute("userId");
 		FollowDAO followDAO = new FollowDAO();
-		List<Club> followedClubs = followDAO.getClubsFollowedByUser(userId);
+		List<Club> allFollowedClubs = followDAO.getClubsFollowedByUser(userId);
+		int page = PaginationUtil.parsePage(request.getParameter("page"));
+		PaginationUtil.PageResult<Club> pagedResult = PaginationUtil.paginate(allFollowedClubs, page, PAGE_SIZE);
+		List<Club> followedClubs = pagedResult.getItems();
 		
 		request.setAttribute("followedClubs", followedClubs);
+		request.setAttribute("totalClubs", pagedResult.getTotalItems());
+		request.setAttribute("currentPage", pagedResult.getCurrentPage());
+		request.setAttribute("totalPages", pagedResult.getTotalPages());
 		request.getRequestDispatcher("/followedClubs.jsp").forward(request, response);
 	}
 }

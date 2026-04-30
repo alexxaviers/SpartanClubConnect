@@ -25,7 +25,12 @@
 
     String success = (String) request.getAttribute("success");
     String error = (String) request.getAttribute("error");
-    int eventCount = events == null ? 0 : events.size();
+    Integer currentPageAttr = (Integer) request.getAttribute("currentPage");
+    Integer totalPagesAttr = (Integer) request.getAttribute("totalPages");
+    Integer totalEventsAttr = (Integer) request.getAttribute("totalEvents");
+    int currentPage = currentPageAttr != null ? currentPageAttr : 1;
+    int totalPages = totalPagesAttr != null ? totalPagesAttr : 0;
+    int eventCount = totalEventsAttr != null ? totalEventsAttr : (events == null ? 0 : events.size());
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -111,6 +116,21 @@
         </li>
         <% } %>
     </ul>
+    <% if (totalPages > 1) { %>
+    <nav class="clubs-pagination" aria-label="My RSVPs pagination">
+        <a class="pagination-btn <%= currentPage == 1 ? "disabled" : "" %>"
+           href="<%= currentPage == 1 ? "#" : (ctx + "/my-rsvps?page=" + (currentPage - 1)) %>"
+           aria-disabled="<%= currentPage == 1 %>">&lsaquo;</a>
+        <% for (int pageNum = 1; pageNum <= totalPages; pageNum++) { %>
+        <a class="pagination-btn <%= pageNum == currentPage ? "active" : "" %>"
+           href="<%= ctx + "/my-rsvps?page=" + pageNum %>"
+           <%= pageNum == currentPage ? "aria-current=\"page\"" : "" %>><%= pageNum %></a>
+        <% } %>
+        <a class="pagination-btn <%= currentPage == totalPages ? "disabled" : "" %>"
+           href="<%= currentPage == totalPages ? "#" : (ctx + "/my-rsvps?page=" + (currentPage + 1)) %>"
+           aria-disabled="<%= currentPage == totalPages %>">&rsaquo;</a>
+    </nav>
+    <% } %>
     <% } %>
 </section>
 
