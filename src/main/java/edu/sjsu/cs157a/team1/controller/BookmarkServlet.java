@@ -49,9 +49,8 @@ public class BookmarkServlet extends HttpServlet {
                 } else {
                     redirectWithMessage(resp, returnTo, returnFeed, eventId, "error", "Event already saved");
                 }
-                return;
-                
-            } else if ("remove".equalsIgnoreCase(action)) {
+            	return;
+        	} else if ("remove".equalsIgnoreCase(action)) {
                 boolean removed = bookmarkDAO.removeBookmark(userId, eventId);
                 if (removed) {
                     redirectWithMessage(resp, returnTo, returnFeed, eventId, "success", "Bookmark removed");
