@@ -2,6 +2,7 @@ package edu.sjsu.cs157a.team1.controller;
 
 import edu.sjsu.cs157a.team1.dao.UserDAO;
 import edu.sjsu.cs157a.team1.model.User;
+import edu.sjsu.cs157a.team1.util.CsrfUtil;
 import edu.sjsu.cs157a.team1.util.PasswordUtil;
 
 import javax.servlet.ServletException;
@@ -12,6 +13,12 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class CreateAccountServlet extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.sendRedirect(request.getContextPath() + "/createAccount");
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -25,7 +32,7 @@ public class CreateAccountServlet extends HttpServlet {
         String error = validate(fullName, email, password, confirmPassword);
         if (error != null) {
             request.setAttribute("errorMessage", error);
-            request.getRequestDispatcher("createAccount.jsp").forward(request, response);
+            request.getRequestDispatcher("/createAccount.jsp").forward(request, response);
             return;
         }
 
@@ -34,7 +41,7 @@ public class CreateAccountServlet extends HttpServlet {
 
         if (userDao.findByEmail(normalizedEmail) != null) {
             request.setAttribute("errorMessage", "An account with that email already exists.");
-            request.getRequestDispatcher("createAccount.jsp").forward(request, response);
+            request.getRequestDispatcher("/createAccount.jsp").forward(request, response);
             return;
         }
 
@@ -49,7 +56,7 @@ public class CreateAccountServlet extends HttpServlet {
         int newUserId = userDao.createUser(user);
         if (newUserId <= 0) {
             request.setAttribute("errorMessage", "Unable to create account at this time. Please try again later.");
-            request.getRequestDispatcher("createAccount.jsp").forward(request, response);
+            request.getRequestDispatcher("/createAccount.jsp").forward(request, response);
             return;
         }
 
@@ -63,9 +70,12 @@ public class CreateAccountServlet extends HttpServlet {
         session.setAttribute("fullName", user.getFullName());
         session.setAttribute("email", user.getEmail());
         session.setAttribute("role", "Student");
+        session.setAttribute("isAdmin", false);
+        session.setAttribute("isClubOfficer", false);
         session.setMaxInactiveInterval(15 * 60);
+        CsrfUtil.getToken(session);
 
-        response.sendRedirect("dashboard.jsp");
+        response.sendRedirect(request.getContextPath() + "/dashboard");
     }
 
     private String validate(String fullName, String email, String password, String confirmPassword) {

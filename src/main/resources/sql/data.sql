@@ -126,7 +126,9 @@ INSERT INTO ClubCategoryMaps (club_id, category_id) VALUES
     (7, 8),
     (8, 7),
     (9, 1),
-    (10, 4);
+    (10, 4),
+    (1, 1),
+    (2, 6);
 
 -- MANAGES RELATIONSHIP (10 rows)
 INSERT INTO Manages (user_id, club_id) VALUES
@@ -152,20 +154,22 @@ INSERT INTO Follows (user_id, club_id) VALUES
     (17, 7),
     (18, 8),
     (19, 9),
-    (20, 10);
+    (20, 10),
+    (1, 2),
+    (2, 3);
 
 -- EVENTS (10 rows)
 INSERT INTO Events (title, description, date, start_time, end_time, location, category, capacity, image_url, is_active, club_id, created_by) VALUES
-    ('ACM Technical Interview Prep', 'A workshop covering data structures, whiteboard practice, and internship interview strategies.', '2026-04-08', '18:00:00', '20:00:00', 'Engineering Building Room 189', 'Technology', 80, NULL, TRUE, 1, 1),
-    ('SHPE Networking Night', 'Meet alumni and local professionals for career advice and internship networking.', '2026-04-10', '18:30:00', '20:30:00', 'Student Union Ballroom B', 'Professional Development', 120, NULL, TRUE, 2, 2),
-    ('Spartan Debate Showcase', 'An exhibition round featuring current members and open audience Q&A.', '2026-04-12', '17:00:00', '19:00:00', 'Student Union Theater', 'Academic', 60, NULL, TRUE, 3, 3),
-    ('Campus Golden Hour Photo Walk', 'Guided photo walk across campus with composition and lighting tips.', '2026-04-14', '17:30:00', '19:00:00', 'Tower Lawn', 'Arts', 35, NULL, TRUE, 4, 4),
-    ('Women in Business Resume Review', 'Resume critique and LinkedIn profile workshop led by upperclassmen and alumni.', '2026-04-16', '18:00:00', '20:00:00', 'BBC Room 032', 'Business', 70, NULL, TRUE, 5, 5),
-    ('Anime Screening Night', 'Club screening of a feature-length anime film followed by discussion.', '2026-04-18', '18:30:00', '21:00:00', 'Student Union Room 3A', 'Media & Entertainment', 90, NULL, TRUE, 6, 6),
-    ('Earth Day Tree Planting', 'Volunteer event focused on planting and maintaining native trees near campus.', '2026-04-22', '09:00:00', '12:00:00', '7th Street Plaza', 'Community Service', 50, NULL, TRUE, 7, 7),
-    ('Weekend Soccer Scrimmage', 'Friendly scrimmage open to all members with rotating teams and short matches.', '2026-04-25', '14:00:00', '16:00:00', 'Spartan Recreation Field', 'Recreation & Sports', 40, NULL, TRUE, 8, 8),
-    ('Blitz Chess Tournament', 'Fast-paced campus chess tournament with a small prize for top finishers.', '2026-04-27', '18:00:00', '21:00:00', 'Clark Hall Room 111', 'Academic', 32, NULL, TRUE, 9, 9),
-    ('Spring Open Mic Showcase', 'Student musicians perform solo and group sets in an open mic format.', '2026-04-30', '19:00:00', '21:30:00', 'Music Building Recital Room', 'Arts', 100, NULL, TRUE, 10, 10);
+    ('ACM Technical Interview Prep', 'A workshop covering data structures, whiteboard practice, and internship interview strategies.', '2026-09-08', '18:00:00', '20:00:00', 'Engineering Building Room 189', 'Technology', 80, NULL, TRUE, 1, 1),
+    ('SHPE Networking Night', 'Meet alumni and local professionals for career advice and internship networking.', '2026-09-10', '18:30:00', '20:30:00', 'Student Union Ballroom B', 'Professional Development', 120, NULL, TRUE, 2, 2),
+    ('Spartan Debate Showcase', 'An exhibition round featuring current members and open audience Q&A.', '2026-09-12', '17:00:00', '19:00:00', 'Student Union Theater', 'Academic', 60, NULL, TRUE, 3, 3),
+    ('Campus Golden Hour Photo Walk', 'Guided photo walk across campus with composition and lighting tips.', '2026-09-14', '17:30:00', '19:00:00', 'Tower Lawn', 'Arts', 35, NULL, TRUE, 4, 4),
+    ('Women in Business Resume Review', 'Resume critique and LinkedIn profile workshop led by upperclassmen and alumni.', '2026-09-16', '18:00:00', '20:00:00', 'BBC Room 032', 'Business', 70, NULL, TRUE, 5, 5),
+    ('Anime Screening Night', 'Club screening of a feature-length anime film followed by discussion.', '2026-09-18', '18:30:00', '21:00:00', 'Student Union Room 3A', 'Media & Entertainment', 90, NULL, TRUE, 6, 6),
+    ('Earth Day Tree Planting', 'Volunteer event focused on planting and maintaining native trees near campus.', '2026-09-22', '09:00:00', '12:00:00', '7th Street Plaza', 'Community Service', 50, NULL, TRUE, 7, 7),
+    ('Weekend Soccer Scrimmage', 'Friendly scrimmage open to all members with rotating teams and short matches.', '2026-09-25', '14:00:00', '16:00:00', 'Spartan Recreation Field', 'Recreation & Sports', 40, NULL, TRUE, 8, 8),
+    ('Blitz Chess Tournament', 'Fast-paced campus chess tournament with a small prize for top finishers.', '2026-09-27', '18:00:00', '21:00:00', 'Clark Hall Room 111', 'Academic', 32, NULL, TRUE, 9, 9),
+    ('Spring Open Mic Showcase', 'Student musicians perform solo and group sets in an open mic format.', '2026-09-30', '19:00:00', '21:30:00', 'Music Building Recital Room', 'Arts', 100, NULL, TRUE, 10, 10);
 
 -- RSVPS (10 rows)
 INSERT INTO RSVPs (user_id, event_id, status) VALUES
@@ -178,7 +182,9 @@ INSERT INTO RSVPs (user_id, event_id, status) VALUES
     (17, 7, 'Going'),
     (18, 8, 'Going'),
     (19, 9, 'Going'),
-    (20, 10, 'Going');
+    (20, 10, 'Going'),
+    (1, 1, 'Going'),
+    (2, 2, 'Waitlisted');
 
 -- BOOKMARKS (10 rows)
 INSERT INTO Bookmarks (user_id, event_id) VALUES
@@ -195,13 +201,13 @@ INSERT INTO Bookmarks (user_id, event_id) VALUES
 
 -- CLUB OFFICER REQUESTS (10 rows)
 INSERT INTO ClubOfficerRequests (sjsu_id, club_name, justification, status, user_id, reviewed_by) VALUES
-                                                                                                      ('016245781', 'Association for Computing Machinery', 'I regularly attend ACM workshops and want to help organize technical practice sessions for new members.', 'Pending', 11, NULL),
-                                                                                                      ('016245782', 'Society of Hispanic Professional Engineers', 'I have prior outreach experience and would like to help SHPE coordinate industry networking events.', 'Approved', 12, 21),
-                                                                                                      ('016245783', 'Spartan Debate Society', 'I have been active in debate prep meetings and want to support tournament logistics and member onboarding.', 'Rejected', 13, 22),
-                                                                                                      ('016245784', 'SJSU Photography Collective', 'I am experienced with Lightroom and campus event coverage and would like to help run photo walk programming.', 'Pending', 14, NULL),
-                                                                                                      ('016245785', 'Women in Business at SJSU', 'I can help manage guest speakers and resume review events for Women in Business.', 'Approved', 15, 23),
-                                                                                                      ('016245786', 'Anime and Manga Association', 'I have helped moderate screening discussions and want to serve as a programming officer for Anime Club.', 'Pending', 16, NULL),
-                                                                                                      ('016245787', 'Spartan Environmental Action Coalition', 'I volunteer regularly at sustainability events and would like to coordinate service activities for SEAC.', 'Approved', 17, 24),
-                                                                                                      ('016245788', 'Intramural Soccer Club', 'I have experience organizing recreational leagues and want to help schedule soccer scrimmages.', 'Rejected', 18, 25),
-                                                                                                      ('016245789', 'Chess and Strategy Club', 'I can help run beginner workshops and tournament check-ins for Chess and Strategy Club.', 'Approved', 19, 26),
-                                                                                                      ('016245790', 'Music Performance Society', 'I want to support rehearsal planning and performer outreach for the Music Performance Society.', 'Pending', 20, NULL);
+    ('016245781', 'Association for Computing Machinery', 'I regularly attend ACM workshops and want to help organize technical practice sessions for new members.', 'Pending', 11, NULL),
+    ('016245782', 'Society of Hispanic Professional Engineers', 'I have prior outreach experience and would like to help SHPE coordinate industry networking events.', 'Approved', 12, 21),
+    ('016245783', 'Spartan Debate Society', 'I have been active in debate prep meetings and want to support tournament logistics and member onboarding.', 'Rejected', 13, 22),
+    ('016245784', 'SJSU Photography Collective', 'I am experienced with Lightroom and campus event coverage and would like to help run photo walk programming.', 'Pending', 14, NULL),
+    ('016245785', 'Women in Business at SJSU', 'I can help manage guest speakers and resume review events for Women in Business.', 'Approved', 15, 23),
+    ('016245786', 'Anime and Manga Association', 'I have helped moderate screening discussions and want to serve as a programming officer for Anime Club.', 'Pending', 16, NULL),
+    ('016245787', 'Spartan Environmental Action Coalition', 'I volunteer regularly at sustainability events and would like to coordinate service activities for SEAC.', 'Approved', 17, 24),
+    ('016245788', 'Intramural Soccer Club', 'I have experience organizing recreational leagues and want to help schedule soccer scrimmages.', 'Rejected', 18, 25),
+    ('016245789', 'Chess and Strategy Club', 'I can help run beginner workshops and tournament check-ins for Chess and Strategy Club.', 'Approved', 19, 26),
+    ('016245790', 'Music Performance Society', 'I want to support rehearsal planning and performer outreach for the Music Performance Society.', 'Pending', 20, NULL);

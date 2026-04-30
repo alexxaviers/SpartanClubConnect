@@ -8,7 +8,11 @@ CREATE TABLE Users (
     email VARCHAR(100) UNIQUE,
     password_hash VARCHAR(255),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    is_active BOOLEAN
+    is_active BOOLEAN,
+    deactivated_by INT NULL,
+    deactivated_at DATETIME NULL,
+    deactivation_reason VARCHAR(255) NULL,
+    FOREIGN KEY (deactivated_by) REFERENCES Users(user_id)
 );
 
 -- ROLES
@@ -49,8 +53,12 @@ CREATE TABLE Events (
     is_active BOOLEAN,
     club_id INT,
     created_by INT,
+    moderated_by INT NULL,
+    moderated_at DATETIME NULL,
+    moderation_reason VARCHAR(255) NULL,
     FOREIGN KEY (club_id) REFERENCES Clubs(club_id),
-    FOREIGN KEY (created_by) REFERENCES Users(user_id)
+    FOREIGN KEY (created_by) REFERENCES Users(user_id),
+    FOREIGN KEY (moderated_by) REFERENCES Users(user_id)
 );
 
 -- CLUB OFFICER REQUESTS
@@ -68,7 +76,7 @@ CREATE TABLE ClubOfficerRequests (
     FOREIGN KEY (reviewed_by) REFERENCES Users(user_id)
 );
 
--- USER ROLES RELATIONSHIP
+-- USER ROLES
 CREATE TABLE UserRoles (
     user_id INT,
     role_id INT,
@@ -78,7 +86,7 @@ CREATE TABLE UserRoles (
     FOREIGN KEY (role_id) REFERENCES Roles(role_id)
 );
 
--- FOLLOWS RELATIONSHIP
+-- FOLLOWS
 CREATE TABLE Follows (
     user_id INT,
     club_id INT,
@@ -88,7 +96,7 @@ CREATE TABLE Follows (
     FOREIGN KEY (club_id) REFERENCES Clubs(club_id)
 );
 
--- BOOKMARKS RELATIONSHIP
+-- BOOKMARKS
 CREATE TABLE Bookmarks (
     user_id INT,
     event_id INT,
@@ -98,7 +106,7 @@ CREATE TABLE Bookmarks (
     FOREIGN KEY (event_id) REFERENCES Events(event_id)
 );
 
--- RSVPS RELATIONSHIP
+-- RSVPS
 CREATE TABLE RSVPs (
     user_id INT,
     event_id INT,
@@ -109,7 +117,7 @@ CREATE TABLE RSVPs (
     FOREIGN KEY (event_id) REFERENCES Events(event_id)
 );
 
--- MANAGES RELATIONSHIP
+-- MANAGES
 CREATE TABLE Manages (
     user_id INT,
     club_id INT,
@@ -119,7 +127,7 @@ CREATE TABLE Manages (
     FOREIGN KEY (club_id) REFERENCES Clubs(club_id)
 );
 
--- CLUB CATEGORY MAPS RELATIONSHIP
+-- CLUB CATEGORY MAPS
 CREATE TABLE ClubCategoryMaps (
     club_id INT,
     category_id INT,

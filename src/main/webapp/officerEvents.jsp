@@ -10,18 +10,22 @@
     Boolean isClubOfficer = (Boolean) session.getAttribute("isClubOfficer");
     if (isAdmin == null) isAdmin = false;
     if (isClubOfficer == null) isClubOfficer = false;
+
     if (userId == null) {
-        response.sendRedirect(ctx + "/login.jsp");
+        response.sendRedirect(ctx + "/login");
         return;
     }
 
-    request.setAttribute("activeNav", "createEvent");
+    request.setAttribute("activeNav", "officerEvents");
 
     String csrfToken = CsrfUtil.getToken(session);
 
+    @SuppressWarnings("unchecked")
     List<ManagedEventView> events = (List<ManagedEventView>) request.getAttribute("events");
+
     String success = (String) request.getAttribute("success");
     String error = (String) request.getAttribute("error");
+    int eventCount = events == null ? 0 : events.size();
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,60 +37,78 @@
     <link rel="stylesheet" href="<%= ctx %>/css/landing.css">
     <link rel="stylesheet" href="<%= ctx %>/css/dashboard.css">
     <link rel="stylesheet" href="<%= ctx %>/css/clubs.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/events.css">
 </head>
 <%@ include file="/WEB-INF/jspf/dashboardShellStart.jspf" %>
-            <section class="dashboard-page-header">
-                <h1 class="dashboard-page-title">Manage Events</h1>
-                <p class="dashboard-page-subtitle">
-                    Create, edit, and remove events for the clubs you manage.
-                </p>
-            </section>
-			<div class="club-profile-actions club-profile-actions--shell event-details-top-nav">
-                <div class="club-profile-actions-row">
-                    <a href="<%= ctx %>/dashboard.jsp" class="secondary-btn club-profile-follow-btn event-details-nav-link">Home</a>
-                    <a href="<%= ctx %>/events" class="secondary-btn club-profile-follow-btn event-details-nav-link">Browse Events</a>
-                    <a href="<%= ctx %>/officer-event" class="secondary-btn club-profile-follow-btn event-details-nav-link">Create New Event</a>
-                </div>
+
+<section class="dashboard-page-header events-header">
+    <h1 class="dashboard-page-title">Manage Events</h1>
+    <p class="dashboard-page-subtitle">Create, edit, and manage events for the clubs you oversee.</p>
+</section>
+
+<section class="dashboard-form-card clubs-shell-card events-shell-card">
+    <div class="events-top-actions">
+        <a href="<%= ctx %>/officer-event" class="secondary-link">Create New Event</a>
+        <a href="<%= ctx %>/events" class="secondary-link">Browse Events</a>
+        <a href="<%= ctx %>/dashboard" class="secondary-link">Home</a>
+    </div>
+
+    <p class="club-meta events-results-count">
+        <strong><%= eventCount %></strong> <%= eventCount == 1 ? "event" : "events" %> found
+    </p>
+
+    <% if (success != null && !success.isEmpty()) { %>
+    <p class="message success-message-box"><%= HtmlEscape.escape(success) %></p>
+    <% } %>
+
+    <% if (error != null && !error.isEmpty()) { %>
+    <p class="message error-message-box"><%= HtmlEscape.escape(error) %></p>
+    <% } %>
+
+    <% if (events == null || events.isEmpty()) { %>
+    <p class="empty-hint">You do not have active events yet. Create one to publish it in the event feed.</p>
+    <% } else { %>
+    <ul class="event-feed">
+        <% for (ManagedEventView event : events) { %>
+        <li class="event-card">
+            <h2 class="event-card-title">
+                <a href="<%= ctx %>/event-details?eventId=<%= event.getEventId() %>">
+                    <%= HtmlEscape.escape(event.getTitle()) %>
+                </a>
+            </h2>
+
+            <p class="event-meta-row">
+                <%= HtmlEscape.escape(event.getClubName()) %>
+            </p>
+
+            <p class="event-meta-row">
+                <%= event.getDate() %>
+                &middot;
+                <%= event.getStartTime() %> - <%= event.getEndTime() %>
+                &middot;
+                <%= HtmlEscape.escape(event.getLocation()) %>
+            </p>
+
+            <div class="event-card-actions">
+                    <span class="event-stat-pill">
+                        Capacity: <%= event.getCapacity() == null ? "No Limit" : event.getCapacity() %>
+                    </span>
             </div>
-            <section class="dashboard-form-card clubs-shell-card">
 
+            <div class="event-details-cta event-details-cta--in-card">
+                <a href="<%= ctx %>/officer-event?eventId=<%= event.getEventId() %>" class="secondary-link">Edit Event</a>
 
-                <% if (success != null && !success.isEmpty()) { %>
-                <p style="color: #0f7b0f;"><strong><%= HtmlEscape.escape(success) %></strong></p>
-                <% } %>
+                <form action="<%= ctx %>/officer-events" method="post" onsubmit="return confirm('Delete this event?');">
+                    <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
+                    <button type="submit" class="secondary-btn">Delete Event</button>
+                </form>
+            </div>
+        </li>
+        <% } %>
+    </ul>
+    <% } %>
+</section>
 
-                <% if (error != null && !error.isEmpty()) { %>
-                <p style="color: #b00020;"><strong><%= HtmlEscape.escape(error) %></strong></p>
-                <% } %>
-
-                <% if (events == null || events.isEmpty()) { %>
-                <p class="empty-hint">You do not have active events yet. Create one to publish it in the event feed.</p>
-                <% } else { %>
-                <ul class="club-list">
-                    <% for (ManagedEventView event : events) { %>
-                    <li class="club-list-item">
-                        <h2><a href="<%= ctx %>/event-details?eventId=<%= event.getEventId() %>"><%= HtmlEscape.escape(event.getTitle()) %></a></h2>
-                        <p class="club-meta">
-                            <%= HtmlEscape.escape(event.getClubName()) %>
-                            &middot; <%= event.getDate() %>
-                            &middot; <%= event.getStartTime() %> - <%= event.getEndTime() %>
-                            &middot; <%= HtmlEscape.escape(event.getLocation()) %>
-                        </p>
-                        <p class="club-meta">
-                            Capacity: <%= event.getCapacity() == null ? "No Limit" : event.getCapacity() %>
-                        </p>
-                        <div class="event-details-cta event-details-cta--in-card">
-                            <a href="<%= ctx %>/officer-event?eventId=<%= event.getEventId() %>" class="club-profile-edit-btn event-details-edit-link">Edit event</a>
-                            <form action="<%= ctx %>/officer-events" method="post">
-                                <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
-                                <input type="hidden" name="action" value="delete">
-                                <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
-                                <button type="submit" class="secondary-btn event-details-action-btn" onclick="return confirm('Delete this event?');">Delete event</button>
-                            </form>
-                        </div>
-                    </li>
-                    <% } %>
-                </ul>
-                <% } %>
-            </section>
 <%@ include file="/WEB-INF/jspf/dashboardShellEnd.jspf" %>

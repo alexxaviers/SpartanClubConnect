@@ -86,7 +86,7 @@
 
         <p class="bottom-link">
             Already have an account?
-            <a href="<%= ctx %>/login.jsp">Sign In</a>
+            <a href="<%= ctx %>/login">Sign In</a>
         </p>
     </section>
 </main>

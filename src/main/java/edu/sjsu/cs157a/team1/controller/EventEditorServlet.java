@@ -166,7 +166,9 @@ public class EventEditorServlet extends HttpServlet {
                     return;
                 }
 
-                resp.sendRedirect("officer-events?success=" + encode("Event created and published"));
+                req.getSession().setAttribute("toastMessage", "Event created successfully.");
+                req.getSession().setAttribute("toastType", "success");
+                resp.sendRedirect("officer-events");
                 return;
             }
 
@@ -178,7 +180,9 @@ public class EventEditorServlet extends HttpServlet {
                 return;
             }
 
-            resp.sendRedirect("officer-events?success=" + encode("Event updated"));
+            req.getSession().setAttribute("toastMessage", "Event updated successfully.");
+            req.getSession().setAttribute("toastType", "success");
+            resp.sendRedirect("officer-events");
         } catch (NumberFormatException e) {
             forwardToForm(req, resp, eventDAO, userId, eventIdParam, "Invalid numeric value");
         } catch (IllegalArgumentException e) {

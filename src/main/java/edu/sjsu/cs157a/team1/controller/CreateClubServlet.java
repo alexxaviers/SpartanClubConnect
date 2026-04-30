@@ -91,6 +91,8 @@ public class CreateClubServlet extends HttpServlet {
             return;
         }
 
+        request.getSession().setAttribute("toastMessage", "Club created successfully.");
+        request.getSession().setAttribute("toastType", "success");
         response.sendRedirect(request.getContextPath() + "/club?id=" + newId);
     }
 

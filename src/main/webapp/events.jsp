@@ -11,14 +11,18 @@
     Boolean isClubOfficer = (Boolean) session.getAttribute("isClubOfficer");
     if (isAdmin == null) isAdmin = false;
     if (isClubOfficer == null) isClubOfficer = false;
+
     if (userId == null) {
-        response.sendRedirect(ctx + "/login.jsp");
+        response.sendRedirect(ctx + "/login");
         return;
     }
 
-    request.setAttribute("activeNav", "");
+    request.setAttribute("activeNav", "browseEvents");
 
+    @SuppressWarnings("unchecked")
     List<EventView> events = (List<EventView>) request.getAttribute("events");
+
+    @SuppressWarnings("unchecked")
     Set<Integer> bookmarkedEventIds = (Set<Integer>) request.getAttribute("bookmarkedEventIds");
 
     if (events == null) {
@@ -28,14 +32,22 @@
     if (bookmarkedEventIds == null) {
         bookmarkedEventIds = java.util.Collections.emptySet();
     }
+
     String success = (String) request.getAttribute("success");
     String error = (String) request.getAttribute("error");
     String csrfToken = CsrfUtil.getToken(session);
+
     String feedMode = (String) request.getAttribute("feedMode");
     if (feedMode == null || feedMode.isEmpty()) {
         feedMode = "all";
     }
-    boolean personalizedFeed = "personalized".equalsIgnoreCase(feedMode);
+
+    String selectedClubName = (String) request.getAttribute("selectedClubName");
+    Integer selectedClubId = (Integer) request.getAttribute("selectedClubId");
+
+    boolean filteredByClub = selectedClubName != null && !selectedClubName.isEmpty();
+    boolean personalizedFeed = "personalized".equalsIgnoreCase(feedMode) && !filteredByClub;
+    int eventCount = events.size();
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,87 +59,109 @@
     <link rel="stylesheet" href="<%= ctx %>/css/landing.css">
     <link rel="stylesheet" href="<%= ctx %>/css/dashboard.css">
     <link rel="stylesheet" href="<%= ctx %>/css/clubs.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/events.css">
 </head>
 <%@ include file="/WEB-INF/jspf/dashboardShellStart.jspf" %>
-            <section class="dashboard-page-header">
-                <h1 class="dashboard-page-title">Upcoming Events</h1>
-                <p class="dashboard-page-subtitle">
-                    Browse events across campus or jump into your RSVPs.
-                </p>
-            </section>
 
-            <section class="dashboard-form-card clubs-shell-card">
-                <div class="clubs-toolbar">
-                    <div class="toolbar-actions">
-                        <a href="<%= ctx %>/my-rsvps" class="secondary-link">My RSVPs</a>
-						<a href="<%= ctx %>/events?feed=all" class="secondary-link<%= !personalizedFeed ? " active" : "" %>">Browse All Events</a>
-                        <a href="<%= ctx %>/events?feed=personalized" class="secondary-link<%= personalizedFeed ? " active" : "" %>">Browse Personalized Events</a>
-                        <% if (isClubOfficer) { %>
-                            <a href="<%= ctx %>/officer-events" class="secondary-link">Manage My Club Events</a>
-                        <% } %>
-                    </div>
-                </div>
+<section class="dashboard-page-header events-header">
+    <h1 class="dashboard-page-title">
+        <%= filteredByClub ? "Club Events" : (personalizedFeed ? "Personalized Events" : "Events") %>
+    </h1>
+    <% if (!filteredByClub) { %>
+    <p class="dashboard-page-subtitle">
+        <%= personalizedFeed ? "Upcoming events from clubs you follow." : "Browse upcoming events across campus." %>
+    </p>
+    <% } %>
+</section>
 
-                <% if (success != null && !success.isEmpty()) { %>
-                    <p style="color: #0f7b0f;"><strong><%= HtmlEscape.escape(success) %></strong></p>
-                <% } %>
+<section class="dashboard-form-card clubs-shell-card events-shell-card">
+    <div class="events-top-actions">
+        <% if (filteredByClub && selectedClubId != null) { %>
+        <a href="<%= ctx %>/club?id=<%= selectedClubId %>" class="secondary-link">Back to Club</a>
+        <a href="<%= ctx %>/events" class="secondary-link">Browse All Events</a>
+        <% } else { %>
+        <a href="<%= ctx %>/my-rsvps" class="secondary-link">My RSVPs</a>
+        <a href="<%= ctx %>/events?feed=all" class="secondary-link<%= !personalizedFeed ? " active" : "" %>">Browse All Events</a>
+        <a href="<%= ctx %>/events?feed=personalized" class="secondary-link<%= personalizedFeed ? " active" : "" %>">Browse Personalized Events</a>
+        <% if (isClubOfficer) { %>
+        <a href="<%= ctx %>/officer-events" class="secondary-link">Manage My Club Events</a>
+        <% } %>
+        <% } %>
+    </div>
 
-                <% if (error != null && !error.isEmpty()) { %>
-                    <p style="color: #b00020;"><strong><%= HtmlEscape.escape(error) %></strong></p>
-                <% } %>
+    <p class="club-meta events-results-count">
+        <strong><%= eventCount %></strong> <%= eventCount == 1 ? "event" : "events" %> found
+    </p>
 
-                <% if (events.isEmpty()) { %>
-                    <% if (personalizedFeed) { %>
-                        <p class="empty-hint">
-                            No upcoming events from clubs you follow yet.
-                            <a href="<%= ctx %>/clubs">Browse clubs</a> to follow organizations and personalize this feed.
-                        </p>
+    <% if (success != null && !success.isEmpty()) { %>
+    <p class="message success-message-box"><%= HtmlEscape.escape(success) %></p>
+    <% } %>
+
+    <% if (error != null && !error.isEmpty()) { %>
+    <p class="message error-message-box"><%= HtmlEscape.escape(error) %></p>
+    <% } %>
+
+    <% if (events.isEmpty()) { %>
+    <% if (filteredByClub) { %>
+    <p class="empty-hint">This club has no upcoming events right now.</p>
+    <% } else if (personalizedFeed) { %>
+    <p class="empty-hint">
+        No upcoming events from clubs you follow yet.
+        <a href="<%= ctx %>/clubs">Browse clubs</a> to follow organizations and personalize this feed.
+    </p>
+    <% } else { %>
+    <p class="empty-hint">No events available right now.</p>
+    <% } %>
+    <% } else { %>
+    <ul class="event-feed">
+        <% for (EventView event : events) { %>
+        <li class="event-card">
+            <h2 class="event-card-title">
+                <a href="<%= ctx %>/event-details?eventId=<%= event.getEventId() %>">
+                    <%= HtmlEscape.escape(event.getTitle()) %>
+                </a>
+            </h2>
+
+            <p class="event-meta-row">
+                <a href="<%= ctx %>/club?id=<%= event.getClubId() %>"><%= HtmlEscape.escape(event.getClubName()) %></a>
+            </p>
+
+            <p class="event-meta-row">
+                <%= event.getDate() %>
+                &middot;
+                <%= event.getStartTime() %> - <%= event.getEndTime() %>
+                &middot;
+                <%= HtmlEscape.escape(event.getLocation()) %>
+            </p>
+
+            <div class="event-card-actions">
+                    <span class="event-stat-pill">
+                        RSVP: <%= event.getUserRsvpStatus() == null ? "Not RSVPed" : HtmlEscape.escape(event.getUserRsvpStatus()) %>
+                    </span>
+                <span class="event-stat-pill">
+                        Attendance: <%= event.getGoingCount() %>/<%= event.getCapacity() == null ? "No Limit" : event.getCapacity() %><%= event.isFull() ? " (Full)" : "" %>
+                    </span>
+            </div>
+
+            <div class="event-details-cta event-details-cta--in-card">
+                <form action="<%= ctx %>/bookmark" method="post">
+                    <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
+                    <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
+                    <input type="hidden" name="returnTo" value="events">
+                    <input type="hidden" name="returnFeed" value="<%= personalizedFeed ? "personalized" : "all" %>">
+                    <% if (bookmarkedEventIds.contains(event.getEventId())) { %>
+                    <input type="hidden" name="action" value="remove">
+                    <button type="submit" class="secondary-btn event-details-action-btn">Remove Bookmark</button>
                     <% } else { %>
-                        <p class="empty-hint">No events available right now.</p>
+                    <input type="hidden" name="action" value="save">
+                    <button type="submit" class="primary-btn event-details-action-btn">Save Event</button>
                     <% } %>
-                <% } else { %>
-                    <ul class="club-list">
-                        <% for (EventView event : events) { %>
-                            <li class="club-list-item">
-                                <h2><a href="<%= ctx %>/event-details?eventId=<%= event.getEventId() %>"><%= HtmlEscape.escape(event.getTitle()) %></a></h2>
-                                <p class="club-meta">
-                                    <%= HtmlEscape.escape(event.getClubName()) %>
-                                    &middot;
-                                    <%= event.getCategory() == null || event.getCategory().isEmpty()
-                                            ? "Uncategorized"
-                                            : HtmlEscape.escape(event.getCategory()) %>
-                                </p>
-                                <p class="club-meta">
-                                    <%= event.getDate() %>
-                                    &middot;
-                                    <%= event.getStartTime() %> - <%= event.getEndTime() %>
-                                    &middot;
-                                    <%= HtmlEscape.escape(event.getLocation()) %>
-                                </p>
-                                <p class="club-meta">
-                                    RSVP: <%= event.getUserRsvpStatus() == null ? "Not RSVPed" : HtmlEscape.escape(event.getUserRsvpStatus()) %>
-                                    &middot;
-                                    Attendance: <%= event.getGoingCount() %>/<%= event.getCapacity() == null ? "No Limit" : event.getCapacity() %>
-                                    <%= event.isFull() ? " (Full)" : "" %>
-                                </p>
-                                <div class="event-details-cta event-details-cta--in-card">
-                                    <form action="<%= ctx %>/bookmark" method="post">
-                                        <input type="hidden" name="csrfToken" value="<%= HtmlEscape.escape(csrfToken) %>">
-                                        <input type="hidden" name="eventId" value="<%= event.getEventId() %>">
-                                        <input type="hidden" name="returnTo" value="events">
-                                        <input type="hidden" name="returnFeed" value="<%= personalizedFeed ? "personalized" : "all" %>">
-                                        <% if (bookmarkedEventIds.contains(event.getEventId())) { %>
-                                            <input type="hidden" name="action" value="remove">
-                                            <button type="submit" class="secondary-btn event-details-action-btn">Remove Bookmark</button>
-                                        <% } else { %>
-                                            <input type="hidden" name="action" value="save">
-                                            <button type="submit" class="primary-btn event-details-action-btn">Save Event</button>
-                                        <% } %>
-                                    </form>
-                                </div>
-                            </li>
-                        <% } %>
-                    </ul>
-                <% } %>
-            </section>
+                </form>
+            </div>
+        </li>
+        <% } %>
+    </ul>
+    <% } %>
+</section>
+
 <%@ include file="/WEB-INF/jspf/dashboardShellEnd.jspf" %>

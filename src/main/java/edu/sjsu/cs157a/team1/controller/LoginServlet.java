@@ -15,6 +15,12 @@ import java.io.IOException;
 public class LoginServlet extends HttpServlet {
 
     @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.sendRedirect(request.getContextPath() + "/login");
+    }
+
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -26,7 +32,7 @@ public class LoginServlet extends HttpServlet {
 
         if (email.isEmpty() || password.isEmpty()) {
             request.setAttribute("error", "Email and password are required.");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
             return;
         }
 
@@ -35,19 +41,19 @@ public class LoginServlet extends HttpServlet {
 
         if (user == null) {
             request.setAttribute("error", "Invalid email or password.");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
             return;
         }
 
         if (!user.isActive()) {
             request.setAttribute("error", "Your account is deactivated. Please contact an administrator.");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
             return;
         }
 
         if (!PasswordUtil.verifyPassword(password, user.getPasswordHash())) {
             request.setAttribute("error", "Invalid email or password.");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
             return;
         }
 
@@ -76,6 +82,6 @@ public class LoginServlet extends HttpServlet {
         session.setMaxInactiveInterval(15 * 60);
         CsrfUtil.getToken(session);
 
-        response.sendRedirect("dashboard.jsp");
+        response.sendRedirect(request.getContextPath() + "/dashboard");
     }
 }

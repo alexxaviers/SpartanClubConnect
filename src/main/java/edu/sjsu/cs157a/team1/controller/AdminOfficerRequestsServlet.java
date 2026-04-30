@@ -13,21 +13,36 @@ public class AdminOfficerRequestsServlet extends HttpServlet {
 
     private final ClubOfficerRequestDAO requestDAO = new ClubOfficerRequestDAO();
 
+    private Integer getSessionUserId(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return null;
+        }
+        return (Integer) session.getAttribute("userId");
+    }
+
+    private boolean requireAdmin(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+        Integer adminUserId = getSessionUserId(request);
+
+        if (adminUserId == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return false;
+        }
+
+        if (!requestDAO.userHasRole(adminUserId, "Admin")) {
+            response.sendRedirect(request.getContextPath() + "/dashboard");
+            return false;
+        }
+
+        return true;
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-
-        if (session == null || session.getAttribute("userId") == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
-
-        Integer adminUserId = (Integer) session.getAttribute("userId");
 
         try {
-            if (!requestDAO.userHasRole(adminUserId, "Admin")) {
-                response.sendRedirect("dashboard.jsp");
+            if (!requireAdmin(request, response)) {
                 return;
             }
 
@@ -36,38 +51,31 @@ public class AdminOfficerRequestsServlet extends HttpServlet {
 
             request.setAttribute("pendingRequests", pendingRequests);
             request.setAttribute("reviewedRequests", reviewedRequests);
-            request.getRequestDispatcher("adminOfficerRequests.jsp").forward(request, response);
+            request.getRequestDispatcher("/adminOfficerRequests.jsp").forward(request, response);
 
         } catch (SQLException e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Unable to load officer requests.");
-            request.getRequestDispatcher("adminOfficerRequests.jsp").forward(request, response);
+            request.getRequestDispatcher("/adminOfficerRequests.jsp").forward(request, response);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-
-        if (session == null || session.getAttribute("userId") == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
-
-        Integer adminUserId = (Integer) session.getAttribute("userId");
-        String action = request.getParameter("action");
-        String requestIdParam = request.getParameter("requestId");
 
         try {
-            if (!requestDAO.userHasRole(adminUserId, "Admin")) {
-                response.sendRedirect("dashboard.jsp");
+            if (!requireAdmin(request, response)) {
                 return;
             }
 
+            Integer adminUserId = getSessionUserId(request);
+            String action = request.getParameter("action");
+            String requestIdParam = request.getParameter("requestId");
+
             if (requestIdParam == null || requestIdParam.isBlank()) {
                 request.getSession().setAttribute("adminOfficerRequestMessage", "Invalid request ID.");
-                response.sendRedirect("AdminOfficerRequestsServlet");
+                response.sendRedirect(request.getContextPath() + "/AdminOfficerRequestsServlet");
                 return;
             }
 
@@ -90,15 +98,15 @@ public class AdminOfficerRequestsServlet extends HttpServlet {
                 request.getSession().setAttribute("adminOfficerRequestMessage", "Invalid action.");
             }
 
-            response.sendRedirect("AdminOfficerRequestsServlet");
+            response.sendRedirect(request.getContextPath() + "/AdminOfficerRequestsServlet");
 
         } catch (NumberFormatException e) {
             request.getSession().setAttribute("adminOfficerRequestMessage", "Request ID must be a valid number.");
-            response.sendRedirect("AdminOfficerRequestsServlet");
+            response.sendRedirect(request.getContextPath() + "/AdminOfficerRequestsServlet");
         } catch (SQLException e) {
             e.printStackTrace();
             request.getSession().setAttribute("adminOfficerRequestMessage", "A database error occurred.");
-            response.sendRedirect("AdminOfficerRequestsServlet");
+            response.sendRedirect(request.getContextPath() + "/AdminOfficerRequestsServlet");
         }
     }
 }

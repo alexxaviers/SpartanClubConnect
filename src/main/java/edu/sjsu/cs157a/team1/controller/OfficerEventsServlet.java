@@ -19,7 +19,7 @@ public class OfficerEventsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("userId") == null) {
-            resp.sendRedirect("login.jsp");
+            resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 
@@ -31,7 +31,7 @@ public class OfficerEventsServlet extends HttpServlet {
 
         try {
             if (!eventDAO.isClubOfficer(userId)) {
-                resp.sendRedirect("events?error=" + encode("Club Officer access required"));
+                resp.sendRedirect(req.getContextPath() + "/dashboard");
                 return;
             }
 
@@ -41,14 +41,14 @@ public class OfficerEventsServlet extends HttpServlet {
             req.setAttribute("error", "Unable to load your managed events right now.");
         }
 
-        req.getRequestDispatcher("officerEvents.jsp").forward(req, resp);
+        req.getRequestDispatcher("/officerEvents.jsp").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("userId") == null) {
-            resp.sendRedirect("login.jsp");
+            resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 
@@ -56,13 +56,13 @@ public class OfficerEventsServlet extends HttpServlet {
         EventDAO eventDAO = new EventDAO();
 
         if (!CsrfUtil.isValid(session, req.getParameter("csrfToken"))) {
-            resp.sendRedirect("officer-events?error=" + encode("Invalid request"));
+            resp.sendRedirect(req.getContextPath() + "/officer-events?error=" + encode("Invalid request"));
             return;
         }
 
         String action = req.getParameter("action");
         if (!"delete".equalsIgnoreCase(action)) {
-            resp.sendRedirect("officer-events?error=" + encode("Unknown action"));
+            resp.sendRedirect(req.getContextPath() + "/officer-events?error=" + encode("Unknown action"));
             return;
         }
 
@@ -70,25 +70,25 @@ public class OfficerEventsServlet extends HttpServlet {
         try {
             eventId = Integer.parseInt(req.getParameter("eventId"));
         } catch (NumberFormatException e) {
-            resp.sendRedirect("officer-events?error=" + encode("Invalid event ID"));
+            resp.sendRedirect(req.getContextPath() + "/officer-events?error=" + encode("Invalid event ID"));
             return;
         }
 
         try {
             if (!eventDAO.isClubOfficer(userId)) {
-                resp.sendRedirect("events?error=" + encode("Club Officer access required"));
+                resp.sendRedirect(req.getContextPath() + "/dashboard");
                 return;
             }
 
             boolean deleted = eventDAO.softDeleteEvent(userId, eventId);
             if (!deleted) {
-                resp.sendRedirect("officer-events?error=" + encode("Unable to delete event"));
+                resp.sendRedirect(req.getContextPath() + "/officer-events?error=" + encode("Unable to delete event"));
                 return;
             }
 
-            resp.sendRedirect("officer-events?success=" + encode("Event deleted"));
+            resp.sendRedirect(req.getContextPath() + "/officer-events?success=" + encode("Event deleted successfully."));
         } catch (Exception e) {
-            resp.sendRedirect("officer-events?error=" + encode("Unable to delete event right now"));
+            resp.sendRedirect(req.getContextPath() + "/officer-events?error=" + encode("Unable to delete event right now"));
         }
     }
 

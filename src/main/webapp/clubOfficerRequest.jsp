@@ -35,82 +35,87 @@
     <link rel="stylesheet" href="<%= ctx %>/css/landing.css">
     <link rel="stylesheet" href="<%= ctx %>/css/dashboard.css">
     <link rel="stylesheet" href="<%= ctx %>/css/clubOfficer.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/events.css">
 </head>
 <%@ include file="/WEB-INF/jspf/dashboardShellStart.jspf" %>
-            <section class="dashboard-page-header">
-                <h1 class="dashboard-page-title">Request Club Officer Role</h1>
-                <p class="dashboard-page-subtitle">
-                    Submit a request to become a club officer and manage club-related content.
-                </p>
-            </section>
 
-            <section class="dashboard-form-card">
-                <% if (errorMessage != null) { %>
-                <p class="message error-message-box"><%= errorMessage %></p>
-                <% } %>
+<section class="dashboard-page-header events-header">
+    <h1 class="dashboard-page-title">Request Club Officer Role</h1>
+    <p class="dashboard-page-subtitle">
+        Submit a request to manage club-related content and officer workflows.
+    </p>
+</section>
 
-                <% if (successMessage != null) { %>
-                <p class="message success-message-box"><%= successMessage %></p>
-                <% } %>
+<section class="dashboard-form-card events-shell-card event-form-shell">
+    <% if (errorMessage != null) { %>
+    <p class="message error-message-box"><%= errorMessage %></p>
+    <% } %>
 
-                <form action="<%= ctx %>/ClubOfficerRequestServlet" method="post" class="dashboard-form">
-                    <div class="form-group">
-                        <label for="fullName">Full Name</label>
-                        <input
-                                type="text"
-                                id="fullName"
-                                name="fullName"
-                                value="<%= fullName != null ? fullName : "" %>"
-                                readonly
-                        >
-                    </div>
+    <% if (successMessage != null) { %>
+    <p class="message success-message-box"><%= successMessage %></p>
+    <% } %>
 
-                    <div class="form-group">
-                        <label for="sjsuId">SJSU ID</label>
-                        <input
-                                type="text"
-                                id="sjsuId"
-                                name="sjsuId"
-                                placeholder="Enter your 9-digit SJSU ID"
-                                pattern="[0-9]{9}"
-                                maxlength="9"
-                                required
-                                value="<%= submittedSjsuId != null ? submittedSjsuId : "" %>"
-                        >
-                    </div>
+    <form action="<%= ctx %>/clubOfficerRequest" method="post" class="dashboard-form event-form">
+        <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input
+                    type="text"
+                    id="fullName"
+                    name="fullName"
+                    value="<%= fullName != null ? fullName : "" %>"
+                    readonly
+            >
+        </div>
 
-                    <div class="form-group">
-                        <label for="clubName">Club Name</label>
-                        <input
-                                type="text"
-                                id="clubName"
-                                name="clubName"
-                                placeholder="Enter the club name"
-                                maxlength="255"
-                                required
-                                value="<%= submittedClubName != null ? submittedClubName : "" %>"
-                        >
-                    </div>
+        <div class="form-group">
+            <label for="sjsuId">SJSU ID</label>
+            <input
+                    type="text"
+                    id="sjsuId"
+                    name="sjsuId"
+                    placeholder="Enter your 9-digit SJSU ID"
+                    pattern="[0-9]{9}"
+                    maxlength="9"
+                    required
+                    value="<%= submittedSjsuId != null ? submittedSjsuId : "" %>"
+            >
+        </div>
 
-                    <div class="form-group">
-                        <label for="justification">Why are you requesting this role?</label>
-                        <textarea
-                                id="justification"
-                                name="justification"
-                                class="dashboard-textarea"
-                                placeholder="Write a short justification for your request"
-                                maxlength="500"
-                                required
-                        ><%= submittedJustification != null ? submittedJustification : "" %></textarea>
+        <div class="form-group">
+            <label for="clubName">Club Name</label>
+            <input
+                    type="text"
+                    id="clubName"
+                    name="clubName"
+                    placeholder="Enter the club name"
+                    maxlength="255"
+                    required
+                    value="<%= submittedClubName != null ? submittedClubName : "" %>"
+            >
+        </div>
 
-                        <div id="justificationCount" class="field-hint">0/500 characters</div>
-                    </div>
+        <div class="form-group">
+            <label for="justification">Why are you requesting this role?</label>
+            <textarea
+                    id="justification"
+                    name="justification"
+                    class="dashboard-textarea"
+                    placeholder="Write a short justification for your request"
+                    maxlength="500"
+                    required
+            ><%= submittedJustification != null ? submittedJustification : "" %></textarea>
 
-                    <button type="submit" class="primary-btn">Submit Request</button>
-                </form>
+            <div id="justificationCount" class="field-hint">0/500 characters</div>
+        </div>
 
-                <div class="dashboard-note-box">
-                    Requests are reviewed by administrators. Once approved, your account can be assigned the Club Officer role.
-                </div>
-            </section>
+        <div class="event-form-actions">
+            <button type="submit" class="primary-btn">Submit Request</button>
+        </div>
+    </form>
+
+    <div class="dashboard-note-box">
+        Requests are reviewed by administrators. Once approved, your account can be assigned the Club Officer role.
+    </div>
+</section>
+
 <%@ include file="/WEB-INF/jspf/dashboardShellEnd.jspf" %>
