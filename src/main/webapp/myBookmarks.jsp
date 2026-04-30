@@ -32,6 +32,7 @@
     <link rel="stylesheet" href="<%= ctx %>/css/landing.css">
     <link rel="stylesheet" href="<%= ctx %>/css/dashboard.css">
     <link rel="stylesheet" href="<%= ctx %>/css/clubs.css">
+    <link rel="stylesheet" href="<%= ctx %>/css/events.css">
 </head>
 <%@ include file="/WEB-INF/jspf/dashboardShellStart.jspf" %>
             <section class="dashboard-page-header">
@@ -41,15 +42,12 @@
                 </p>
             </section>
 
-            <div class="club-profile-actions club-profile-actions--shell event-details-top-nav">
-                <div class="club-profile-actions-row">
-                    <a href="<%= ctx %>/events" class="secondary-btn club-profile-follow-btn event-details-nav-link">All Events</a>
-                    <a href="<%= ctx %>/my-bookmarks" class="secondary-btn club-profile-follow-btn event-details-nav-link" aria-current="page">Saved Events</a>
-                    <a href="<%= ctx %>/dashboard.jsp" class="secondary-btn club-profile-follow-btn event-details-nav-link">Home</a>
-                </div>
-            </div>
-
             <section class="dashboard-form-card clubs-shell-card">
+                <div class="events-top-actions">
+                    <a href="<%= ctx %>/events" class="secondary-link">All Events</a>
+                    <a href="<%= ctx %>/my-bookmarks" class="secondary-link active" aria-current="page">Saved Events</a>
+                    <a href="<%= ctx %>/dashboard.jsp" class="secondary-link">Home</a>
+                </div>
                 <% if (success != null && !success.isEmpty()) { %>
                     <p style="color: #0f7b0f;"><strong><%= HtmlEscape.escape(success) %></strong></p>
                 <% } %>
@@ -64,23 +62,25 @@
                         <a href="<%= ctx %>/events">Browse events</a> to bookmark events for later.
                     </p>
                 <% } else { %>
-                    <ul class="club-list">
-                        <% for (EventView event : events) { %>
-                        <li class="club-list-item">
-                            <div class="club-list-item-body">
-                                <h2><a href="<%= ctx %>/event-details?eventId=<%= event.getEventId() %>"><%= HtmlEscape.escape(event.getTitle()) %></a></h2>
-                                <p class="club-meta">
-                                    <%= HtmlEscape.escape(event.getClubName()) %>
-                                    &middot; <%= event.getDate() %>
-                                    &middot; <%= event.getStartTime() %> - <%= event.getEndTime() %>
-                                    &middot; <%= HtmlEscape.escape(event.getLocation()) %>
-                                </p>
-                                <p class="club-meta">
+                    <ul class="event-feed">
+                  		<% for (EventView event : events) { %>
+                        <li class="event-card">
+                            <h2 class="event-card-title">
+                                <a href="<%= ctx %>/event-details?eventId=<%= event.getEventId() %>"><%= HtmlEscape.escape(event.getTitle()) %></a>
+                            </h2>
+                            <p class="event-meta-row"><%= HtmlEscape.escape(event.getClubName()) %></p>
+                            <p class="event-meta-row">
+                                <%= event.getDate() %>
+                                &middot; <%= event.getStartTime() %> - <%= event.getEndTime() %>
+                                &middot; <%= HtmlEscape.escape(event.getLocation()) %>
+                            </p>
+                            <div class="event-card-actions">
+                                <span class="event-stat-pill">
                                     RSVP: <%= event.getUserRsvpStatus() == null ? "Not RSVPed" : HtmlEscape.escape(event.getUserRsvpStatus()) %>
-                                    &middot;
-                                    Attendance: <%= event.getGoingCount() %>/<%= event.getCapacity() == null ? "No Limit" : event.getCapacity() %>
-                                    <%= event.isFull() ? " (Full)" : "" %>
-                                </p>
+                                </span>
+                                <span class="event-stat-pill">
+                                    Attendance: <%= event.getGoingCount() %>/<%= event.getCapacity() == null ? "No Limit" : event.getCapacity() %><%= event.isFull() ? " (Full)" : "" %>
+                                </span>
                             </div>
                             <div class="event-details-cta event-details-cta--in-card">
                                 <form action="<%= ctx %>/bookmark" method="post">
