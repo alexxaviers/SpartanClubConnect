@@ -1,146 +1,115 @@
+<div align="center">
+
 # SpartanClubConnect
-CS157A Sec 1 Team 1 Project
 
-SpartanClubConnect is a full-stack web application designed to help San José State University (SJSU) students discover, manage, and engage with campus clubs and events in a centralized platform.
+**One place for San José State students to find clubs, follow them and RSVP to events.**
 
----
+A full-stack Java web app built for CS 157A (Database Management Systems) at San José State University, Mar–May 2026, as a team course project.
 
-## 🚀 Overview
+![Java](https://img.shields.io/badge/Java_21-ED8B00?style=flat-square&logo=openjdk&logoColor=white)
+![Jakarta Servlets](https://img.shields.io/badge/Servlets%20%2F%20JSP-007396?style=flat-square&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white)
+![Maven](https://img.shields.io/badge/Maven-C71A36?style=flat-square&logo=apachemaven&logoColor=white)
+![Tomcat](https://img.shields.io/badge/Tomcat-F8DC75?style=flat-square&logo=apachetomcat&logoColor=black)
 
-This project provides a modern, Instagram-style interface where:
-- Students can explore clubs and events
-- Club officers can manage clubs and publish events
-- Administrators can moderate content and manage users
-The goal is to improve student engagement by replacing scattered platforms with a single, organized system.
-
----
-
-## ✨ Features
-
-### 👤 User Authentication
-
-- User registration and login with secure password hashing
-- Role-based access (Student, Club Officer, Admin)
-- Session management and logout functionality
-
-### 🏫 Club Management
-
-- Create and edit club profiles
-- Browse and search clubs by name or category
-- Assign club officers to manage clubs
-
-### 📅 Event Management
-
-- Create, edit, and delete event posts
-- View event feed and event details
-- Events include title, date, location, and optional images
-
-### ⭐ Student Engagement
-
-- Follow/unfollow clubs
-- Bookmark events
-- Personalized event feed based on followed clubs
-
-### 📝 RSVP System
-
-- RSVP to events with capacity handling
-- Cancel RSVP
-- View registered events
- 
-### 🛠️ Admin Controls
-
-- Approve/deny club officer requests
-- Moderate or remove events
-- Manage user accounts and roles
+</div>
 
 ---
 
-## 🧱 Tech Stack
+## What it does
 
-Frontend
-- HTML, CSS, JavaScript
+| Students | Club officers | Admins |
+|---|---|---|
+| Browse and search clubs by name or category | Create and edit club profiles | Approve or deny officer requests |
+| Follow clubs and get a personalized event feed | Publish, edit and remove events | Moderate events |
+| Bookmark events | Manage their club's events and RSVPs | Manage users and roles |
+| RSVP, join the waitlist, or cancel | | |
 
-Backend
-- Java (JSP, JDBC)
-- Apache Tomcat
+Passwords are hashed with BCrypt, forms carry CSRF tokens, output is HTML-escaped, and every page is gated by role-based access control.
 
-Database
-- MySQL
+## Architecture
 
-Tools
-- MySQL Workbench
-- IntelliJ IDEA / Eclipse
-
----
-
-## 🗄️ Database Design
-
-The application uses a relational MySQL database designed to support user roles, club management, events, and student engagement features.
-
-Core Tables
-- Users — account information and authentication
-- Roles — defines roles (Student, Club Officer, Admin)
-- Clubs — student organizations
-- Events — events created by clubs
-- ClubCategories — classification of clubs
-- ClubOfficerRequests — officer role requests
-
-Relationships
-- UserRoles — assigns roles to users (RBAC)
-- Follows — users follow clubs
-- Bookmarks — users save events
-- RSVPs — users register for events
-- Manages — officers manage clubs
-- ClubCategoryMaps — maps clubs to categories
-
----
-
-## 🔐 Access Control
-
-Role-Based Access Control (RBAC):
-- Student: browse, follow, bookmark, RSVP
-- Club Officer: manage clubs and events
-- Admin: moderate content and manage users
-
----
-
-## ⚙️ Setup Instructions
-
-1. Clone the repository
-```bash
-git clone https://github.com/ObviousYordle/CS157A-S1-Team-1.git
-cd SpartanClubConnect
+```mermaid
+flowchart LR
+    B[Browser] -->|HTTP| S[Servlets<br/>controller]
+    S --> J[JSP views]
+    S --> D[DAOs<br/>JDBC]
+    D --> M[(MySQL<br/>12 tables)]
 ```
 
-2. Set up MySQL database
-- Import schema from provided SQL files
-- Configure database connection
+A classic MVC layout: servlets handle requests and access checks, DAOs run parameterized JDBC queries, and JSPs render the pages. Packaged as a WAR with Maven and deployed to Tomcat.
 
-3. Run the backend
-- Deploy on Apache Tomcat
+## My part
 
-4. Open the app
-- Navigate to `http://localhost:8080`
+**Database design.** I designed the 12-table MySQL schema and the seed data: users, roles, clubs, categories, events, officer requests, and the relationship tables (user roles, follows, bookmarks, RSVPs, club managers, category mappings) with foreign keys for referential integrity.
 
----
+**Event booking and RSVP system.** The interesting problem: two students hitting RSVP for the last seat at the same moment. Registration runs as a single transaction:
 
-## 📈 Future Improvements
+1. `SELECT ... FROM Events WHERE event_id = ? FOR UPDATE` locks the event row, so concurrent RSVPs for the same event queue up instead of racing.
+2. The user's existing RSVP row is locked too, which blocks duplicate registrations.
+3. Count current `Going` RSVPs and compare with the event's capacity.
+4. Insert as `Going` if there's room, otherwise as `Waitlisted`, then commit. Any failed check rolls back.
 
-- Waitlist system for full events
-- Enhanced UI/UX
-- Notifications system
-- Mobile responsiveness
+```java
+String lockEventSql = "SELECT date, end_time, capacity, is_active FROM Events WHERE event_id = ? FOR UPDATE";
+...
+String targetStatus = (capacity != null && goingCount >= capacity) ? "Waitlisted" : "Going";
+```
 
----
+**Pages.** The servlets and JSP pages for creating events, event details, officer event management and RSVPs.
 
-## 👥 Team
+## Database schema
 
-- Anh Tran
-- Trista Chen
-- Alex Xavier
+```mermaid
+erDiagram
+    Users ||--o{ UserRoles : has
+    Roles ||--o{ UserRoles : grants
+    Users ||--o{ Follows : follows
+    Clubs ||--o{ Follows : "followed by"
+    Users ||--o{ Manages : manages
+    Clubs ||--o{ Manages : "managed by"
+    Clubs ||--o{ Events : hosts
+    Users ||--o{ RSVPs : registers
+    Events ||--o{ RSVPs : has
+    Users ||--o{ Bookmarks : saves
+    Events ||--o{ Bookmarks : "saved in"
+    Clubs ||--o{ ClubCategoryMaps : "tagged with"
+    ClubCategories ||--o{ ClubCategoryMaps : tags
+    Users ||--o{ ClubOfficerRequests : submits
+    Users ||--o{ ClubOfficerRequests : reviews
+```
 
----
+## Run it locally
 
-## 📄 License
+**Requirements:** Java 21, Maven, MySQL 8, Tomcat 9 (the app uses the `javax.servlet` API).
 
-This project is for academic purposes (CS157A - SJSU).
+```bash
+git clone https://github.com/alexxaviers/SpartanClubConnect.git
+cd SpartanClubConnect
+
+# create the database and load sample data
+mysql -u root -p < src/main/resources/sql/schema.sql
+mysql -u root -p < src/main/resources/sql/data.sql
+
+# point the app at your database
+cp src/main/resources/db.properties.example src/main/resources/db.properties
+
+mvn package        # builds target/*.war
+```
+
+Deploy the WAR to Tomcat and open `http://localhost:8080/`.
+
+## Project structure
+
+```
+src/main/java/.../controller/   Servlets (auth, clubs, events, RSVPs, admin)
+src/main/java/.../dao/          JDBC data access
+src/main/java/.../model/        Domain objects
+src/main/java/.../util/         BCrypt hashing, CSRF, HTML escaping, DB connection, pagination
+src/main/resources/sql/         Schema, seed data, sample queries
+src/main/webapp/                JSP pages and CSS
+```
+
+## Team
+
+CS 157A, Section 1, Team 1: Anh Tran, Trista Chen and [Alex Xavier](https://github.com/alexxaviers). Original repository: [ObviousYordle/CS157A-S1-Team-1](https://github.com/ObviousYordle/CS157A-S1-Team-1).
